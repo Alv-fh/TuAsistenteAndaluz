@@ -1,10 +1,9 @@
-// URL oficial para consultar el estado de las becas
-const URL_CONSULTA_BECAS = 'https://www.juntadeandalucia.es/educacion/becasweb/consultawebbecas?redirect=/educacion/portales/web/educacion/becas-ayudas/becas/convocatoria-general';
-
 // 1. Configuración de Supabase.
-
 const SUPABASE_URL = 'https://atffndqbkgqhetkokasp.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0ZmZuZHFia2dxaGV0a29rYXNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzNTY5MTEsImV4cCI6MjEwODkzMjkxMX0.0rvH6dCri-16tznn15JQkcYSJYPBD1GpaBLz8QROsg4';
+
+// URL oficial para consultar el estado de las becas
+const URL_CONSULTA_BECAS = 'https://www.juntadeandalucia.es/educacion/becasweb/consultawebbecas?redirect=/educacion/portales/web/educacion/becas-ayudas/becas/convocatoria-general';
 
 const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -104,7 +103,7 @@ const ORDEN_ESTADO = { 'Abierto': 0, 'Próximamente': 1, 'Cerrado': 2, 'Desconoc
 
 const ICONO_CATEGORIA = 'M12 4.25l-10.5 5.5 10.5 5.5 8.25-4.318V15.5h2.25V9.75L12 4.25z M12 17.25l-8.25-4.318V15l8.25 4.5 8.25-4.5v-2.068L12 17.25z';
 const ICONO_CALENDARIO = 'M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5';
-
+const ICONO_EURO = 'M21 7.125C21 5.399 16.97 4 12 4s-9 1.399-9 3.125c0 1.726 4.03 3.125 9 3.125s9-1.399 9-3.125zM12 11.875c-4.321 0-8.212-1.041-8.995-2.454C3.003 9.7 3 9.911 3 10.125c0 1.726 4.03 3.125 9 3.125s9-1.399 9-3.125c0-.214-.003-.425-.005-.704-.783 1.413-4.674 2.454-8.995 2.454zM12 16.625c-4.321 0-8.212-1.041-8.995-2.454C3.003 14.45 3 14.661 3 14.875c0 1.726 4.03 3.125 9 3.125s9-1.399 9-3.125c0-.214-.003-.425-.005-.704-.783 1.413-4.674 2.454-8.995 2.454z';
 // 4. Dibujar los trámites
 function renderizarTramites(tramites) {
   const contenedor = document.getElementById('contenedor-tramites');
@@ -121,7 +120,7 @@ function renderizarTramites(tramites) {
     const tarjeta = crearElemento('div', 'glass-card flex flex-col gap-3');
 
     const cabecera = crearElemento('div', 'flex justify-between items-start gap-4');
-    cabecera.appendChild(crearElemento('h3', 'text-lg font-bold text-slate-800 leading-tight', tramite.titulo));
+    cabecera.appendChild(crearElemento('h3', 'text-lg font-bold text-slate-800 leading-tight titulo-truncado', tramite.titulo));
     if (tramite.destacado) {
       cabecera.appendChild(
         crearElemento('span', 'bg-emerald-100 text-emerald-800 text-xs font-extrabold px-3 py-1 rounded-full whitespace-nowrap shadow-sm', 'Destacado')
@@ -136,6 +135,14 @@ function renderizarTramites(tramites) {
     tagCat.appendChild(document.createTextNode(tramite.categoria ?? ''));
     detalles.appendChild(tagCat);
 
+    // Etiqueta de cuantía
+    if (tramite.cuantia) {
+      const tagCuantia = crearElemento('span', 'flex items-center bg-emerald-50 border-emerald-200 text-emerald-700 px-2.5 py-1 rounded-md border shadow-sm font-bold');
+      tagCuantia.appendChild(crearIconoSVG(ICONO_EURO));
+      tagCuantia.appendChild(document.createTextNode(tramite.cuantia));
+      detalles.appendChild(tagCuantia);
+    }
+
     const ef = estadoEfectivo(tramite);
     const estilo = ESTILOS_ESTADO[ef.estado] || ESTILOS_ESTADO['Desconocido'];
     const tagFecha = crearElemento('span', `flex items-center px-2.5 py-1 rounded-md border shadow-sm ${estilo.clase}`);
@@ -145,7 +152,6 @@ function renderizarTramites(tramites) {
 
     tarjeta.appendChild(detalles);
 
-    // BOTÓN DE GUÍA
     if (tramite.guia && tramite.guia.que_es) {
       const botonGuia = crearElemento(
         'button',
@@ -157,7 +163,6 @@ function renderizarTramites(tramites) {
       tarjeta.appendChild(botonGuia);
     }
 
-    // Botón original: Ver en la web oficial
     const destino = enlaceSeguro(tramite.url_oficial);
     const claseBoton = 'text-center w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl transition shadow-lg shadow-emerald-600/20';
     const boton = crearElemento(
@@ -180,17 +185,15 @@ function renderizarTramites(tramites) {
   });
 }
 
-// 5. Modal de la Guía (VERSIÓN CON ALTURA DINÁMICA DVH)
+// 5. Modal de la Guía
 function mostrarGuia(tramite) {
   document.body.style.overflow = 'hidden';
 
   const modalOverlay = document.createElement('div');
-  modalOverlay.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 sm:p-6';
+  modalOverlay.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-end sm:items-center justify-center p-0 sm:p-6';
   
   const modalContent = document.createElement('div');
-  // Usamos 'h-[90dvh]' y forzamos el estilo en línea para que el navegador lo calcule al instante
-  modalContent.className = 'bg-white rounded-3xl max-w-2xl w-full shadow-2xl relative flex flex-col overflow-hidden';
-  modalContent.style.height = '90dvh'; 
+  modalContent.className = 'bg-white rounded-t-3xl sm:rounded-3xl max-w-2xl w-full max-h-[85vh] shadow-2xl relative flex flex-col overflow-hidden';
   
   const headerHtml = `
     <div class="flex items-start justify-between p-6 pb-4 border-b border-slate-100 shrink-0">
@@ -272,7 +275,7 @@ async function inicializarApp() {
   try {
     const { data, error } = await clienteSupabase
       .from('tramites')
-      .select('slug,titulo,categoria,estado,fecha_apertura,fecha_cierre,proxima_apertura,apertura_estimada,destacado,url_oficial,guia')
+      .select('slug,titulo,categoria,estado,cuantia,fecha_apertura,fecha_cierre,proxima_apertura,apertura_estimada,destacado,url_oficial,guia')
       .eq('publicado', true);
 
     if (error) throw error;
@@ -316,7 +319,6 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarBotonConsulta();
 });
 
-// Configurar el enlace del botón de consulta de becas
 function configurarBotonConsulta() {
     const btnConsulta = document.getElementById('btn-consulta-becas');
     if (btnConsulta) {

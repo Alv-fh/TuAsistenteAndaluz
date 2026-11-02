@@ -86,24 +86,87 @@ input[type="search"]:focus {
     border: 1px solid rgba(255, 255, 255, 0.9);
     box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 1);
 }
-
-/* Animación de flotación libre por la pantalla */
-@keyframes float-around {
-    0% { transform: translate(0, 0) scale(1); }
-    25% { transform: translate(15vw, 20vh) scale(1.1); }
-    50% { transform: translate(-10vw, 35vh) scale(0.9); }
-    75% { transform: translate(-20vw, -10vh) scale(1.05); }
-    100% { transform: translate(0, 0) scale(1); }
+/* Fondo animado: queda DETRÁS de todo el contenido */
+#fondo-animado {
+    position: fixed;
+    top: -100px;
+    left: -100px;
+    right: -100px;
+    bottom: -100px;
+    z-index: 0;
+    pointer-events: none;
+    /* Quitamos el overflow: hidden y el contain: paint */
+}
+/* Desvanecido hacia los bordes */
+#fondo-animado::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(248, 250, 252, 0) 40%, rgba(248, 250, 252, 0.8) 100%);
+    z-index: 1;
 }
 
-.animate-float-1 {
+/* Cada bola es un degradado radial que llega a transparente en su propio borde */
+.blob {
+    position: absolute;
+    border-radius: 9999px;
+    will-change: transform;
+    backface-visibility: hidden;
+    z-index: 0;
+}
+
+.blob-1 {
+    top: -10%;
+    left: -10%;
+    width: 55vw;
+    height: 55vw;
+    background: radial-gradient(circle closest-side, rgba(110, 231, 183, 0.5) 0%, rgba(110, 231, 183, 0.2) 45%, rgba(110, 231, 183, 0) 100%);
     animation: float-around 25s ease-in-out infinite;
 }
-.animate-float-2 {
-    animation: float-around 30s ease-in-out infinite reverse; /* Va en sentido contrario */
+
+.blob-2 {
+    bottom: -10%;
+    right: -10%;
+    width: 45vw;
+    height: 45vw;
+    background: radial-gradient(circle closest-side, rgba(94, 234, 212, 0.5) 0%, rgba(94, 234, 212, 0.2) 45%, rgba(94, 234, 212, 0) 100%);
+    animation: float-around 30s ease-in-out infinite reverse;
     animation-delay: -5s;
 }
-.animate-float-3 {
+
+.blob-3 {
+    top: 20%;
+    right: 10%;
+    width: 38vw;
+    height: 38vw;
+    background: radial-gradient(circle closest-side, rgba(187, 247, 208, 0.4) 0%, rgba(187, 247, 208, 0.15) 45%, rgba(187, 247, 208, 0) 100%);
     animation: float-around 20s ease-in-out infinite;
     animation-delay: -10s;
 }
+
+@keyframes float-around {
+    0%   { transform: translate3d(0, 0, 0) scale(1); }
+    25%  { transform: translate3d(15vw, 20vh, 0) scale(1.1); }
+    50%  { transform: translate3d(-10vw, 35vh, 0) scale(0.9); }
+    75%  { transform: translate3d(-20vw, -10vh, 0) scale(1.05); }
+    100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+/* Respeta a quien tiene desactivadas las animaciones en su sistema */
+@media (prefers-reduced-motion: reduce) {
+    .blob { animation: none; }
+}
+
+/* El resto de tu CSS (glass-card, etc.) se queda igual */
+
+.titulo-truncado {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;         
+    box-orient: vertical;  
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 2rem;
+}
+

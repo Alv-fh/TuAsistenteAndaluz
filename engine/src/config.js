@@ -26,7 +26,10 @@ export const config = {
     // --- CONFIGURACIÓN DE LA ARAÑA (CRAWLER) ---
     portadas: [
       'https://www.juntadeandalucia.es/temas/estudiar/becas.html', 
-      'https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/areas/empleo.html'
+      'https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/areas/empleo.html',
+      'https://www.juntadeandalucia.es/temas/familias-igualdad/mayores/ayudas.html',
+      'https://www.juntadeandalucia.es/temas/familias-igualdad/discapacidad/ayudas-beneficios.html',
+      'https://www.juntadeandalucia.es/organismos/universidadindustriaenergiaeinnovacion/areas/universidad/talento.html'
     ],
     urlsDirectas: [
       {
@@ -38,7 +41,7 @@ export const config = {
           'https://www.juntadeandalucia.es/educacion/portales/web/educacion/becas-ayudas/becas/beca-6000/convocatorias'
         ]
       },
-      // 2. NUEVA: Ayuda al Transporte
+      //  Ayuda al Transporte
       {
         url: 'https://www.juntadeandalucia.es/educacion/portales/becas-ayudas/ayudas/ayuda-transporte',
         slug: 'ayuda-transporte',
@@ -47,7 +50,7 @@ export const config = {
           'https://www.juntadeandalucia.es/educacion/portales/becas-ayudas/ayudas/ayuda-transporte'
         ]
       },
-      // NUEVA: Programa Emplea-T (Empleo)
+      //  Programa Emplea-T (Empleo)
       {
         url: 'https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/areas/empleo/incentivos-contratacion/paginas/empleat.html',
         slug: 'programa-emplea-t',
@@ -59,11 +62,17 @@ export const config = {
         slug: 'bono-alquiler-joven',
         categoria: 'Vivienda',
         fuentes: ['https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/24974.html']
+      },
+      {
+      url: 'https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/25586.html',
+      slug: 'ayuda-comedor-escolar',
+      categoria: 'Educación',
+      fuentes: ['https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/25586.html']
       }
     ],
     ignorarSlugs: ['tu-beca-en-nueve-pasos'],
     maxProfundidad: 2,
-    maxPaginas: 20,
+    maxPaginas: 25,
     maxEnlacesPorPagina: 6,
     maxCaracteresIa: 30000,
     palabrasClave: /beca|ayuda|subvenci|bono|matr[ií]cula|escolariza|admisi[oó]n/i,

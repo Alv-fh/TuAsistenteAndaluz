@@ -96,17 +96,26 @@ async function main() {
           continue;
         }
 
-        const cambios = { contenido_hash: lectura.huella, revisado_en: ahora, actualizado_en: ahora };
+                const cambios = { contenido_hash: lectura.huella, revisado_en: ahora, actualizado_en: ahora };
+        
         if (datos.estado === 'Desconocido') {
           console.log('   La IA no pudo determinar el estado: se conserva el anterior.');
         } else {
           Object.assign(cambios, {
             estado: v.estado,
+            cuantia: datos.cuantia ?? null,
             fecha_apertura: v.fecha_apertura ?? 'No especificada',
             fecha_cierre: datos.fecha_cierre ?? 'No especificada',
             proxima_apertura: datos.proxima_apertura,
             apertura_estimada: datos.apertura_estimada
           });
+
+          // Lógica de destacado
+          if (v.estado === 'Abierto' || v.estado === 'Próximamente') {
+            cambios.destacado = true;
+          } else if (v.estado === 'Cerrado') {
+            cambios.destacado = false;
+          }
         }
         
         if (datos.guia && datos.guia.que_es) {

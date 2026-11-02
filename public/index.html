@@ -16,15 +16,17 @@
 <body class="bg-slate-50 min-h-screen text-slate-800 antialiased background-radial flex flex-col relative overflow-x-hidden">
 
     <!-- Efectos de fondo (Liquid Glass) -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0" id="fondo-animado">
-        <div id="blob-1" class="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-emerald-300/30 rounded-full blur-3xl animate-float-1"></div>
-        <div id="blob-2" class="absolute bottom-[-10%] right-[-10%] w-[30vw] h-[30vw] bg-teal-300/30 rounded-full blur-3xl animate-float-2"></div>
-        <div id="blob-3" class="absolute top-[20%] right-[10%] w-[25vw] h-[25vw] bg-green-200/20 rounded-full blur-3xl animate-float-3"></div>
+<body class="bg-slate-50 min-h-screen text-slate-800 antialiased background-radial flex flex-col relative overflow-x-hidden">
+
+    <!-- Efectos de fondo (Liquid Glass) -->
+    <div id="fondo-animado" aria-hidden="true">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
     </div>
 
     <!-- Barra de navegación + Buscador Sticky -->
     <div class="sticky top-0 z-50 w-full">
-        <!-- Header Original -->
         <header class="glass-header px-6 py-4 flex items-center justify-center">
             <img src="logo-taa.png" alt="TuAsistenteAndaluz Logo" class="w-12 h-12 md:w-14 md:h-14 mr-4 rounded-2xl shadow-md object-cover border border-white/50">
             <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-emerald-950 drop-shadow-sm">
@@ -32,7 +34,6 @@
             </h1>
         </header>
 
-        <!-- Buscador Sticky -->
         <div class="py-3 px-4 bg-transparent">
             <div class="max-w-2xl mx-auto">
                 <div class="flex items-center w-full bg-white/95 border border-slate-200 rounded-2xl shadow-sm focus-within:ring-2 focus-within:ring-emerald-500/30 transition-all overflow-hidden">
@@ -52,7 +53,6 @@
     <!-- Contenido principal -->
     <main class="max-w-4xl mx-auto px-4 pb-12 flex-1 w-full relative z-10">
         
-        <!-- Título Principal -->
         <div class="text-center mb-8 mt-4">
             <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-5" style="text-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);">
                 Trámites de la Junta,<br class="hidden md:block"> sin dolores de cabeza
@@ -60,7 +60,6 @@
             <p class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">Encuentra ayudas, becas y bolsas de empleo oficiales explicadas para humanos.</p>
         </div>
 
-        <!-- Aviso de servicio independiente -->
         <div class="max-w-2xl mx-auto mb-8 flex items-start gap-3 bg-white/50 backdrop-blur-2xl border border-white/80 rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] px-5 py-4 text-sm text-slate-600" role="note">
             <svg class="w-6 h-6 text-emerald-600 shrink-0 mt-0.5 drop-shadow-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <circle cx="12" cy="12" r="9"></circle>
@@ -69,7 +68,6 @@
             <p class="leading-relaxed"><strong class="text-slate-800">Servicio independiente.</strong> La información procede de fuentes públicas de la Junta de Andalucía. Comprueba siempre los plazos en la web oficial antes de solicitar.</p>
         </div>
 
-        <!-- NUEVO: Botón de consulta de estado de becas -->
         <div class="max-w-2xl mx-auto mb-10">
             <a id="btn-consulta-becas" href="#" target="_blank" rel="noopener noreferrer" 
                class="flex items-center justify-between w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-emerald-600/30 transition-all transform hover:scale-[1.02]">
@@ -84,19 +82,37 @@
             </p>
         </div>
 
-        <!-- Tarjetas -->
         <div id="contenedor-tramites" class="grid grid-cols-1 md:grid-cols-2 gap-6" aria-live="polite">
             <p class="col-span-full text-center text-slate-500 animate-pulse font-medium py-10">Cargando trámites oficiales...</p>
         </div>
     </main>
 
-    <!-- Pie -->
-    <footer class="px-6 py-10 text-center text-sm text-slate-500 relative z-10 border-t border-white/40 mt-auto">
-        <p class="mb-2">TuAsistenteAndaluz es un servicio independiente y no está vinculado a la Junta de Andalucía.</p>
-        <p>
-            Información oficial en
-            <a href="https://www.juntadeandalucia.es/" target="_blank" rel="noopener noreferrer" class="text-emerald-700 font-bold hover:text-emerald-600 transition-colors underline decoration-emerald-300 decoration-2 underline-offset-4">juntadeandalucia.es</a>
-        </p>
+        <footer class="px-6 py-10 text-center text-sm text-slate-500 relative z-10 border-t border-white/40 mt-auto flex flex-col items-center gap-6">
+        <div>
+            <p class="mb-2">TuAsistenteAndaluz es un servicio independiente y no está vinculado a la Junta de Andalucía.</p>
+            <p>
+                Información oficial en
+                <a href="https://www.juntadeandalucia.es/" target="_blank" rel="noopener noreferrer" class="text-emerald-700 font-bold hover:text-emerald-600 transition-colors underline decoration-emerald-300 decoration-2 underline-offset-4">juntadeandalucia.es</a>
+            </p>
+        </div>
+
+        <!-- Botones de apoyo y LinkedIn -->
+        <div class="flex flex-wrap justify-center gap-3 mt-2">
+            <!-- Botón de Café -->
+            <a href="https://buymeacoffee.com/tuasistenteandaluz" target="_blank" rel="noopener noreferrer" 
+               class="flex items-center gap-2 bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold py-2 px-4 rounded-xl border border-amber-200 transition-colors shadow-sm text-sm">
+                <span class="text-lg">☕</span> Invítame a un café
+            </a>
+
+            <!-- Botón de LinkedIn -->
+            <a href="https://linkedin.com/in/alv-fh" target="_blank" rel="noopener noreferrer" 
+               class="flex items-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold py-2 px-4 rounded-xl border border-blue-200 transition-colors shadow-sm text-sm">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+                linkedin.com/in/alv-fh
+            </a>
+        </div>
     </footer>
 
     <!-- Supabase -->
