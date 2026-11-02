@@ -1,3 +1,4 @@
+import { generarJSON } from './ai.js';
 import { createClient } from '@supabase/supabase-js';
 import { createHash } from 'node:crypto';
 import { config } from '../config.js';

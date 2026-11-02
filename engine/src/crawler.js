@@ -12,8 +12,10 @@ import {
   registrarAyuda,
   slugDesdeUrl
 } from './lib/db.js';
+
 // La IA solo devuelve NÚMEROS de una lista; las URLs las valida el código.
 async function elegirEnlacesConIA(enlaces, urlPagina) {
+  console.log('   [DEBUG] generarJSON es:', typeof generarJSON);
   const vistos = new Set();
   const candidatos = [];
   for (const e of enlaces) {

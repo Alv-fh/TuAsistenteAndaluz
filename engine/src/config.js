@@ -14,11 +14,20 @@ export const config = {
     token: process.env.TELEGRAM_BOT_TOKEN,
     adminChatId: process.env.TELEGRAM_CHAT_ID,
   },
-  crawler: {
+    crawler: {
     headless: process.env.HEADLESS === 'true',
-    
+    dominiosPermitidos: ['juntadeandalucia.es', 'boe.es'],
+
+    // Propiedades de control (las que faltaban)
+    segmentosGenericos: ['convocatorias', 'calendario', 'normativa', 'preguntas-frecuentes', 'solicitud', 'inicio', 'index'],
+    maxCaracteresFuente: 15000,
+    mesesMaxCerrada: 12,
+
     // --- CONFIGURACIÓN DE LA ARAÑA (CRAWLER) ---
-    portadas: ['https://www.juntadeandalucia.es/temas/estudiar/becas.html'],
+    portadas: [
+      'https://www.juntadeandalucia.es/temas/estudiar/becas.html', 
+      'https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/areas/empleo.html'
+    ],
     urlsDirectas: [
       {
         url: 'https://www.juntadeandalucia.es/educacion/portales/becas-ayudas/becas/beca-6000',
@@ -29,6 +38,22 @@ export const config = {
           'https://www.juntadeandalucia.es/educacion/portales/web/educacion/becas-ayudas/becas/beca-6000/convocatorias'
         ]
       },
+      // 2. NUEVA: Ayuda al Transporte
+      {
+        url: 'https://www.juntadeandalucia.es/educacion/portales/becas-ayudas/ayudas/ayuda-transporte',
+        slug: 'ayuda-transporte',
+        categoria: 'Educación',
+        fuentes: [
+          'https://www.juntadeandalucia.es/educacion/portales/becas-ayudas/ayudas/ayuda-transporte'
+        ]
+      },
+      // NUEVA: Programa Emplea-T (Empleo)
+      {
+        url: 'https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/areas/empleo/incentivos-contratacion/paginas/empleat.html',
+        slug: 'programa-emplea-t',
+        categoria: 'Empleo',
+        fuentes: ['https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/areas/empleo/incentivos-contratacion/paginas/empleat.html']
+      },
       {
         url: 'https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/24974.html',
         slug: 'bono-alquiler-joven',
@@ -36,7 +61,7 @@ export const config = {
         fuentes: ['https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/24974.html']
       }
     ],
-    ignorarSlugs: [],
+    ignorarSlugs: ['tu-beca-en-nueve-pasos'],
     maxProfundidad: 2,
     maxPaginas: 20,
     maxEnlacesPorPagina: 6,
@@ -48,4 +73,4 @@ export const config = {
     boeDiasAtras: 3,
     maxAnalisisBoletines: 15
   }
-};
+}
