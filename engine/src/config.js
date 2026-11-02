@@ -68,6 +68,12 @@ export const config = {
       slug: 'ayuda-comedor-escolar',
       categoria: 'Educación',
       fuentes: ['https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/25586.html']
+      },
+      {
+      url: 'https://www.juntadeandalucia.es/medioambiente/portal/web/caza-y-pesca/licencias-tasas/licencias-caza-pesca', 
+      slug: 'licencia-caza-pesca',
+      categoria: 'Medio Ambiente', 
+      fuentes: ['https://www.juntadeandalucia.es/.../licencia-caza-pesca.html']
       }
     ],
     ignorarSlugs: ['tu-beca-en-nueve-pasos'],

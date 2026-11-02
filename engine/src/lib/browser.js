@@ -35,7 +35,7 @@ async function irA(pagina, url, intentos = 2) {
 export async function leerPagina(pagina, url) {
   await irA(pagina, url);
   await pagina.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
-
+  await pagina.waitForTimeout(3000);
   return pagina.evaluate(() => {
     const selectores = ['#main-content', 'main', '[role="main"]', 'article', '#content', '.content'];
     let contenedor = null;
