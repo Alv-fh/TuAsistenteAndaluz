@@ -1,4 +1,8 @@
+// URL oficial para consultar el estado de las becas
+const URL_CONSULTA_BECAS = 'https://www.juntadeandalucia.es/educacion/becasweb/consultawebbecas?redirect=/educacion/portales/web/educacion/becas-ayudas/becas/convocatoria-general';
+
 // 1. Configuración de Supabase.
+
 const SUPABASE_URL = 'https://atffndqbkgqhetkokasp.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0ZmZuZHFia2dxaGV0a29rYXNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzNTY5MTEsImV4cCI6MjEwODkzMjkxMX0.0rvH6dCri-16tznn15JQkcYSJYPBD1GpaBLz8QROsg4';
 
@@ -307,4 +311,15 @@ document.addEventListener('mousemove', (e) => {
   }
 });
 
-document.addEventListener('DOMContentLoaded', inicializarApp);
+document.addEventListener('DOMContentLoaded', () => {
+    inicializarApp();
+    configurarBotonConsulta();
+});
+
+// Configurar el enlace del botón de consulta de becas
+function configurarBotonConsulta() {
+    const btnConsulta = document.getElementById('btn-consulta-becas');
+    if (btnConsulta) {
+        btnConsulta.href = URL_CONSULTA_BECAS;
+    }
+}
