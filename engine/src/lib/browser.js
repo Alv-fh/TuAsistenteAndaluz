@@ -8,7 +8,7 @@ chromium.use(stealthPlugin());
 export async function abrirNavegador(forzarOculto = false) {
   const navegador = await chromium.launch({
     headless: forzarOculto || config.crawler.headless,
-    args: ['--disable-blink-features=AutomationControlled']
+    args: ['--disable-blink-features=AutomationControlled', '--no-sandbox', '--disable-dev-shm-usage']
   });
   const contexto = await navegador.newContext({
     userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
