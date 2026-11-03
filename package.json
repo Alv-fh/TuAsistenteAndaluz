@@ -1,25 +1,26 @@
 {
-  "dependencies": {
-    "node-telegram-bot-api": "^2.1.0"
-  },
   "name": "tuasistenteandaluz",
   "version": "1.0.0",
-  "description": "",
+  "description": "TuAsistenteAndaluz - Trámites y ayudas de la Junta de Andalucía explicados para humanos",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:css": "npx @tailwindcss/cli -i ./input.css -o ./public/tailwind.css --minify"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Alv-fh/TuAsistenteAndaluz.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Álvaro Falcón",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Alv-fh/TuAsistenteAndaluz/issues"
   },
-  "homepage": "https://github.com/Alv-fh/TuAsistenteAndaluz#readme",
+  "homepage": "https://tuasistenteandaluz.es",
+  "dependencies": {
+    "node-telegram-bot-api": "^2.1.0"
+  },
   "devDependencies": {
     "@tailwindcss/cli": "^4.3.4",
     "tailwindcss": "^4.3.4"
