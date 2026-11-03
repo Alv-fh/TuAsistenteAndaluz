@@ -30,14 +30,9 @@
     })();
     </script>
 
-    <!-- Tailwind: primero el CDN, después la configuración -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-    tailwind.config = {
-        darkMode: 'class'
-    };
-    </script>
+    <!-- CSS propio y CSS de Tailwind compilado (sin CDN) -->
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="tailwind.css">
 </head>
 
 <!-- Los colores de fondo y de texto del body los gestiona styles.css (claro y oscuro) -->
