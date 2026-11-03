@@ -170,3 +170,33 @@ input[type="search"]:focus {
     min-height: 2rem;
 }
 
+/* Ajustes para modo oscuro */
+.dark body {
+    background-color: #0f172a; /* slate-900 */
+    color: #f8fafc; /* slate-50 */
+}
+
+.dark .background-radial {
+    background-color: #0f172a;
+    background-image: 
+        radial-gradient(at 0% 0%, hsla(158, 64%, 20%, 0.5) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, hsla(180, 50%, 15%, 0.5) 0px, transparent 50%);
+}
+
+.dark .glass-card {
+    background: rgba(30, 41, 59, 0.7); /* slate-800 */
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .glass-card:hover {
+    box-shadow: 0 20px 40px -8px rgba(16, 185, 129, 0.3);
+}
+
+.dark .glass-header {
+    background: rgba(15, 23, 42, 0.7);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark h1, .dark h2, .dark h3 {
+    color: #f8fafc !important;
+}

@@ -325,3 +325,42 @@ function configurarBotonConsulta() {
         btnConsulta.href = URL_CONSULTA_BECAS;
     }
 }
+
+// 9. Gestión del Tema Oscuro/Claro
+document.addEventListener('DOMContentLoaded', () => {
+    const themeToggle = document.getElementById('theme-toggle');
+    const iconSun = document.getElementById('icon-sun');
+    const iconMoon = document.getElementById('icon-moon');
+
+    // Función para aplicar el tema
+    const applyTheme = (isDark) => {
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+            iconSun.classList.remove('hidden');
+            iconMoon.classList.add('hidden');
+        } else {
+            document.documentElement.classList.remove('dark');
+            iconSun.classList.add('hidden');
+            iconMoon.classList.remove('hidden');
+        }
+    };
+
+    // 1. Comprobar preferencia del sistema al cargar
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // 2. Comprobar si el usuario ya había elegido un tema antes (localStorage)
+    const savedTheme = localStorage.getItem('theme');
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        applyTheme(true);
+    } else {
+        applyTheme(false);
+    }
+
+    // 3. Escuchar el clic del botón
+    themeToggle.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.contains('dark');
+        applyTheme(!isDark);
+        // Guardar la preferencia del usuario
+        localStorage.setItem('theme', !isDark ? 'dark' : 'light');
+    });
+});
