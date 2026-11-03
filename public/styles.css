@@ -70,10 +70,16 @@
 
 /* El buscador también con efecto Liquid Glass */
 input[type="search"] {
-    background: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    outline: none;
+    background: rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.02);
+}
+
+input[type="search"]:focus {
+    background: rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15), inset 0 2px 4px rgba(0,0,0,0.02);
 }
 
 /* Modal Liquid Glass (reservado) */
@@ -170,7 +176,12 @@ input[type="search"] {
 /* =========================================
    MODO OSCURO (TAA)
    -----------------------------------------
-*/
+   Regla de oro: aquí NO se cambian colores de texto con
+   selectores genéricos (.dark p, .dark h1...) ni con !important.
+   Los textos se colorean con las variantes dark: de Tailwind
+   en el HTML/JS. Este bloque solo trata fondos, cristal y acentos.
+   ========================================= */
+
 /* Hace que scrollbars, inputs y controles nativos sean oscuros
    (arregla la barra de scroll blanca del modal) */
 html.dark {
@@ -248,15 +259,59 @@ html.dark {
     color: rgb(var(--accent-rgb));
 }
 
+/* Buscador en oscuro (el !important solo se mantiene en fondo y borde
+   porque la regla base también lo usa) */
+.dark input[type="search"] {
+    background: rgba(6, 78, 59, 0.45) !important;
+    border-color: rgba(16, 185, 129, 0.3) !important;
+    box-shadow: none;
+}
+.dark input[type="search"]:focus {
+    background: rgba(6, 78, 59, 0.65) !important;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+}
+
+
 /* =========================================
-   CHIPS DEL PANEL DE FILTROS
-   Mismos 4 colores de acento que las tarjetas
+   PANEL LATERAL DE FILTROS (cajón izquierdo)
    ========================================= */
+#filtros-overlay {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+#filtros-overlay.abierto {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#panel-filtros {
+    transform: translateX(-100%);
+    visibility: hidden; /* también lo saca del orden de tabulación cuando está cerrado */
+    transition: transform 0.3s ease, visibility 0s linear 0.3s;
+}
+#panel-filtros.abierto {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #filtros-overlay, #panel-filtros { transition: none; }
+}
+
+/* Chips en vertical: mismos 4 colores de acento que las tarjetas */
 .chip-filtro {
     --accent-rgb: 5, 150, 105; /* esmeralda (claro) */
-    padding: 0.4rem 0.9rem;
-    border-radius: 9999px;
-    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    text-align: left;
+    padding: 0.65rem 1rem;
+    border-radius: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
     color: rgb(var(--accent-rgb));
@@ -269,11 +324,20 @@ html.dark {
     outline: 2px solid rgb(var(--accent-rgb));
     outline-offset: 2px;
 }
+.chip-filtro .chip-count {
+    font-size: 0.75rem;
+    padding: 0.05rem 0.55rem;
+    border-radius: 9999px;
+    background: rgba(var(--accent-rgb), 0.18);
+}
 /* Chip seleccionado: relleno sólido */
 .chip-filtro[aria-pressed="true"] {
     background: rgb(var(--accent-rgb));
     color: #fff;
     box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.35);
+}
+.chip-filtro[aria-pressed="true"] .chip-count {
+    background: rgba(255, 255, 255, 0.25);
 }
 
 /* Colores en modo claro (tonos más oscuros para que se lean) */
@@ -282,8 +346,8 @@ html.dark {
 .chip-filtro[data-acento="3"] { --accent-rgb: 124, 58, 237; }  /* violeta */
 
 /* Colores en modo oscuro (los mismos que las tarjetas) */
-.dark .chip-filtro                    { --accent-rgb: 110, 231, 183; }
-.dark .chip-filtro[data-acento="1"]   { --accent-rgb: 103, 232, 249; }
-.dark .chip-filtro[data-acento="2"]   { --accent-rgb: 252, 211, 77; }
-.dark .chip-filtro[data-acento="3"]   { --accent-rgb: 196, 181, 253; }
+.dark .chip-filtro                      { --accent-rgb: 110, 231, 183; }
+.dark .chip-filtro[data-acento="1"]     { --accent-rgb: 103, 232, 249; }
+.dark .chip-filtro[data-acento="2"]     { --accent-rgb: 252, 211, 77; }
+.dark .chip-filtro[data-acento="3"]     { --accent-rgb: 196, 181, 253; }
 .dark .chip-filtro[aria-pressed="true"] { color: #022c22; }

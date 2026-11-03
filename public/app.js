@@ -8,8 +8,10 @@ const URL_CONSULTA_BECAS = 'https://www.juntadeandalucia.es/educacion/becasweb/c
 const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let todosLosTramites = [];
+
 // Estado de los filtros: texto del buscador + categoría elegida (clave normalizada)
 const filtros = { texto: '', categoria: null };
+
 // 2. Utilidades de renderizado seguro
 function crearElemento(etiqueta, clases, texto = null) {
   const el = document.createElement(etiqueta);
@@ -329,7 +331,8 @@ async function inicializarApp() {
       .forEach((c) => acentoDe(c));
 
     construirChips();
-    aplicarFiltros();  } catch (error) {
+    aplicarFiltros();
+  } catch (error) {
     console.error('Error al cargar trámites:', error.code, error.message, error.details);
     contenedor.textContent = '';
     contenedor.appendChild(
@@ -338,7 +341,7 @@ async function inicializarApp() {
   }
 }
 
-// 7. Filtros: buscador + categorías
+// 7. Filtros: buscador + categorías (panel lateral)
 function aplicarFiltros() {
   const lista = todosLosTramites.filter((t) => {
     const coincideTexto =
@@ -361,18 +364,23 @@ function construirChips() {
   const cont = document.getElementById('chips-categorias');
   cont.textContent = '';
 
-  // Categorías únicas, con el nombre tal cual viene de la base de datos
+  // Categorías únicas (con su nombre original) y cuántos trámites tiene cada una
   const categorias = new Map();
   todosLosTramites.forEach((t) => {
     const clave = normalizar(t.categoria);
-    if (clave && !categorias.has(clave)) categorias.set(clave, t.categoria);
+    if (!clave) return;
+    const c = categorias.get(clave) ?? { nombre: t.categoria, total: 0 };
+    c.total += 1;
+    categorias.set(clave, c);
   });
 
-  const crearChip = (clave, texto, acento) => {
-    const chip = crearElemento('button', 'chip-filtro', texto);
+  const crearChip = (clave, texto, acento, total) => {
+    const chip = crearElemento('button', 'chip-filtro');
     chip.type = 'button';
     chip.dataset.categoria = clave ?? '';
     if (acento !== null) chip.dataset.acento = String(acento);
+    chip.appendChild(crearElemento('span', 'chip-nombre', texto));
+    chip.appendChild(crearElemento('span', 'chip-count', String(total)));
     chip.addEventListener('click', () => {
       // Pulsar de nuevo la categoría activa quita el filtro
       filtros.categoria = clave && filtros.categoria === clave ? null : clave;
@@ -382,10 +390,10 @@ function construirChips() {
     cont.appendChild(chip);
   };
 
-  crearChip(null, 'Todas', null);
+  crearChip(null, 'Todas', null, todosLosTramites.length);
   [...categorias]
     .sort((a, b) => a[0].localeCompare(b[0]))
-    .forEach(([clave, nombre]) => crearChip(clave, nombre, acentoDe(clave)));
+    .forEach(([clave, c]) => crearChip(clave, c.nombre, acentoDe(clave), c.total));
 }
 
 function actualizarChips() {
@@ -398,24 +406,24 @@ function actualizarChips() {
 
 function alternarPanelFiltros(abrir) {
   const panel = document.getElementById('panel-filtros');
+  const overlay = document.getElementById('filtros-overlay');
   const boton = document.getElementById('filter-toggle');
-  const mostrar = abrir ?? panel.classList.contains('hidden');
-  panel.classList.toggle('hidden', !mostrar);
+  const mostrar = abrir ?? !panel.classList.contains('abierto');
+
+  panel.classList.toggle('abierto', mostrar);
+  overlay.classList.toggle('abierto', mostrar);
   boton.setAttribute('aria-expanded', String(mostrar));
+
+  // Con el cajón abierto no se desplaza la página de fondo
+  document.body.style.overflow = mostrar ? 'hidden' : '';
+  if (mostrar) document.getElementById('cerrar-filtros').focus();
+  else if (document.activeElement && panel.contains(document.activeElement)) boton.focus();
 }
 
 function configurarPanelFiltros() {
-  const panel = document.getElementById('panel-filtros');
-  const boton = document.getElementById('filter-toggle');
-
-  boton.addEventListener('click', () => alternarPanelFiltros());
-
-  // Cerrar al hacer clic fuera o con Escape
-  document.addEventListener('click', (e) => {
-    if (!panel.classList.contains('hidden') && !panel.contains(e.target) && !boton.contains(e.target)) {
-      alternarPanelFiltros(false);
-    }
-  });
+  document.getElementById('filter-toggle').addEventListener('click', () => alternarPanelFiltros());
+  document.getElementById('cerrar-filtros').addEventListener('click', () => alternarPanelFiltros(false));
+  document.getElementById('filtros-overlay').addEventListener('click', () => alternarPanelFiltros(false));
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') alternarPanelFiltros(false);
   });
@@ -458,11 +466,11 @@ function configurarTema() {
   const guardado = leerGuardado();
   applyTheme(guardado ? guardado === 'dark' : mediaOscuro.matches);
 
-  themeToggle.addEventListener('click', () => {
+  themeToggle.onclick = () => {
     const nuevoOscuro = !document.documentElement.classList.contains('dark');
     applyTheme(nuevoOscuro);
     guardar(nuevoOscuro ? 'dark' : 'light');
-  });
+  };
 
   // Si el usuario nunca eligió tema, seguir los cambios del sistema en vivo
   mediaOscuro.addEventListener('change', (e) => {
@@ -478,11 +486,6 @@ function configurarBotonConsulta() {
 }
 
 // 10. Arranque
-document.addEventListener('DOMContentLoaded', () => {
-  configurarTema();
-  configurarBotonConsulta();
-  inicializarApp();
-});
 document.addEventListener('DOMContentLoaded', () => {
   configurarTema();
   configurarBotonConsulta();
