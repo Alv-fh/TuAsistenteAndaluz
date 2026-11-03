@@ -193,12 +193,11 @@ function mostrarGuia(tramite) {
   modalOverlay.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-end sm:items-center justify-center p-0 sm:p-6';
   
   const modalContent = document.createElement('div');
-  modalContent.className = 'bg-white rounded-t-3xl sm:rounded-3xl max-w-2xl w-full max-h-[85vh] shadow-2xl relative flex flex-col overflow-hidden';
-  
+  modalContent.className = 'bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-2xl w-full max-h-[85vh] shadow-2xl relative flex flex-col overflow-hidden text-slate-900 dark:text-slate-100';  
   const headerHtml = `
-    <div class="flex items-start justify-between p-6 pb-4 border-b border-slate-100 shrink-0">
-      <h2 class="text-xl md:text-2xl font-extrabold text-slate-900 leading-tight pr-4">${tramite.titulo}</h2>
-      <button id="cerrar-modal" class="shrink-0 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl transition-colors shadow-sm">
+    <div class="flex items-start justify-between p-6 pb-4 border-b border-slate-100 dark:border-slate-700 shrink-0">
+      <h2 class="text-xl md:text-2xl font-extrabold text-slate-900 dark:text-emerald-100 leading-tight pr-4">${tramite.titulo}</h2>
+      <button id="cerrar-modal" class="shrink-0 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl transition-colors shadow-sm">
           &times;
       </button>
     </div>
