@@ -33,7 +33,9 @@ export const config = {
       'https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/areas/empleo.html',
       'https://www.juntadeandalucia.es/temas/familias-igualdad/mayores/ayudas.html',
       'https://www.juntadeandalucia.es/temas/familias-igualdad/discapacidad/ayudas-beneficios.html',
-      'https://www.juntadeandalucia.es/organismos/universidadindustriaenergiaeinnovacion/areas/universidad/talento.html'
+      'https://www.juntadeandalucia.es/organismos/universidadindustriaenergiaeinnovacion/areas/universidad/talento.html',
+      'https://www.sepe.es/HomeSepe/prestaciones-desempleo/',
+      'https://sede.sepe.gob.es/portalSede/procedimientos-y-servicios/personas/proteccion-por-desempleo/solicitud-de-prestaciones.html'
     ],
     urlsDirectas: [
       {
