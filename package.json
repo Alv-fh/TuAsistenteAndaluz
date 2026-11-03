@@ -1,5 +1,27 @@
 {
   "dependencies": {
     "node-telegram-bot-api": "^2.1.0"
+  },
+  "name": "tuasistenteandaluz",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alv-fh/TuAsistenteAndaluz.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Alv-fh/TuAsistenteAndaluz/issues"
+  },
+  "homepage": "https://github.com/Alv-fh/TuAsistenteAndaluz#readme",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.4",
+    "tailwindcss": "^4.3.4"
   }
 }

@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+/* Aquí puedes añadir tu configuración si la necesitas, por ejemplo: */
+@theme {
+  /* Si quieres forzar el modo oscuro por clase, en v4 se hace con una variante */
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
