@@ -194,14 +194,14 @@ input[type="search"]:focus {
 }
 
 .dark .glass-card {
-    background: linear-gradient(135deg, rgba(6, 78, 59, 0.6), rgba(2, 44, 34, 0.4));
-    border-color: rgba(16, 185, 129, 0.2);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(135deg, rgba(6, 78, 59, 0.85), rgba(2, 44, 34, 0.75)); /* Más opaco y con degradado */
+    border-color: rgba(16, 185, 129, 0.3); /* Borde verde más visible */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .dark .glass-card:hover {
-    border-color: rgba(16, 185, 129, 0.5);
-    box-shadow: 0 10px 40px rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.6);
+    box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
 }
 
 /* El buscador también en oscuro */
@@ -213,7 +213,12 @@ input[type="search"]:focus {
 .dark input[type="search"]::placeholder {
     color: #6ee7b7;
 }
-
+/* Tags internos en modo oscuro */
+.dark .bg-slate-100\/80 {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #a7f3d0 !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
 /* Textos para que brillen */
 .dark h1, .dark h2, .dark h3, .dark .text-slate-800, .dark .text-slate-900 {
     color: #ecfdf5 !important;
