@@ -170,33 +170,54 @@ input[type="search"]:focus {
     min-height: 2rem;
 }
 
-/* Ajustes para modo oscuro */
+/* =========================================
+   MODO OSCURO PERSONALIZADO (TAA)
+   ========================================= */
+
+/* Fondo general (Aurora oscura) */
 .dark body {
-    background-color: #0f172a; /* slate-900 */
-    color: #f8fafc; /* slate-50 */
+    background-color: #022c22; /* Verde muy oscuro, casi negro */
+    color: #ecfdf5; /* Verde muy claro */
 }
 
 .dark .background-radial {
-    background-color: #0f172a;
+    background-color: #022c22;
     background-image: 
-        radial-gradient(at 0% 0%, hsla(158, 64%, 20%, 0.5) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, hsla(180, 50%, 15%, 0.5) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, hsla(158, 64%, 20%, 0.6) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, hsla(180, 50%, 15%, 0.6) 0px, transparent 50%);
+}
+
+/* Cabecera y Tarjetas de Cristal */
+.dark .glass-header {
+    background: rgba(2, 44, 34, 0.7); /* Fondo verde oscuro translúcido */
+    border-bottom: 1px solid rgba(16, 185, 129, 0.2); /* Borde verde brillante */
 }
 
 .dark .glass-card {
-    background: rgba(30, 41, 59, 0.7); /* slate-800 */
-    border-color: rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, rgba(6, 78, 59, 0.6), rgba(2, 44, 34, 0.4));
+    border-color: rgba(16, 185, 129, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .dark .glass-card:hover {
-    box-shadow: 0 20px 40px -8px rgba(16, 185, 129, 0.3);
+    border-color: rgba(16, 185, 129, 0.5);
+    box-shadow: 0 10px 40px rgba(16, 185, 129, 0.2);
 }
 
-.dark .glass-header {
-    background: rgba(15, 23, 42, 0.7);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+/* El buscador también en oscuro */
+.dark input[type="search"] {
+    background: rgba(6, 78, 59, 0.5) !important;
+    border-color: rgba(16, 185, 129, 0.3) !important;
+    color: #ecfdf5 !important;
+}
+.dark input[type="search"]::placeholder {
+    color: #6ee7b7;
 }
 
-.dark h1, .dark h2, .dark h3 {
-    color: #f8fafc !important;
+/* Textos para que brillen */
+.dark h1, .dark h2, .dark h3, .dark .text-slate-800, .dark .text-slate-900 {
+    color: #ecfdf5 !important;
+}
+.dark p, .dark .text-slate-600 {
+    color: #a7f3d0 !important; /* Verde claro para textos secundarios */
 }
