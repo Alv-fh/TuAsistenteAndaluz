@@ -29,6 +29,17 @@ function crearIconoSVG(pathData) {
   return svg;
 }
 
+// Escapa texto antes de meterlo en plantillas con innerHTML (el modal).
+// Si tus guías llevan HTML a propósito (<strong>, <br>...), quita el esc() de ese campo.
+function esc(valor) {
+  return String(valor ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 const DOMINIOS_OFICIALES = ['juntadeandalucia.es', 'boe.es'];
 function enlaceSeguro(texto) {
   try {
@@ -44,6 +55,18 @@ const normalizar = (t) =>
   String(t ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
 
 const hayFecha = (f) => Boolean(f) && f !== 'No especificada';
+
+// Color de acento de cada tarjeta en modo oscuro (0..3 → esmeralda, cian, ámbar, violeta).
+// Cada categoría recibe siempre el mismo color. Los colores se definen en styles.css.
+const NUM_ACENTOS = 4;
+const acentoPorCategoria = new Map();
+function acentoDe(categoria) {
+  const clave = normalizar(categoria);
+  if (!acentoPorCategoria.has(clave)) {
+    acentoPorCategoria.set(clave, acentoPorCategoria.size % NUM_ACENTOS);
+  }
+  return acentoPorCategoria.get(clave);
+}
 
 // 3. Fechas y estado
 function parseFecha(s) {
@@ -78,11 +101,11 @@ function estadoEfectivo(t) {
 
 const ESTILOS_ESTADO = {
   'Abierto': {
-    clase: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+    clase: 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-400/10 dark:border-emerald-400/30 dark:text-emerald-300',
     etiqueta: (t) => (hayFecha(t.fecha_cierre) ? `Abierto hasta el ${t.fecha_cierre}` : 'Plazo abierto')
   },
   'Próximamente': {
-    clase: 'bg-amber-50 border-amber-200 text-amber-700',
+    clase: 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-400/10 dark:border-amber-400/30 dark:text-amber-300',
     etiqueta: (t, ef) => {
       if (ef.abre) return `Abre el ${ef.abre}`;
       if (t.proxima_apertura) return t.apertura_estimada ? `${t.proxima_apertura} (sin confirmar)` : t.proxima_apertura;
@@ -90,11 +113,11 @@ const ESTILOS_ESTADO = {
     }
   },
   'Cerrado': {
-    clase: 'bg-rose-50/50 border-rose-100 text-rose-600/80',
+    clase: 'bg-rose-50/50 border-rose-100 text-rose-600/80 dark:bg-rose-400/10 dark:border-rose-400/25 dark:text-rose-300',
     etiqueta: (t) => (hayFecha(t.fecha_cierre) ? `Cerró el ${t.fecha_cierre}` : 'Plazo cerrado')
   },
   'Desconocido': {
-    clase: 'bg-slate-100 border-slate-200 text-slate-600',
+    clase: 'bg-slate-100 border-slate-200 text-slate-600 dark:bg-slate-400/10 dark:border-slate-400/25 dark:text-slate-300',
     etiqueta: () => 'Consulta el plazo en la web oficial'
   }
 };
@@ -104,6 +127,7 @@ const ORDEN_ESTADO = { 'Abierto': 0, 'Próximamente': 1, 'Cerrado': 2, 'Desconoc
 const ICONO_CATEGORIA = 'M12 4.25l-10.5 5.5 10.5 5.5 8.25-4.318V15.5h2.25V9.75L12 4.25z M12 17.25l-8.25-4.318V15l8.25 4.5 8.25-4.5v-2.068L12 17.25z';
 const ICONO_CALENDARIO = 'M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5';
 const ICONO_EURO = 'M21 7.125C21 5.399 16.97 4 12 4s-9 1.399-9 3.125c0 1.726 4.03 3.125 9 3.125s9-1.399 9-3.125zM12 11.875c-4.321 0-8.212-1.041-8.995-2.454C3.003 9.7 3 9.911 3 10.125c0 1.726 4.03 3.125 9 3.125s9-1.399 9-3.125c0-.214-.003-.425-.005-.704-.783 1.413-4.674 2.454-8.995 2.454zM12 16.625c-4.321 0-8.212-1.041-8.995-2.454C3.003 14.45 3 14.661 3 14.875c0 1.726 4.03 3.125 9 3.125s9-1.399 9-3.125c0-.214-.003-.425-.005-.704-.783 1.413-4.674 2.454-8.995 2.454z';
+
 // 4. Dibujar los trámites
 function renderizarTramites(tramites) {
   const contenedor = document.getElementById('contenedor-tramites');
@@ -111,33 +135,36 @@ function renderizarTramites(tramites) {
 
   if (tramites.length === 0) {
     contenedor.appendChild(
-      crearElemento('p', 'text-slate-500 col-span-full text-center font-medium py-8', 'No se han encontrado trámites con esa búsqueda.')
+      crearElemento('p', 'text-slate-500 dark:text-emerald-300/70 col-span-full text-center font-medium py-8', 'No se han encontrado trámites con esa búsqueda.')
     );
     return;
   }
 
   tramites.forEach((tramite) => {
     const tarjeta = crearElemento('div', 'glass-card flex flex-col gap-3');
+    // Acento de color para el modo oscuro (lo usa styles.css)
+    tarjeta.dataset.acento = String(acentoDe(tramite.categoria));
 
     const cabecera = crearElemento('div', 'flex justify-between items-start gap-4');
+    // En modo oscuro el color de este h3 lo pone styles.css (acento de la tarjeta)
     cabecera.appendChild(crearElemento('h3', 'text-lg font-bold text-slate-800 leading-tight titulo-truncado', tramite.titulo));
     if (tramite.destacado) {
       cabecera.appendChild(
-        crearElemento('span', 'bg-emerald-100 text-emerald-800 text-xs font-extrabold px-3 py-1 rounded-full whitespace-nowrap shadow-sm', 'Destacado')
+        crearElemento('span', 'bg-emerald-100 text-emerald-800 dark:bg-emerald-400/20 dark:text-emerald-200 text-xs font-extrabold px-3 py-1 rounded-full whitespace-nowrap shadow-sm', 'Destacado')
       );
     }
     tarjeta.appendChild(cabecera);
 
     const detalles = crearElemento('div', 'flex flex-wrap gap-2 text-sm font-semibold mb-4 mt-auto');
 
-    const tagCat = crearElemento('span', 'flex items-center bg-slate-100/80 px-2.5 py-1 rounded-md border border-slate-200/60 text-slate-600 shadow-sm');
+    const tagCat = crearElemento('span', 'flex items-center bg-slate-100/80 dark:bg-white/10 px-2.5 py-1 rounded-md border border-slate-200/60 dark:border-white/15 text-slate-600 dark:text-emerald-100 shadow-sm');
     tagCat.appendChild(crearIconoSVG(ICONO_CATEGORIA));
     tagCat.appendChild(document.createTextNode(tramite.categoria ?? ''));
     detalles.appendChild(tagCat);
 
     // Etiqueta de cuantía
     if (tramite.cuantia) {
-      const tagCuantia = crearElemento('span', 'flex items-center bg-emerald-50 border-emerald-200 text-emerald-700 px-2.5 py-1 rounded-md border shadow-sm font-bold');
+      const tagCuantia = crearElemento('span', 'flex items-center bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-400/10 dark:border-emerald-400/30 dark:text-emerald-300 px-2.5 py-1 rounded-md border shadow-sm font-bold');
       tagCuantia.appendChild(crearIconoSVG(ICONO_EURO));
       tagCuantia.appendChild(document.createTextNode(tramite.cuantia));
       detalles.appendChild(tagCuantia);
@@ -155,7 +182,7 @@ function renderizarTramites(tramites) {
     if (tramite.guia && tramite.guia.que_es) {
       const botonGuia = crearElemento(
         'button',
-        'text-center w-full bg-white border-2 border-emerald-600 text-emerald-700 font-bold py-2.5 px-4 rounded-xl hover:bg-emerald-50 transition-colors mb-1 flex items-center justify-center gap-2',
+        'text-center w-full bg-white dark:bg-transparent border-2 border-emerald-600 dark:border-emerald-400 text-emerald-700 dark:text-emerald-300 font-bold py-2.5 px-4 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-400/10 transition-colors mb-1 flex items-center justify-center gap-2',
         '📖 Ayuda para solicitarla'
       );
       botonGuia.setAttribute('aria-label', `Ver guía de ayuda para: ${tramite.titulo}`);
@@ -189,40 +216,49 @@ function renderizarTramites(tramites) {
 function mostrarGuia(tramite) {
   document.body.style.overflow = 'hidden';
 
+  const guia = tramite.guia;
+
   const modalOverlay = document.createElement('div');
-  modalOverlay.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-end sm:items-center justify-center p-0 sm:p-6';
-  
+  modalOverlay.className = 'fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm z-[100] flex items-end sm:items-center justify-center p-0 sm:p-6';
+
+  // Un único contenedor con fondo propio; el scroll vive solo en el cuerpo interior
   const modalContent = document.createElement('div');
-  modalContent.className = 'bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-2xl w-full max-h-[85vh] shadow-2xl relative flex flex-col overflow-hidden text-slate-900 dark:text-slate-100';  
+  modalContent.className =
+    'guia-modal bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 ' +
+    'rounded-t-3xl sm:rounded-3xl max-w-2xl w-full max-h-[85vh] shadow-2xl relative ' +
+    'flex flex-col overflow-hidden border border-transparent dark:border-emerald-500/20';
+
   const headerHtml = `
     <div class="flex items-start justify-between p-6 pb-4 border-b border-slate-100 dark:border-slate-700 shrink-0">
-      <h2 class="text-xl md:text-2xl font-extrabold text-slate-900 dark:text-emerald-100 leading-tight pr-4">${tramite.titulo}</h2>
-      <button id="cerrar-modal" class="shrink-0 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl transition-colors shadow-sm">
+      <h2 class="text-xl md:text-2xl font-extrabold text-slate-900 dark:text-emerald-100 leading-tight pr-4">${esc(tramite.titulo)}</h2>
+      <button id="cerrar-modal" aria-label="Cerrar guía" class="shrink-0 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-full w-10 h-10 flex items-center justify-center font-bold text-xl transition-colors shadow-sm">
           &times;
       </button>
     </div>
   `;
 
+  const claseH3 = 'font-bold text-lg text-emerald-700 dark:text-emerald-300 mb-2 flex items-center gap-2';
+
   let bodyHtml = `
     <div class="p-6 md:p-8 overflow-y-auto flex-1">
-      <div class="text-sm text-amber-800 bg-amber-50 p-4 rounded-xl mb-6 border border-amber-200 flex items-start gap-3">
-        <svg class="w-5 h-5 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-        <p><strong>Aviso importante:</strong> Esta es una guía orientativa basada en fuentes públicas. Los requisitos o el método de solicitud pueden haber cambiado. Comprueba siempre los datos en la web oficial antes de presentar tu solicitud.</p>
+      <div class="aviso text-sm text-amber-800 dark:text-amber-100 bg-amber-50 dark:bg-amber-500/10 p-4 rounded-xl mb-6 border border-amber-200 dark:border-amber-400/30 flex items-start gap-3">
+        <svg class="w-5 h-5 shrink-0 mt-0.5 text-amber-600 dark:text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+        <p><strong class="text-amber-900 dark:text-amber-300">Aviso importante:</strong> Esta es una guía orientativa basada en fuentes públicas. Los requisitos o el método de solicitud pueden haber cambiado. Comprueba siempre los datos en la web oficial antes de presentar tu solicitud.</p>
       </div>
 
-      <div class="space-y-6 text-slate-700 text-base">
+      <div class="space-y-6 text-slate-700 dark:text-slate-300 text-base">
         <div>
-          <h3 class="font-bold text-lg text-emerald-700 mb-2 flex items-center gap-2">💡 ¿En qué consiste?</h3>
-          <p class="leading-relaxed">${tramite.guia.que_es}</p>
+          <h3 class="${claseH3}">💡 ¿En qué consiste?</h3>
+          <p class="leading-relaxed">${esc(guia.que_es)}</p>
         </div>
   `;
 
-  if (tramite.guia.requisitos && tramite.guia.requisitos.length > 0) {
+  if (guia.requisitos && guia.requisitos.length > 0) {
     bodyHtml += `
         <div>
-          <h3 class="font-bold text-lg text-emerald-700 mb-2 flex items-center gap-2">✅ Requisitos principales</h3>
-          <ul class="list-disc pl-5 space-y-1.5 leading-relaxed">
-            ${tramite.guia.requisitos.map(r => `<li>${r}</li>`).join('')}
+          <h3 class="${claseH3}">✅ Requisitos principales</h3>
+          <ul class="list-disc pl-5 space-y-1.5 leading-relaxed marker:text-emerald-600 dark:marker:text-emerald-400">
+            ${guia.requisitos.map((r) => `<li>${esc(r)}</li>`).join('')}
           </ul>
         </div>
     `;
@@ -230,12 +266,12 @@ function mostrarGuia(tramite) {
 
   bodyHtml += `
         <div>
-          <h3 class="font-bold text-lg text-emerald-700 mb-2 flex items-center gap-2">📅 Plazos</h3>
-          <p class="leading-relaxed">${tramite.guia.plazos || 'Consulta los plazos exactos en la web oficial.'}</p>
+          <h3 class="${claseH3}">📅 Plazos</h3>
+          <p class="leading-relaxed">${esc(guia.plazos || 'Consulta los plazos exactos en la web oficial.')}</p>
         </div>
         <div>
-          <h3 class="font-bold text-lg text-emerald-700 mb-2 flex items-center gap-2">📝 Cómo solicitarlo paso a paso</h3>
-          <p class="leading-relaxed whitespace-pre-line">${tramite.guia.como_solicitar || 'Sigue las instrucciones de la web oficial.'}</p>
+          <h3 class="${claseH3}">📝 Cómo solicitarlo paso a paso</h3>
+          <p class="leading-relaxed whitespace-pre-line">${esc(guia.como_solicitar || 'Sigue las instrucciones de la web oficial.')}</p>
         </div>
       </div>
     </div>
@@ -249,7 +285,7 @@ function mostrarGuia(tramite) {
     modalOverlay.remove();
     document.body.style.overflow = '';
     if (history.state && history.state.modalOpen) {
-        history.back();
+      history.back();
     }
   };
 
@@ -264,7 +300,7 @@ function mostrarGuia(tramite) {
       modalOverlay.remove();
       document.body.style.overflow = '';
     }
-  }, { once: true }); 
+  }, { once: true });
 }
 
 // 6. Carga inicial
@@ -284,12 +320,19 @@ async function inicializarApp() {
         (ORDEN_ESTADO[estadoEfectivo(a).estado] ?? 9) - (ORDEN_ESTADO[estadoEfectivo(b).estado] ?? 9) ||
         Number(b.destacado) - Number(a.destacado)
     );
+
+    // Reparte los colores de acento por categoría una sola vez (orden alfabético,
+    // así cada categoría conserva su color aunque el buscador filtre la lista)
+    [...new Set(todosLosTramites.map((t) => normalizar(t.categoria)))]
+      .sort()
+      .forEach((c) => acentoDe(c));
+
     renderizarTramites(todosLosTramites);
   } catch (error) {
     console.error('Error al cargar trámites:', error.code, error.message, error.details);
     contenedor.textContent = '';
     contenedor.appendChild(
-      crearElemento('p', 'text-red-500 col-span-full text-center py-8', 'Error de conexión con el portal. Inténtalo más tarde.')
+      crearElemento('p', 'text-red-500 dark:text-red-300 col-span-full text-center py-8', 'Error de conexión con el portal. Inténtalo más tarde.')
     );
   }
 }
@@ -306,60 +349,62 @@ document.getElementById('buscador-tramites').addEventListener('input', (evento) 
 // 8. Efecto Parallax del fondo
 const fondoAnimado = document.getElementById('fondo-animado');
 document.addEventListener('mousemove', (e) => {
-  const x = (e.clientX / window.innerWidth - 0.5) * 2; 
+  const x = (e.clientX / window.innerWidth - 0.5) * 2;
   const y = (e.clientY / window.innerHeight - 0.5) * 2;
   if (fondoAnimado) {
     fondoAnimado.style.transform = `translate(${x * -30}px, ${y * -30}px)`;
   }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    inicializarApp();
-    configurarBotonConsulta();
-});
+// 9. Gestión del Tema Oscuro/Claro
+// La clase "dark" inicial ya la puso el script del <head> antes de pintar.
+// Aquí solo sincronizamos los iconos y gestionamos el botón.
+function configurarTema() {
+  const themeToggle = document.getElementById('theme-toggle');
+  const iconSun = document.getElementById('icon-sun');
+  const iconMoon = document.getElementById('icon-moon');
+  const mediaOscuro = window.matchMedia('(prefers-color-scheme: dark)');
 
-function configurarBotonConsulta() {
-    const btnConsulta = document.getElementById('btn-consulta-becas');
-    if (btnConsulta) {
-        btnConsulta.href = URL_CONSULTA_BECAS;
-    }
+  const leerGuardado = () => {
+    try { return localStorage.getItem('theme'); } catch { return null; }
+  };
+  const guardar = (valor) => {
+    try { localStorage.setItem('theme', valor); } catch { /* modo privado: ignorar */ }
+  };
+
+  const applyTheme = (isDark) => {
+    document.documentElement.classList.toggle('dark', isDark);
+    // Sol en oscuro (para volver a claro), luna en claro
+    iconSun.classList.toggle('hidden', !isDark);
+    iconMoon.classList.toggle('hidden', isDark);
+    themeToggle.setAttribute('aria-pressed', String(isDark));
+  };
+
+  const guardado = leerGuardado();
+  applyTheme(guardado ? guardado === 'dark' : mediaOscuro.matches);
+
+  themeToggle.addEventListener('click', () => {
+    const nuevoOscuro = !document.documentElement.classList.contains('dark');
+    applyTheme(nuevoOscuro);
+    guardar(nuevoOscuro ? 'dark' : 'light');
+  });
+
+  // Si el usuario nunca eligió tema, seguir los cambios del sistema en vivo
+  mediaOscuro.addEventListener('change', (e) => {
+    if (!leerGuardado()) applyTheme(e.matches);
+  });
 }
 
-// 9. Gestión del Tema Oscuro/Claro
+function configurarBotonConsulta() {
+  const btnConsulta = document.getElementById('btn-consulta-becas');
+  if (btnConsulta) {
+    btnConsulta.href = URL_CONSULTA_BECAS;
+  }
+}
+
+// 10. Arranque
 document.addEventListener('DOMContentLoaded', () => {
-    const themeToggle = document.getElementById('theme-toggle');
-    const iconSun = document.getElementById('icon-sun');
-    const iconMoon = document.getElementById('icon-moon');
-
-    // Función para aplicar el tema
-    const applyTheme = (isDark) => {
-        if (isDark) {
-            document.documentElement.classList.add('dark');
-            iconSun.classList.remove('hidden');
-            iconMoon.classList.add('hidden');
-        } else {
-            document.documentElement.classList.remove('dark');
-            iconSun.classList.add('hidden');
-            iconMoon.classList.remove('hidden');
-        }
-    };
-
-    // 1. Comprobar preferencia del sistema al cargar
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    // 2. Comprobar si el usuario ya había elegido un tema antes (localStorage)
-    const savedTheme = localStorage.getItem('theme');
-    
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-        applyTheme(true);
-    } else {
-        applyTheme(false);
-    }
-
-    // 3. Escuchar el clic del botón
-    themeToggle.addEventListener('click', () => {
-        const isDark = document.documentElement.classList.contains('dark');
-        applyTheme(!isDark);
-        // Guardar la preferencia del usuario
-        localStorage.setItem('theme', !isDark ? 'dark' : 'light');
-    });
+  configurarTema();
+  configurarBotonConsulta();
+  inicializarApp();
 });

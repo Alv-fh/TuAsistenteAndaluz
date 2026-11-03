@@ -1,7 +1,11 @@
+/* =========================================
+   MODO CLARO (base)
+   ========================================= */
+
 /* Fondo "Aurora" con toques verdes */
 .background-radial {
     background-color: #f0fdf4; /* Verde muy claro base */
-    background-image: 
+    background-image:
         radial-gradient(at 0% 0%, hsla(158, 64%, 85%, 0.8) 0px, transparent 50%),
         radial-gradient(at 100% 0%, hsla(180, 50%, 90%, 0.6) 0px, transparent 50%),
         radial-gradient(at 100% 100%, hsla(150, 60%, 85%, 0.6) 0px, transparent 50%),
@@ -24,18 +28,18 @@
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.8);
-    border-radius: 1.5rem; /* Más redondeado */
+    border-radius: 1.5rem;
     padding: 1.75rem;
-    box-shadow: 
-        0 8px 32px -4px rgba(16, 185, 129, 0.1), /* Sombra verde suave */
+    box-shadow:
+        0 8px 32px -4px rgba(16, 185, 129, 0.1),
         0 4px 12px -2px rgba(0, 0, 0, 0.03),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9); /* Reflejo interior brillante */
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
     overflow: hidden;
 }
 
-/* Efecto de "Luz" que atraviesa el cristal al pasar el ratón */
+/* Efecto de "luz" que atraviesa el cristal al pasar el ratón */
 .glass-card::before {
     content: '';
     position: absolute;
@@ -57,8 +61,8 @@
 
 .glass-card:hover {
     transform: translateY(-6px) scale(1.01);
-    box-shadow: 
-        0 20px 40px -8px rgba(16, 185, 129, 0.25), /* Sombra verde más intensa */
+    box-shadow:
+        0 20px 40px -8px rgba(16, 185, 129, 0.25),
         0 10px 20px -4px rgba(0, 0, 0, 0.04),
         inset 0 1px 0 rgba(255, 255, 255, 1);
     border-color: rgba(16, 185, 129, 0.4);
@@ -78,7 +82,7 @@ input[type="search"]:focus {
     box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15), inset 0 2px 4px rgba(0,0,0,0.02);
 }
 
-/* Modal Liquid Glass */
+/* Modal Liquid Glass (reservado) */
 .modal-glass {
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(24px);
@@ -86,6 +90,7 @@ input[type="search"]:focus {
     border: 1px solid rgba(255, 255, 255, 0.9);
     box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 1);
 }
+
 /* Fondo animado: queda DETRÁS de todo el contenido */
 #fondo-animado {
     position: fixed;
@@ -95,8 +100,8 @@ input[type="search"]:focus {
     bottom: -100px;
     z-index: 0;
     pointer-events: none;
-    /* Quitamos el overflow: hidden y el contain: paint */
 }
+
 /* Desvanecido hacia los bordes */
 #fondo-animado::after {
     content: '';
@@ -157,72 +162,111 @@ input[type="search"]:focus {
     .blob { animation: none; }
 }
 
-/* El resto de tu CSS (glass-card, etc.) se queda igual */
-
 .titulo-truncado {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    line-clamp: 2;         
-    box-orient: vertical;  
+    line-clamp: 2;
     overflow: hidden;
     text-overflow: ellipsis;
     min-height: 2rem;
 }
 
+
 /* =========================================
-   MODO OSCURO PERSONALIZADO (TAA)
+   MODO OSCURO (TAA)
+   -----------------------------------------
+   Regla de oro: aquí NO se cambian colores de texto con
+   selectores genéricos (.dark p, .dark h1...) ni con !important.
+   Los textos se colorean con las variantes dark: de Tailwind
+   en el HTML/JS. Este bloque solo trata fondos, cristal y acentos.
    ========================================= */
 
-/* Fondo general (Aurora oscura) */
-.dark body {
-    background-color: #022c22; /* Verde muy oscuro, casi negro */
-    color: #ecfdf5; /* Verde muy claro */
+/* Hace que scrollbars, inputs y controles nativos sean oscuros
+   (arregla la barra de scroll blanca del modal) */
+html.dark {
+    color-scheme: dark;
 }
 
+.dark body {
+    color: #ecfdf5;
+}
+
+/* Fondo general (Aurora oscura) */
 .dark .background-radial {
     background-color: #022c22;
-    background-image: 
-        radial-gradient(at 0% 0%, hsla(158, 64%, 20%, 0.6) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, hsla(180, 50%, 15%, 0.6) 0px, transparent 50%);
+    background-image:
+        radial-gradient(at 0% 0%, hsla(158, 64%, 22%, 0.6) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, hsla(190, 60%, 20%, 0.5) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, hsla(260, 45%, 22%, 0.35) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, hsla(170, 60%, 16%, 0.5) 0px, transparent 50%);
 }
 
-/* Cabecera y Tarjetas de Cristal */
+/* Bolas del fondo: más tenues y con más variedad de color */
+.dark #fondo-animado::after {
+    background: radial-gradient(circle at center, rgba(2, 44, 34, 0) 40%, rgba(2, 30, 24, 0.85) 100%);
+}
+.dark .blob-1 {
+    background: radial-gradient(circle closest-side, rgba(16, 185, 129, 0.28) 0%, rgba(16, 185, 129, 0.1) 45%, rgba(16, 185, 129, 0) 100%);
+}
+.dark .blob-2 {
+    background: radial-gradient(circle closest-side, rgba(34, 211, 238, 0.2) 0%, rgba(34, 211, 238, 0.07) 45%, rgba(34, 211, 238, 0) 100%);
+}
+.dark .blob-3 {
+    background: radial-gradient(circle closest-side, rgba(167, 139, 250, 0.2) 0%, rgba(167, 139, 250, 0.07) 45%, rgba(167, 139, 250, 0) 100%);
+}
+
+/* Cabecera */
 .dark .glass-header {
-    background: rgba(2, 44, 34, 0.7); /* Fondo verde oscuro translúcido */
-    border-bottom: 1px solid rgba(16, 185, 129, 0.2); /* Borde verde brillante */
+    background: rgba(2, 44, 34, 0.7);
+    border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.35);
 }
 
+/* Tarjetas: cada una tiene un color de acento (--accent-rgb).
+   La paleta se asigna por categoría desde app.js con data-acento="0..3". */
 .dark .glass-card {
-    background: linear-gradient(135deg, rgba(6, 78, 59, 0.85), rgba(2, 44, 34, 0.75)); /* Más opaco y con degradado */
-    border-color: rgba(16, 185, 129, 0.3); /* Borde verde más visible */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    --accent-rgb: 110, 231, 183; /* 0 · esmeralda (por defecto) */
+
+    background:
+        linear-gradient(145deg,
+            rgba(var(--accent-rgb), 0.16) 0%,
+            rgba(4, 30, 26, 0.9) 48%,
+            rgba(3, 20, 26, 0.92) 100%);
+    border-color: rgba(var(--accent-rgb), 0.35);
+    box-shadow:
+        0 6px 24px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
+.dark .glass-card[data-acento="1"] { --accent-rgb: 103, 232, 249; } /* cian */
+.dark .glass-card[data-acento="2"] { --accent-rgb: 252, 211, 77; }  /* ámbar */
+.dark .glass-card[data-acento="3"] { --accent-rgb: 196, 181, 253; } /* violeta */
 
 .dark .glass-card:hover {
-    border-color: rgba(16, 185, 129, 0.6);
-    box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
+    border-color: rgba(var(--accent-rgb), 0.7);
+    box-shadow:
+        0 14px 40px rgba(var(--accent-rgb), 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* El buscador también en oscuro */
+.dark .glass-card::before {
+    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
+}
+
+/* Título de la tarjeta con el color de acento
+   (especificidad 0,2,1: gana a text-slate-800 de Tailwind sin !important) */
+.dark .glass-card h3 {
+    color: rgb(var(--accent-rgb));
+}
+
+/* Buscador en oscuro (el !important solo se mantiene en fondo y borde
+   porque la regla base también lo usa) */
 .dark input[type="search"] {
-    background: rgba(6, 78, 59, 0.5) !important;
+    background: rgba(6, 78, 59, 0.45) !important;
     border-color: rgba(16, 185, 129, 0.3) !important;
-    color: #ecfdf5 !important;
+    box-shadow: none;
 }
-.dark input[type="search"]::placeholder {
-    color: #6ee7b7;
-}
-/* Tags internos en modo oscuro */
-.dark .bg-slate-100\/80 {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    color: #a7f3d0 !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
-}
-/* Textos para que brillen */
-.dark h1, .dark h2, .dark h3, .dark .text-slate-800, .dark .text-slate-900 {
-    color: #ecfdf5 !important;
-}
-.dark p, .dark .text-slate-600 {
-    color: #a7f3d0 !important; /* Verde claro para textos secundarios */
+.dark input[type="search"]:focus {
+    background: rgba(6, 78, 59, 0.65) !important;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
 }
