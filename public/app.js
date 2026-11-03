@@ -43,7 +43,8 @@ function esc(valor) {
     .replace(/'/g, '&#39;');
 }
 
-const DOMINIOS_OFICIALES = ['juntadeandalucia.es', 'boe.es'];
+// Solo se crean botones "Ver en la web oficial" hacia estos dominios (y sus subdominios)
+const DOMINIOS_OFICIALES = ['juntadeandalucia.es', 'boe.es', 'sepe.es'];
 function enlaceSeguro(texto) {
   try {
     const u = new URL(texto);
