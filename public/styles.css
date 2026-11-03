@@ -248,3 +248,42 @@ html.dark {
     color: rgb(var(--accent-rgb));
 }
 
+/* =========================================
+   CHIPS DEL PANEL DE FILTROS
+   Mismos 4 colores de acento que las tarjetas
+   ========================================= */
+.chip-filtro {
+    --accent-rgb: 5, 150, 105; /* esmeralda (claro) */
+    padding: 0.4rem 0.9rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    color: rgb(var(--accent-rgb));
+    background: rgba(var(--accent-rgb), 0.1);
+    border: 1px solid rgba(var(--accent-rgb), 0.4);
+    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.chip-filtro:hover { background: rgba(var(--accent-rgb), 0.2); }
+.chip-filtro:focus-visible {
+    outline: 2px solid rgb(var(--accent-rgb));
+    outline-offset: 2px;
+}
+/* Chip seleccionado: relleno sólido */
+.chip-filtro[aria-pressed="true"] {
+    background: rgb(var(--accent-rgb));
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.35);
+}
+
+/* Colores en modo claro (tonos más oscuros para que se lean) */
+.chip-filtro[data-acento="1"] { --accent-rgb: 8, 145, 178; }   /* cian */
+.chip-filtro[data-acento="2"] { --accent-rgb: 217, 119, 6; }   /* ámbar */
+.chip-filtro[data-acento="3"] { --accent-rgb: 124, 58, 237; }  /* violeta */
+
+/* Colores en modo oscuro (los mismos que las tarjetas) */
+.dark .chip-filtro                    { --accent-rgb: 110, 231, 183; }
+.dark .chip-filtro[data-acento="1"]   { --accent-rgb: 103, 232, 249; }
+.dark .chip-filtro[data-acento="2"]   { --accent-rgb: 252, 211, 77; }
+.dark .chip-filtro[data-acento="3"]   { --accent-rgb: 196, 181, 253; }
+.dark .chip-filtro[aria-pressed="true"] { color: #022c22; }

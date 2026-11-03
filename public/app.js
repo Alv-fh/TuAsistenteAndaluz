@@ -8,7 +8,8 @@ const URL_CONSULTA_BECAS = 'https://www.juntadeandalucia.es/educacion/becasweb/c
 const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let todosLosTramites = [];
-
+// Estado de los filtros: texto del buscador + categoría elegida (clave normalizada)
+const filtros = { texto: '', categoria: null };
 // 2. Utilidades de renderizado seguro
 function crearElemento(etiqueta, clases, texto = null) {
   const el = document.createElement(etiqueta);
@@ -327,8 +328,8 @@ async function inicializarApp() {
       .sort()
       .forEach((c) => acentoDe(c));
 
-    renderizarTramites(todosLosTramites);
-  } catch (error) {
+    construirChips();
+    aplicarFiltros();  } catch (error) {
     console.error('Error al cargar trámites:', error.code, error.message, error.details);
     contenedor.textContent = '';
     contenedor.appendChild(
@@ -337,14 +338,88 @@ async function inicializarApp() {
   }
 }
 
-// 7. Buscador en tiempo real
+// 7. Filtros: buscador + categorías
+function aplicarFiltros() {
+  const lista = todosLosTramites.filter((t) => {
+    const coincideTexto =
+      !filtros.texto ||
+      normalizar(t.titulo).includes(filtros.texto) ||
+      normalizar(t.categoria).includes(filtros.texto);
+    const coincideCategoria = !filtros.categoria || normalizar(t.categoria) === filtros.categoria;
+    return coincideTexto && coincideCategoria;
+  });
+  renderizarTramites(lista);
+  actualizarChips();
+}
+
 document.getElementById('buscador-tramites').addEventListener('input', (evento) => {
-  const q = normalizar(evento.target.value);
-  const filtrados = todosLosTramites.filter(
-    (t) => normalizar(t.titulo).includes(q) || normalizar(t.categoria).includes(q)
-  );
-  renderizarTramites(filtrados);
+  filtros.texto = normalizar(evento.target.value);
+  aplicarFiltros();
 });
+
+function construirChips() {
+  const cont = document.getElementById('chips-categorias');
+  cont.textContent = '';
+
+  // Categorías únicas, con el nombre tal cual viene de la base de datos
+  const categorias = new Map();
+  todosLosTramites.forEach((t) => {
+    const clave = normalizar(t.categoria);
+    if (clave && !categorias.has(clave)) categorias.set(clave, t.categoria);
+  });
+
+  const crearChip = (clave, texto, acento) => {
+    const chip = crearElemento('button', 'chip-filtro', texto);
+    chip.type = 'button';
+    chip.dataset.categoria = clave ?? '';
+    if (acento !== null) chip.dataset.acento = String(acento);
+    chip.addEventListener('click', () => {
+      // Pulsar de nuevo la categoría activa quita el filtro
+      filtros.categoria = clave && filtros.categoria === clave ? null : clave;
+      aplicarFiltros();
+      alternarPanelFiltros(false);
+    });
+    cont.appendChild(chip);
+  };
+
+  crearChip(null, 'Todas', null);
+  [...categorias]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .forEach(([clave, nombre]) => crearChip(clave, nombre, acentoDe(clave)));
+}
+
+function actualizarChips() {
+  document.querySelectorAll('#chips-categorias .chip-filtro').forEach((chip) => {
+    const clave = chip.dataset.categoria || null;
+    chip.setAttribute('aria-pressed', String(clave === filtros.categoria));
+  });
+  document.getElementById('filter-badge').classList.toggle('hidden', !filtros.categoria);
+}
+
+function alternarPanelFiltros(abrir) {
+  const panel = document.getElementById('panel-filtros');
+  const boton = document.getElementById('filter-toggle');
+  const mostrar = abrir ?? panel.classList.contains('hidden');
+  panel.classList.toggle('hidden', !mostrar);
+  boton.setAttribute('aria-expanded', String(mostrar));
+}
+
+function configurarPanelFiltros() {
+  const panel = document.getElementById('panel-filtros');
+  const boton = document.getElementById('filter-toggle');
+
+  boton.addEventListener('click', () => alternarPanelFiltros());
+
+  // Cerrar al hacer clic fuera o con Escape
+  document.addEventListener('click', (e) => {
+    if (!panel.classList.contains('hidden') && !panel.contains(e.target) && !boton.contains(e.target)) {
+      alternarPanelFiltros(false);
+    }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') alternarPanelFiltros(false);
+  });
+}
 
 // 8. Efecto Parallax del fondo
 const fondoAnimado = document.getElementById('fondo-animado');
@@ -406,5 +481,11 @@ function configurarBotonConsulta() {
 document.addEventListener('DOMContentLoaded', () => {
   configurarTema();
   configurarBotonConsulta();
+  inicializarApp();
+});
+document.addEventListener('DOMContentLoaded', () => {
+  configurarTema();
+  configurarBotonConsulta();
+  configurarPanelFiltros();
   inicializarApp();
 });
