@@ -74,7 +74,39 @@ export const config = {
       slug: 'licencia-caza-pesca',
       categoria: 'Medio Ambiente', 
       fuentes: ['https://www.juntadeandalucia.es/.../licencia-caza-pesca.html']
+      },
+          // Garantía Vivienda Andalucía (Aval Jóvenes)
+      {
+        url: 'https://www.juntadeandalucia.es/organismos/viviendajuventudyordenaciondelterritorio/areas/vivienda-rehabilitacion/programa-garantia-vivienda.html',
+        slug: 'garantia-vivienda-andalucia',
+        categoria: 'Vivienda',
+        fuentes: [
+          'https://www.juntadeandalucia.es/organismos/viviendajuventudyordenaciondelterritorio/areas/vivienda-rehabilitacion/programa-garantia-vivienda.html',
+          'https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/25368.html'
+        ]
+      },
+      // Ayudas Sociales Extraordinarias 2026
+      {
+        url: 'https://www.juntadeandalucia.es/organismos/serviciossocialesfamiliaseigualdad/areas/pensiones/extraordinarias.html',
+        slug: 'ayudas-sociales-extraordinarias-2026',
+        categoria: 'Ayudas',
+        fuentes: [
+          'https://www.juntadeandalucia.es/organismos/serviciossocialesfamiliaseigualdad/areas/pensiones/extraordinarias.html',
+          'https://www.juntadeandalucia.es/boja/2025/246/11',
+          'https://www.juntadeandalucia.es/boja/2025/246/12'
+        ]
+      },
+      // Tarjeta Sanitaria
+      {
+        url: 'https://www.juntadeandalucia.es/temas/salud/servicios/tarjeta.html',
+        slug: 'tarjeta-sanitaria',
+        categoria: 'Trámites',
+        fuentes: [
+          'https://www.juntadeandalucia.es/temas/salud/servicios/tarjeta.html',
+          'https://www.sspa.juntadeandalucia.es/servicioandaluzdesalud/ciudadania/gestiones-administrativas'
+        ]
       }
+
     ],
     ignorarSlugs: ['tu-beca-en-nueve-pasos'],
     maxProfundidad: 2,
