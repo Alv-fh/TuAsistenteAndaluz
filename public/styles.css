@@ -68,18 +68,13 @@
     border-color: rgba(16, 185, 129, 0.4);
 }
 
-/* El buscador también con efecto Liquid Glass */
+/* El input es transparente: el cristal y el borde los pone la caja que lo envuelve.
+   (Si el input tuviera fondo/borde propios, se vería una línea junto a la lupa) */
 input[type="search"] {
-    background: rgba(255, 255, 255, 0.5) !important;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.8) !important;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.02);
-}
-
-input[type="search"]:focus {
-    background: rgba(255, 255, 255, 0.8) !important;
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15), inset 0 2px 4px rgba(0,0,0,0.02);
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    outline: none;
 }
 
 /* Modal Liquid Glass (reservado) */
@@ -258,19 +253,6 @@ html.dark {
 .dark .glass-card h3 {
     color: rgb(var(--accent-rgb));
 }
-
-/* Buscador en oscuro (el !important solo se mantiene en fondo y borde
-   porque la regla base también lo usa) */
-.dark input[type="search"] {
-    background: rgba(6, 78, 59, 0.45) !important;
-    border-color: rgba(16, 185, 129, 0.3) !important;
-    box-shadow: none;
-}
-.dark input[type="search"]:focus {
-    background: rgba(6, 78, 59, 0.65) !important;
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
-}
-
 
 /* =========================================
    PANEL LATERAL DE FILTROS (cajón izquierdo)
