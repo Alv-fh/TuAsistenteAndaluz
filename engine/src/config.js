@@ -183,8 +183,7 @@ export const config = {
     maxPaginas: 40,
     maxEnlacesPorPagina: 6,
     maxCaracteresIa: 30000,
-    palabrasClave: /beca|ayuda|subvenci|bono|matr[ií]cula|escolariza|admisi[oó]n/i,
-
+    palabrasClave: /beca|ayuda|subvenci|bono|matr[ií]cula|escolariza|admisi[oó]n|discapacidad|empleo|transporte|comedor|vivienda|alquiler|mayores|dependencia|paro|subsidio|sepe|tasa|licencia/i,
     // --- CONFIGURACIÓN DE LOS BOLETINES (BULLETINS) ---
     bojaFeedUrl: 'https://www.juntadeandalucia.es/boja/distribucion/boja.xml',
     boeDiasAtras: 3,
