@@ -196,7 +196,7 @@
     border: 1px solid var(--taa-aviso-bd);
     color: var(--taa-aviso-txt);
 }
-.taa-cta { margin-top: 2rem; }
+.taa-cta { margin-top: 3.5rem; }
 .taa-pagina a.taa-boton {
     display: block;
     text-align: center;
