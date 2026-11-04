@@ -35,7 +35,8 @@ export const config = {
       'https://www.juntadeandalucia.es/temas/familias-igualdad/discapacidad/ayudas-beneficios.html',
       'https://www.juntadeandalucia.es/organismos/universidadindustriaenergiaeinnovacion/areas/universidad/talento.html',
       'https://www.sepe.es/HomeSepe/prestaciones-desempleo/',
-      'https://sede.sepe.gob.es/portalSede/procedimientos-y-servicios/personas/proteccion-por-desempleo/solicitud-de-prestaciones.html'
+      'https://sede.sepe.gob.es/portalSede/procedimientos-y-servicios/personas/proteccion-por-desempleo/solicitud-de-prestaciones.html',
+      'https://www.juntadeandalucia.es/temas/familias-igualdad/discapacidad/ayudas-beneficios/otras-ayudas.html'
     ],
     urlsDirectas: [
       {
@@ -175,7 +176,7 @@ export const config = {
       //   baja-prestacion.html, consultas.html, comunicacion-variacion-situacion-personal-familiar-rentas.html,
       //   gestion-documentacion-ciudadano.html
     ],
-    ignorarSlugs: ['tu-beca-en-nueve-pasos'],
+    ignorarSlugs: ['tu-beca-en-nueve-pasos', 'nacionales', 'otras-ayudas'],
     maxProfundidad: 2,
     // Subido de 25 a 40: las urlsDirectas ya son 17 y con 25 apenas quedaría margen
     // para las páginas que la IA descubre a partir de las portadas.
