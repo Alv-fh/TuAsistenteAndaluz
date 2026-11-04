@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BV5TZH279Z"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-BV5TZH279Z');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ayudas, becas, empleo y trámites de la Junta de Andalucía y del SEPE explicados de forma sencilla. Servicio independiente.">
+    <title>TuAsistenteAndaluz - Trámites Oficiales Simplificados</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo-taa.png">
+
+    <!-- Aplica el tema ANTES de pintar (evita el parpadeo al cargar) -->
+    <script>
+    (function () {
+        try {
+            var saved = localStorage.getItem('theme');
+            var dark = saved ? saved === 'dark'
+                             : window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.classList.toggle('dark', dark);
+        } catch (e) {}
+    })();
+    </script>
+
+    <!-- CSS propio y CSS de Tailwind compilado (sin CDN) -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="tailwind.css">
+</head>
+
+<!-- Los colores de fondo y de texto del body los gestiona styles.css (claro y oscuro) -->
+<body class="min-h-screen text-slate-800 antialiased background-radial flex flex-col relative overflow-x-hidden">
+
+    <!-- Efectos de fondo (Liquid Glass) -->
+    <div id="fondo-animado" aria-hidden="true">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Barra de navegación + Buscador Sticky -->
+    <div class="sticky top-0 z-50 w-full">
+        <header class="glass-header px-6 py-4 flex items-center justify-center relative">
+
+            <!-- Botón de filtros (a la izquierda del todo) -->
+            <button id="filter-toggle" class="absolute left-4 sm:left-6 p-2 rounded-xl bg-white/50 dark:bg-slate-800/50 hover:bg-white/80 dark:hover:bg-slate-700/80 border border-white/60 dark:border-slate-600/60 shadow-sm transition-all" aria-label="Filtrar por categoría" aria-expanded="false" aria-controls="panel-filtros">
+                <svg class="w-6 h-6 text-slate-800 dark:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18l-7 8.5V19l-4 2v-8.5L3 4z"></path>
+                </svg>
+                <!-- Puntito que avisa de que hay un filtro activo -->
+                <span id="filter-badge" class="hidden absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900"></span>
+            </button>
+
+            <!-- Logo y título (centrados) -->
+            <div class="flex items-center">
+                <img src="logo-taa.png" alt="TuAsistenteAndaluz Logo" class="w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 mr-3 sm:mr-4 rounded-2xl shadow-md object-cover border border-white/50">
+                <h1 class="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-emerald-100 drop-shadow-sm">TuAsistente<span class="text-emerald-600 dark:text-emerald-400">Andaluz</span></h1>
+            </div>
+
+            <!-- Botón de tema (a la derecha del todo) -->
+            <button id="theme-toggle" class="absolute right-4 sm:right-6 p-2 rounded-xl bg-white/50 dark:bg-slate-800/50 hover:bg-white/80 dark:hover:bg-slate-700/80 border border-white/60 dark:border-slate-600/60 shadow-sm transition-all" aria-label="Cambiar tema">
+                <!-- Icono de Sol (se ve en modo oscuro) -->
+                <svg id="icon-sun" class="w-6 h-6 text-slate-800 dark:text-yellow-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+                <!-- Icono de Luna (se ve en modo claro) -->
+                <svg id="icon-moon" class="w-6 h-6 text-slate-800 dark:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                </svg>
+            </button>
+        </header>
+
+        <div class="py-3 px-4 bg-transparent">
+            <div class="max-w-2xl mx-auto">
+                <div class="flex items-center w-full bg-white/95 dark:bg-emerald-950/60 backdrop-blur-md border border-slate-200 dark:border-emerald-500/30 rounded-2xl shadow-sm focus-within:ring-2 focus-within:ring-emerald-500/30 transition-all overflow-hidden">
+                    <div class="pl-4 pr-1 text-slate-400 dark:text-emerald-300/70">
+                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <input type="search" id="buscador-tramites" aria-label="Buscar trámites" autocomplete="off"
+                        class="block w-full py-3 pr-4 pl-2 bg-transparent text-slate-800 dark:text-emerald-50 placeholder-slate-500 dark:placeholder-emerald-300/60 focus:outline-none focus:ring-0 text-base"
+                        placeholder="Buscar ayuda o beca...">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Panel lateral de filtros (cajón a la izquierda) -->
+    <div id="filtros-overlay" class="fixed inset-0 z-[90] bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm" aria-hidden="true"></div>
+    <aside id="panel-filtros" class="fixed left-0 top-0 bottom-0 z-[95] w-72 max-w-[85vw] flex flex-col bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-r border-slate-200 dark:border-emerald-500/30 shadow-2xl" aria-label="Filtros por categoría">
+        <div class="flex items-center justify-between p-5 pb-4 border-b border-slate-100 dark:border-slate-700 shrink-0">
+            <h2 class="text-lg font-extrabold text-slate-900 dark:text-emerald-100">Categorías</h2>
+            <button id="cerrar-filtros" type="button" aria-label="Cerrar filtros" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-full w-9 h-9 flex items-center justify-center font-bold text-xl transition-colors">&times;</button>
+        </div>
+        <div id="chips-categorias" class="flex flex-col gap-2 p-5 overflow-y-auto"></div>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="max-w-4xl mx-auto px-4 pb-12 flex-1 w-full relative z-10">
+
+        <div class="text-center mb-8 mt-4">
+            <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-emerald-50 mb-5" style="text-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);">
+                Trámites oficiales,<br class="hidden md:block"> sin dolores de cabeza
+            </h2>
+            <p class="text-lg md:text-xl text-slate-600 dark:text-emerald-200 max-w-2xl mx-auto">Encuentra ayudas, becas y trámites de empleo de la Junta de Andalucía y del SEPE explicados para humanos.</p>
+        </div>
+
+        <div class="max-w-2xl mx-auto mb-8 flex items-start gap-3 bg-white/50 dark:bg-slate-900/50 backdrop-blur-2xl border border-white/80 dark:border-emerald-500/20 rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] px-5 py-4 text-sm text-slate-600 dark:text-emerald-200" role="note">
+            <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5 drop-shadow-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path stroke-linecap="round" d="M12 11v5M12 8h.01"></path>
+            </svg>
+            <p class="leading-relaxed"><strong class="text-slate-800 dark:text-emerald-50">Servicio independiente.</strong> La información procede de fuentes públicas de la Junta de Andalucía y del SEPE. Comprueba siempre los plazos en la web oficial antes de solicitar.</p>
+        </div>
+
+        <div class="max-w-2xl mx-auto mb-10">
+            <a id="btn-consulta-becas" href="#" target="_blank" rel="noopener noreferrer"
+               class="flex items-center justify-between w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-emerald-600/30 transition-all transform hover:scale-[1.02]">
+                <div class="flex items-center gap-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span class="text-lg">Consultar estado de mi beca</span>
+                </div>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </a>
+            <p class="text-xs text-center text-slate-500 dark:text-emerald-300/70 mt-2">
+                Serás redirigido a la web oficial de la Junta de Andalucía.
+            </p>
+        </div>
+
+        <div id="contenedor-tramites" class="grid grid-cols-1 md:grid-cols-2 gap-6" aria-live="polite">
+            <p class="col-span-full text-center text-slate-500 dark:text-emerald-300/70 animate-pulse font-medium py-10">Cargando trámites oficiales...</p>
+        </div>
+    </main>
+
+    <footer class="px-6 py-10 text-center text-sm text-slate-500 dark:text-emerald-300/70 relative z-10 border-t border-white/40 dark:border-emerald-500/20 mt-auto flex flex-col items-center gap-6">
+        <div>
+            <p class="mb-2">TuAsistenteAndaluz es un servicio independiente y no está vinculado a la Junta de Andalucía ni al SEPE.</p>
+            <p>
+                Información oficial en
+                <a href="https://www.juntadeandalucia.es/" target="_blank" rel="noopener noreferrer" class="text-emerald-700 dark:text-emerald-300 font-bold hover:text-emerald-600 dark:hover:text-emerald-200 transition-colors underline decoration-emerald-300 dark:decoration-emerald-500/50 decoration-2 underline-offset-4">juntadeandalucia.es</a> y
+                <a href="https://www.sepe.es/" target="_blank" rel="noopener noreferrer" class="text-emerald-700 dark:text-emerald-300 font-bold hover:text-emerald-600 dark:hover:text-emerald-200 transition-colors underline decoration-emerald-300 dark:decoration-emerald-500/50 decoration-2 underline-offset-4">sepe.es</a>
+            </p>
+        </div>
+
+        <!-- Botones de apoyo y LinkedIn -->
+        <div class="flex flex-wrap justify-center gap-3 mt-2">
+            <!-- Botón de Café -->
+            <a href="https://buymeacoffee.com/tuasistenteandaluz" target="_blank" rel="noopener noreferrer"
+               class="flex items-center gap-2 bg-amber-100 hover:bg-amber-200 dark:bg-amber-400/10 dark:hover:bg-amber-400/20 text-amber-800 dark:text-amber-200 font-bold py-2 px-4 rounded-xl border border-amber-200 dark:border-amber-400/30 transition-colors shadow-sm text-sm">
+                <span class="text-lg">☕</span> Invítame a un café
+            </a>
+
+            <!-- Botón de LinkedIn -->
+            <a href="https://linkedin.com/in/alv-fh" target="_blank" rel="noopener noreferrer"
+               class="flex items-center gap-2 bg-blue-50 hover:bg-blue-100 dark:bg-sky-400/10 dark:hover:bg-sky-400/20 text-blue-700 dark:text-sky-200 font-bold py-2 px-4 rounded-xl border border-blue-200 dark:border-sky-400/30 transition-colors shadow-sm text-sm">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+                linkedin.com/in/alv-fh
+            </a>
+        </div>
+    </footer>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+</body>
+</html>

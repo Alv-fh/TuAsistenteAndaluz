@@ -194,6 +194,14 @@ function renderizarTramites(tramites) {
       tarjeta.appendChild(botonGuia);
     }
 
+    // 👇 NUEVO: Enlace a la ficha estática para SEO
+    if (tramite.slug) {
+      const enlaceFicha = crearElemento('a', 'text-center text-sm font-bold text-emerald-700 dark:text-emerald-300 underline underline-offset-4', 'Ver ficha completa');
+      enlaceFicha.href = `/ayuda/${encodeURIComponent(tramite.slug)}/`;
+      tarjeta.appendChild(enlaceFicha);
+    }
+    // 👆 FIN DEL NUEVO ENLACE
+
     const destino = enlaceSeguro(tramite.url_oficial);
     const claseBoton = 'text-center w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl transition shadow-lg shadow-emerald-600/20';
     const boton = crearElemento(
