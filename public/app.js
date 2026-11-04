@@ -185,22 +185,14 @@ function renderizarTramites(tramites) {
 
     if (tramite.guia && tramite.guia.que_es) {
       const botonGuia = crearElemento(
-        'button',
+        'a',
         'text-center w-full bg-white dark:bg-transparent border-2 border-emerald-600 dark:border-emerald-400 text-emerald-700 dark:text-emerald-300 font-bold py-2.5 px-4 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-400/10 transition-colors mb-1 flex items-center justify-center gap-2',
         '📖 Ayuda para solicitarla'
       );
+      botonGuia.setAttribute('href', `/ayuda/${encodeURIComponent(tramite.slug)}/`);
       botonGuia.setAttribute('aria-label', `Ver guía de ayuda para: ${tramite.titulo}`);
-      botonGuia.addEventListener('click', () => mostrarGuia(tramite));
       tarjeta.appendChild(botonGuia);
     }
-
-    // 👇 NUEVO: Enlace a la ficha estática para SEO
-    if (tramite.slug) {
-      const enlaceFicha = crearElemento('a', 'text-center text-sm font-bold text-emerald-700 dark:text-emerald-300 underline underline-offset-4', 'Ver ficha completa');
-      enlaceFicha.href = `/ayuda/${encodeURIComponent(tramite.slug)}/`;
-      tarjeta.appendChild(enlaceFicha);
-    }
-    // 👆 FIN DEL NUEVO ENLACE
 
     const destino = enlaceSeguro(tramite.url_oficial);
     const claseBoton = 'text-center w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl transition shadow-lg shadow-emerald-600/20';
