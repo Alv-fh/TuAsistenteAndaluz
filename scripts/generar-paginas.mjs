@@ -32,7 +32,7 @@ const PUBLIC = path.join(RAIZ, 'public');
 const SITIO = (process.env.SITE_URL || 'https://tuasistenteandaluz.es').replace(/\/+$/, '');
 const GA_ID = process.env.GA_ID ?? 'G-BV5TZH279Z';
 const NOMBRE = 'TuAsistenteAndaluz';
-const DOMINIOS_OFICIALES = ['juntadeandalucia.es', 'boe.es', 'sepe.es', 'sepe.gob.es'];
+const DOMINIOS_OFICIALES = ['juntadeandalucia.es', 'boe.es', 'sepe.es', 'sepe.gob.es', 'seg-social.es', 'prestaciones.seg-social.es', 'sede.agenciatributaria.gob.es'];
 
 const COLUMNAS = [
   'id', 'created_at', 'slug', 'titulo', 'categoria', 'estado', 'cuantia',
