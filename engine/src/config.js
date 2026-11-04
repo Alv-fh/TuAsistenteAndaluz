@@ -20,7 +20,7 @@ export const config = {
   },
   crawler: {
     headless: process.env.HEADLESS === 'true',
-    dominiosPermitidos: ['juntadeandalucia.es', 'boe.es', 'sepe.es', 'seg-social.es', 'prestaciones.seg-social.es', 'sede.agenciatributaria.gob.es'],
+    dominiosPermitidos: ['juntadeandalucia.es', 'boe.es', 'sepe.es', 'seg-social.es', 'prestaciones.seg-social.es', 'sede.agenciatributaria.gob.es', 'sede.mscbs.gob.es'],
     // Propiedades de control (las que faltaban)
     segmentosGenericos: ['convocatorias', 'calendario', 'normativa', 'preguntas-frecuentes', 'solicitud', 'inicio', 'index'],
     maxCaracteresFuente: 15000,
@@ -229,6 +229,84 @@ export const config = {
         slug: 'prestacion-desempleo-seguridad-social',
         categoria: 'Empleo',
         fuentes: ['https://www.seg-social.es/wps/portal/wss/internet/InformacionUtil/44539/49706?changeLanguage=es']
+      },
+      {
+        url: 'https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/6823.html',
+        slug: 'procedimiento-6823',
+        categoria: 'Trámites',
+        fuentes: ['https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/6823.html']
+      },
+      {
+        url: 'https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/10660.html',
+        slug: 'procedimiento-10660',
+        categoria: 'Trámites',
+        fuentes: ['https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/10660.html']
+      },
+      {
+        url: 'https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/7.html',
+        slug: 'procedimiento-7',
+        categoria: 'Trámites',
+        fuentes: ['https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/7.html']
+      },
+      {
+        url: 'https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/10442.html',
+        slug: 'procedimiento-10442',
+        categoria: 'Trámites',
+        fuentes: ['https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/10442.html']
+      },
+      {
+        url: 'https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/servicios/procedimientos/detalle/3106.html',
+        slug: 'procedimiento-3106-empleo',
+        categoria: 'Empleo',
+        fuentes: ['https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/servicios/procedimientos/detalle/3106.html']
+      },
+      {
+        url: 'https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/servicios/procedimientos/detalle/24388.html',
+        slug: 'procedimiento-24388-empleo',
+        categoria: 'Empleo',
+        fuentes: ['https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/servicios/procedimientos/detalle/24388.html']
+      },
+      {
+        url: 'https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/servicios/procedimientos/detalle/24389.html',
+        slug: 'procedimiento-24389-empleo',
+        categoria: 'Empleo',
+        fuentes: ['https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/servicios/procedimientos/detalle/24389.html']
+      },
+      {
+        url: 'https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/servicios/procedimientos/detalle/25342.html',
+        slug: 'procedimiento-25342-empleo',
+        categoria: 'Empleo',
+        fuentes: ['https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/servicios/procedimientos/detalle/25342.html']
+      },
+      {
+        url: 'https://www.juntadeandalucia.es/organismos/educacion/servicios/procedimientos/detalle/6344.html',
+        slug: 'procedimiento-6344-educacion',
+        categoria: 'Educación',
+        fuentes: ['https://www.juntadeandalucia.es/organismos/educacion/servicios/procedimientos/detalle/6344.html']
+      },
+      {
+        url: 'https://www.juntadeandalucia.es/organismos/culturapatrimoniohistoricoydeporte/servicios/procedimientos/detalle/25468.html',
+        slug: 'procedimiento-25468-cultura',
+        categoria: 'Trámites',
+        fuentes: ['https://www.juntadeandalucia.es/organismos/culturapatrimoniohistoricoydeporte/servicios/procedimientos/detalle/25468.html']
+      },
+      {
+        url: 'https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/1520.html',
+        slug: 'procedimiento-1520',
+        categoria: 'Trámites',
+        fuentes: ['https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/1520.html']
+      },
+      {
+        url: 'https://www.juntadeandalucia.es/organismos/turismojusticiadesregulacionyadministracionlocal/servicios/procedimientos/detalle/11572.html',
+        slug: 'procedimiento-11572-justicia',
+        categoria: 'Trámites',
+        fuentes: ['https://www.juntadeandalucia.es/organismos/turismojusticiadesregulacionyadministracionlocal/servicios/procedimientos/detalle/11572.html']
+      },
+      {
+        url: 'https://sede.mscbs.gob.es/ciudadanos/procAdministrativos.do?tipo=detallar&cod=025809',
+        slug: 'procedimiento-mscbs-025809',
+        categoria: 'Trámites',
+        fuentes: ['https://sede.mscbs.gob.es/ciudadanos/procAdministrativos.do?tipo=detallar&cod=025809']
       }
       // Otras páginas de la sede que podrías añadir más adelante:
       //   baja-prestacion.html, consultas.html, comunicacion-variacion-situacion-personal-familiar-rentas.html,
