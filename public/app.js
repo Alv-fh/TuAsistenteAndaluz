@@ -486,10 +486,41 @@ function configurarBotonConsulta() {
   }
 }
 
+// 11. Botón de volver arriba (con scroll suave)
+function configurarBotonArriba() {
+  const boton = document.getElementById('btn-volver-arriba');
+  if (!boton) return;
+
+  // Mostrar/ocultar el botón según el scroll
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400) {
+      // Aparece
+      boton.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+      boton.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+    } else {
+      // Desaparece
+      boton.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+      boton.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+    }
+  });
+
+  // Al hacer clic, subir suavemente
+  boton.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth' // 👈 ESTO ES LA CLAVE PARA QUE SEA FLUIDO
+    });
+  });
+}
+
+// Añade esta línea dentro del DOMContentLoaded
+// (junto a configurarTema(), configurarBotonConsulta(), etc.)
+
 // 10. Arranque
 document.addEventListener('DOMContentLoaded', () => {
   configurarTema();
   configurarBotonConsulta();
   configurarPanelFiltros();
+  configurarBotonArriba();
   inicializarApp();
 });
