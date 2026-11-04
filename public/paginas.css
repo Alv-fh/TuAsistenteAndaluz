@@ -260,3 +260,18 @@
 .taa-enlaces li { margin: 0.3rem 0; }
 .taa-enlaces a { color: var(--taa-txt); text-underline-offset: 3px; }
 .taa-enlaces a:hover { color: var(--taa-acento-txt); }
+
+.taa-img-guia {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 1rem 0 1.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--taa-borde);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.dark .taa-img-guia {
+    border-color: rgba(52, 211, 153, 0.25);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
