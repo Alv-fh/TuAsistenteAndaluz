@@ -321,8 +321,8 @@ async function inicializarApp() {
 
     todosLosTramites = (data ?? []).sort(
       (a, b) =>
-        (ORDEN_ESTADO[estadoEfectivo(a).estado] ?? 9) - (ORDEN_ESTADO[estadoEfectivo(b).estado] ?? 9) ||
-        Number(b.destacado) - Number(a.destacado)
+        Number(b.destacado) - Number(a.destacado) || // Primero los destacados
+        (ORDEN_ESTADO[estadoEfectivo(a).estado] ?? 9) - (ORDEN_ESTADO[estadoEfectivo(b).estado] ?? 9) // Luego por estado
     );
 
     // Reparte los colores de acento por categoría una sola vez (orden alfabético,
