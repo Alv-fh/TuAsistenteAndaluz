@@ -196,7 +196,7 @@
     border: 1px solid var(--taa-aviso-bd);
     color: var(--taa-aviso-txt);
 }
-.taa-cta { margin-top: 4rem; }
+.taa-cta { margin-top: 2rem; }
 .taa-pagina a.taa-boton {
     display: block;
     text-align: center;
@@ -208,6 +208,7 @@
     background: var(--taa-boton-bg);
     box-shadow: 0 8px 20px -6px rgba(16, 185, 129, 0.45);
     transition: background-color 0.2s;
+    margin-top: 3.5rem;
 }
 .taa-pagina a.taa-boton:hover { background: var(--taa-boton-hover); }
 .taa-meta { margin-top: 1.75rem; padding-top: 1rem; border-top: 1px solid var(--taa-borde); font-size: 0.85rem; color: var(--taa-suave); }
