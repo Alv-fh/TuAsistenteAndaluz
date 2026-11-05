@@ -202,7 +202,7 @@ async function main() {
   if (elegidos.length > aAnalizar.length) {
     console.log(`Se analizan ${aAnalizar.length}; el resto queda para la próxima ejecución.`);
   }
-
+  console.log("👉 AQUÍ ESTÁN LAS AYUDAS DETECTADAS POR LA IA:", aAnalizar);
   const { navegador, pagina } = await abrirNavegador();
   const res = { nuevas: 0, otras: 0, caducadas: 0, descartadas: 0, errores: 0 };
 
