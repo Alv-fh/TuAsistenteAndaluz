@@ -122,48 +122,56 @@
             </svg>
             <p class="leading-relaxed"><strong class="text-slate-800 dark:text-emerald-50">Servicio independiente.</strong> La información procede de fuentes públicas de la Junta de Andalucía y del SEPE. Comprueba siempre los plazos en la web oficial antes de solicitar.</p>
         </div>
-        <!-- Sección: Guías destacadas -->
-        <div class="max-w-2xl mx-auto mb-10">
-            <!-- Título de la sección con líneas verticales -->
-            <div class="flex items-center gap-4 mb-6">
-                <div class="h-6 w-1 bg-emerald-500 rounded-full"></div>
-                <h2 class="text-xl font-extrabold text-slate-800 dark:text-emerald-50 tracking-tight">Guías más importantes</h2>
-                <div class="h-6 w-1 bg-emerald-500 rounded-full"></div>
+                <!-- Sección: Guías destacadas -->
+        <div class="max-w-2xl mx-auto mb-10 relative">
+            
+            <!-- Título con líneas horizontales -->
+            <div class="relative flex items-center justify-center mb-6">
+                <!-- Línea horizontal finísima que va de lado a lado -->
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-emerald-200/50 dark:border-emerald-500/20"></div>
+                </div>
+                <!-- El título con fondo para "taparlo" y que la línea no lo atraviese -->
+                <h2 class="relative px-4 text-sm font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-300 bg-emerald-50/50 dark:bg-[#022c22] rounded-full">
+                    Guías más importantes
+                </h2>
             </div>
 
-            <!-- Tarjetas agrupadas -->
-            <div class="flex flex-col gap-4">
-                
-                <!-- Tarjeta de Cl@ve (Naranja) -->
-                <a href="/guia-clave.html" class="flex items-center justify-between w-full bg-orange-50/90 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-500/30 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all group">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-white p-1.5 rounded-xl shadow-sm hover:animate-pulse">
-                            <img src="/img/clave.png" alt="Logo Cl@ve" class="w-8 h-8 object-contain">
+            <!-- Caja contenedora con borde sutil -->
+            <div class="bg-white/40 dark:bg-emerald-950/20 border border-emerald-100/50 dark:border-emerald-500/10 rounded-3xl p-4 shadow-sm">
+                <div class="flex flex-col gap-4">
+                    
+                    <!-- Tarjeta de Cl@ve (Naranja) -->
+                    <a href="/guia-clave.html" class="flex items-center justify-between w-full bg-orange-50/90 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-500/30 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all group">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-white p-1.5 rounded-xl shadow-sm">
+                                <img src="/img/clave.png" alt="Logo Cl@ve" class="w-8 h-8 object-contain">
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-orange-900 dark:text-orange-100">¿No tienes Cl@ve Avanzada?</h3>
+                                <p class="text-sm text-orange-700 dark:text-orange-300/80">Te explicamos cómo conseguirla paso a paso.</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="font-bold text-orange-900 dark:text-orange-100">¿No tienes Cl@ve Avanzada?</h2>
-                            <p class="text-sm text-orange-700 dark:text-orange-300/80">Te explicamos cómo conseguirla paso a paso.</p>
-                        </div>
-                    </div>
-                    <span class="text-orange-500 group-hover:translate-x-1 transition-transform">→</span>
-                </a>
+                        <span class="text-orange-500 group-hover:translate-x-1 transition-transform">→</span>
+                    </a>
 
-                <!-- Tarjeta de SAE vs SEPE (Verde) -->
-                <a href="/guia-sae-sepe.html" class="flex items-center justify-between w-full bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-500/30 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all group">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-white p-1.5 rounded-xl shadow-sm flex items-center gap-1 shrink-0">
-                            <img src="/img/sae-1.png" alt="Logo SAE" style="width: 28px; height: 28px; object-fit: contain;">
-                            <span class="text-xs font-black text-emerald-600 dark:text-emerald-400 px-1">VS</span>
-                            <img src="/img/sepe-1.jpg" alt="Logo SEPE" style="width: 28px; height: 28px; object-fit: contain;">
+                    <!-- Tarjeta de SAE vs SEPE (Verde) -->
+                    <a href="/guia-sae-sepe.html" class="flex items-center justify-between w-full bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-500/30 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all group">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-white p-1.5 rounded-xl shadow-sm flex items-center gap-1 shrink-0">
+                                <img src="/img/sae-1.png" alt="Logo SAE" style="width: 28px; height: 28px; object-fit: contain;">
+                                <span class="text-xs font-black text-emerald-600 dark:text-emerald-400 px-1">VS</span>
+                                <img src="/img/sepe-1.jpg" alt="Logo SEPE" style="width: 28px; height: 28px; object-fit: contain;">
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-emerald-900 dark:text-emerald-100">¿SAE o SEPE? Te lo explicamos</h3>
+                                <p class="text-sm text-emerald-700 dark:text-emerald-300/80">Dónde pedir el paro y dónde buscar empleo.</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="font-bold text-emerald-900 dark:text-emerald-100">¿SAE o SEPE? Te lo explicamos</h2>
-                            <p class="text-sm text-emerald-700 dark:text-emerald-300/80">Dónde pedir el paro y dónde buscar empleo.</p>
-                        </div>
-                    </div>
-                    <span class="text-emerald-500 group-hover:translate-x-1 transition-transform">→</span>
-                </a>
-                
+                        <span class="text-emerald-500 group-hover:translate-x-1 transition-transform">→</span>
+                    </a>
+                    
+                </div>
             </div>
         </div>
 
