@@ -425,7 +425,7 @@ function paginaFicha(t, ctx) {
     </section>
     <section>
       <h2>Cómo solicitarlo paso a paso</h2>
-      <p class="taa-pasos">${esc(g.como_solicitar || 'Sigue las instrucciones de la web oficial.')}</p>
+      <div class="taa-pasos">${esc(g.como_solicitar || 'Sigue las instrucciones de la web oficial.').replace(/\n/g, '<br>')}</div>
     </section>` : `
     <section>
       <h2>Información</h2>
