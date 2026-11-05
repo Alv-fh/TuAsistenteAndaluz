@@ -48,9 +48,9 @@
 
     <!-- Barra de navegación + Buscador Sticky -->
     <div class="sticky top-0 z-50 w-full">
-        <header class="glass-header px-6 py-4 flex items-center justify-center relative">
+                <header class="glass-header px-6 py-4 flex items-center justify-center relative">
 
-            <!-- GRUPO IZQUIERDO: Solo Filtros -->
+            <!-- GRUPO IZQUIERDO: Filtros + Tema -->
             <div class="absolute left-4 sm:left-6 flex items-center gap-2">
                 <!-- Botón de filtros -->
                 <button id="filter-toggle" class="p-2 rounded-xl bg-white/50 dark:bg-slate-800/50 hover:bg-white/80 dark:hover:bg-slate-700/80 border border-white/60 dark:border-slate-600/60 shadow-sm transition-all" aria-label="Filtrar por categoría" aria-expanded="false" aria-controls="panel-filtros">
@@ -59,15 +59,25 @@
                     </svg>
                     <span id="filter-badge" class="hidden absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900"></span>
                 </button>
+
+                <!-- Botón de tema (Sol/Luna) -->
+                <button id="theme-toggle" class="p-2 rounded-xl bg-white/50 dark:bg-slate-800/50 hover:bg-white/80 dark:hover:bg-slate-700/80 border border-white/60 dark:border-slate-600/60 shadow-sm transition-all" aria-label="Cambiar tema">
+                    <svg id="icon-sun" class="w-6 h-6 text-slate-800 dark:text-yellow-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    <svg id="icon-moon" class="w-6 h-6 text-slate-800 dark:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                </button>
             </div>
 
             <!-- Logo y título (centrados) -->
             <div class="flex items-center">
                 <img src="logo-taa.png" alt="TuAsistenteAndaluz Logo" class="w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 mr-3 sm:mr-4 rounded-2xl shadow-md object-cover border border-white/50">
-                <h1 class="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-emerald-100 drop-shadow-sm">TuAsistente<span class="text-emerald-600 dark:text-emerald-400">Andaluz</span></h1>
+                <h1 class="text-base sm:text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-emerald-100 drop-shadow-sm">TuAsistente<span class="text-emerald-600 dark:text-emerald-400">Andaluz</span></h1>
             </div>
 
-            <!-- GRUPO DERECHO: LinkedIn + Café + Tema -->
+            <!-- GRUPO DERECHO: LinkedIn + Café -->
             <div class="absolute right-4 sm:right-6 flex items-center gap-2">
                 <!-- Botón de LinkedIn -->
                 <a href="https://linkedin.com/in/alv-fh" target="_blank" rel="noopener noreferrer" 
@@ -88,16 +98,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"></path>
                     </svg>
                 </a>
-
-                <!-- Botón de tema -->
-                <button id="theme-toggle" class="p-2 rounded-xl bg-white/50 dark:bg-slate-800/50 hover:bg-white/80 dark:hover:bg-slate-700/80 border border-white/60 dark:border-slate-600/60 shadow-sm transition-all" aria-label="Cambiar tema">
-                    <svg id="icon-sun" class="w-6 h-6 text-slate-800 dark:text-yellow-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                    <svg id="icon-moon" class="w-6 h-6 text-slate-800 dark:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                    </svg>
-                </button>
             </div>
 
         </header>
