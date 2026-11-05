@@ -7,8 +7,8 @@ import { supabase } from './lib/db.js';
 const execFileAsync = promisify(execFile);
 
 // La misma ruta que usas tú a mano
-const SCRIPT = '/var/www/TuAsistenteAndaluz/scripts/generar-paginas.mjs';
-const RAIZ = '/var/www/TuAsistenteAndaluz';
+const SCRIPT = 'TuAsistenteAndaluz/scripts/generar-paginas.mjs';
+const RAIZ = 'TuAsistenteAndaluz';
 
 // polling: true significa que el bot se queda escuchando activamente
 const bot = new TelegramBot(config.telegram.token, { polling: true });
@@ -16,6 +16,7 @@ const bot = new TelegramBot(config.telegram.token, { polling: true });
 console.log('🤖 Bot de Telegram escuchando comandos...');
 
 bot.on('callback_query', async (query) => {
+  console.log('🔔 callback_query recibido:', query.data); 
   const data = query.data;
   const chatId = query.message.chat.id;
   const messageId = query.message.message_id;
