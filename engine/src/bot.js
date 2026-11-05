@@ -6,9 +6,11 @@ import { supabase } from './lib/db.js';
 
 const execFileAsync = promisify(execFile);
 
-// La misma ruta que usas tú a mano
+// Rutas absolutas
 const SCRIPT = '/var/www/TuAsistenteAndaluz/scripts/generar-paginas.mjs';
 const RAIZ = '/var/www/TuAsistenteAndaluz';
+const REPO_URL = 'github.com/Alv-fh/TuAsistenteAndaluz.git';
+const RAMA = 'main'; // Cambia a 'master' si tu rama principal se llama así
 
 // polling: true significa que el bot se queda escuchando activamente
 const bot = new TelegramBot(config.telegram.token, { polling: true });
@@ -26,16 +28,19 @@ bot.on('callback_query', async (query) => {
 
   // 1. SI PULSAS PUBLICAR
   if (data.startsWith('publish_')) {
+    bot.answerCallbackQuery(query.id, { text: 'Publicando y desplegando...' });
+
+    // A) Actualizamos Supabase
     const { error } = await supabase
       .from('tramites')
       .update({ publicado: true, actualizado_en: new Date().toISOString() })
       .eq('slug', slug);
 
     if (error) {
-      return bot.answerCallbackQuery(query.id, { text: `Error: ${error.message}`, show_alert: true });
+      return bot.answerCallbackQuery(query.id, { text: `Error en BD: ${error.message}`, show_alert: true });
     }
 
-    // Ejecutamos el script, igual que lo haces tú a mano
+    // B) Ejecutamos el script para generar las páginas
     try {
       const { stdout, stderr } = await execFileAsync(process.execPath, [SCRIPT], {
         cwd: RAIZ,
@@ -51,7 +56,38 @@ bot.on('callback_query', async (query) => {
       });
     }
 
-    bot.editMessageText(`✅ *Publicado en la web:* ${slug}`, {
+    // C) Hacemos commit y push a GitHub
+    try {
+      // 1. Comprobar si hay cambios (git status --porcelain)
+      const { stdout: statusOut } = await execFileAsync('git', ['status', '--porcelain', 'public/'], { cwd: RAIZ });
+      
+      if (statusOut.trim().length > 0) {
+        // Hay cambios, procedemos a subirlos
+        await execFileAsync('git', ['add', 'public/'], { cwd: RAIZ });
+        await execFileAsync('git', ['commit', '-m', `Publicar trámite: ${slug}`], { cwd: RAIZ });
+        
+        // Usamos el token del .env para el push
+        const token = process.env.GITHUB_TOKEN;
+        if (!token) throw new Error('Falta GITHUB_TOKEN en el archivo .env');
+        
+        const pushUrl = `https://${token}@${REPO_URL}`;
+        await execFileAsync('git', ['push', pushUrl, RAMA], { cwd: RAIZ });
+        
+        console.log(`🚀 Push a GitHub completado para: ${slug}`);
+      } else {
+        console.log('No hay cambios nuevos en public/ para subir.');
+      }
+    } catch (e) {
+      console.error('Error en Git:', e.message);
+      // Si falla Git, avisamos en Telegram pero la BD ya está actualizada.
+      bot.answerCallbackQuery(query.id, { 
+        text: `Publicado en BD, pero falló Git: ${e.message}`, 
+        show_alert: true 
+      });
+    }
+
+    // D) Actualizamos el mensaje en Telegram
+    bot.editMessageText(`✅ *Publicado y subido a la web:* ${slug}`, {
       chat_id: chatId,
       message_id: messageId,
       parse_mode: 'Markdown'
