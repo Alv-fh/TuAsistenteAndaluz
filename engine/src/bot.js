@@ -5,6 +5,10 @@ import { supabase } from './lib/db.js';
 // polling: true significa que el bot se queda escuchando activamente
 const bot = new TelegramBot(config.telegram.token, { polling: true });
 
+// 👇 PEGA AQUÍ TU URL DEL DEPLOY HOOK DE VERCEL 👇
+// (La encuentras en Vercel -> Settings -> Git -> Deploy Hooks)
+const VERCEL_DEPLOY_HOOK = 'https://api.vercel.com/v1/integrations/deploy/prj_x2LksfD37q2oI5l0IAHJ2TJ5zvrt/HjGVumAP5l';
+
 console.log('🤖 Bot de Telegram escuchando comandos...');
 
 bot.on('callback_query', async (query) => {
@@ -17,6 +21,11 @@ bot.on('callback_query', async (query) => {
 
   // 1. SI PULSAS PUBLICAR
   if (data.startsWith('publish_')) {
+    
+    // Le decimos a Telegram que estamos procesando
+    bot.answerCallbackQuery(query.id, { text: 'Publicando y desplegando...' });
+
+    // A) Actualizamos Supabase
     const { error } = await supabase
       .from('tramites')
       .update({ publicado: true, actualizado_en: new Date().toISOString() })
@@ -26,12 +35,20 @@ bot.on('callback_query', async (query) => {
       return bot.answerCallbackQuery(query.id, { text: `Error: ${error.message}`, show_alert: true });
     }
 
-    bot.editMessageText(`✅ *Publicado en la web:* ${slug}`, {
+    // B) Avisamos a Vercel para que regenere la web (ejecutando el script)
+    try {
+      await fetch(VERCEL_DEPLOY_HOOK, { method: 'POST' });
+      console.log(`🚀 Despliegue de Vercel solicitado para: ${slug}`);
+    } catch (e) {
+      console.error('Error al llamar al Deploy Hook de Vercel:', e.message);
+    }
+
+    // C) Actualizamos el mensaje en Telegram
+    bot.editMessageText(`✅ *Publicado y desplegando:* ${slug}\nEspera 30 segundos a que Vercel actualice la web.`, {
       chat_id: chatId,
       message_id: messageId,
       parse_mode: 'Markdown'
     });
-    bot.answerCallbackQuery(query.id, { text: '¡Publicado con éxito!' });
   }
 
   // 2. SI PULSAS REVISAR
