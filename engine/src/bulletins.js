@@ -1,12 +1,18 @@
 import { config } from './config.js';
-import { generarJSON } from './lib/ai.js';
-import { abrirNavegador } from './lib/browser.js';
+import { analizarAyuda, generarJSON } from './lib/ai.js';
+import { abrirNavegador, leerPagina } from './lib/browser.js';
 import {
   espera,
   fechaHoyTexto,
-  limpiar, normalizarUrl,
-  supabase
+  limpiar, 
+  normalizarUrl,
+  supabase,
+  evaluarVigencia,
+  registrarAyuda,
+  describirResultado,
+  huellaTexto
 } from './lib/db.js';
+
 const aLista = (x) => (Array.isArray(x) ? x : x ? [x] : []);
 
 async function pedir(url, accept) {
@@ -202,14 +208,59 @@ async function main() {
   if (elegidos.length > aAnalizar.length) {
     console.log(`Se analizan ${aAnalizar.length}; el resto queda para la próxima ejecución.`);
   }
-  console.log("👉 AQUÍ ESTÁN LAS AYUDAS DETECTADAS POR LA IA:", aAnalizar);
+
   const { navegador, pagina } = await abrirNavegador();
   const res = { nuevas: 0, otras: 0, caducadas: 0, descartadas: 0, errores: 0 };
 
   try {
     for (const it of aAnalizar) {
       console.log(`\n[${it.fuente.toUpperCase()}] ${it.id}\n   ${limpiar(it.titulo, 160)}`);
-      await espera(2000);
+      try {
+        // Abrimos la web oficial del BOE o BOJA
+        const r = await leerPagina(pagina, it.url);
+        const texto = r.texto;
+
+        if (texto.length < 300) {
+          console.log('   Texto demasiado corto o página no válida (probablemente solo PDF).');
+          res.errores++;
+          await espera(2000);
+          continue;
+        }
+
+        // Analizamos el texto con la IA (igual que en crawler.js)
+        const datos = await analizarAyuda(texto, it.url, 'Ayudas');
+        
+        if (!datos) {
+          console.log('   La IA no lo considera una ayuda concreta.');
+          res.descartadas++;
+        } else {
+          // Evaluamos si está vigente
+          const v = evaluarVigencia(datos);
+          if (!v.vigente) {
+            console.log(`   Descartada: ${v.motivo}.`);
+            res.caducadas++;
+          } else {
+            datos.estado = v.estado;
+            datos.fecha_apertura = v.fecha_apertura;
+            
+            // Lo guardamos en Supabase (esto disparará la alerta de Telegram)
+            const resRegistro = await registrarAyuda({ 
+              datos, 
+              url: it.url, 
+              slugFijo: null, // Que lo genere solo
+              origen: it.fuente, 
+              huella: huellaTexto(texto) 
+            });
+            
+            console.log(`   ${describirResultado(resRegistro)}`);
+            resRegistro.accion === 'nueva' ? res.nuevas++ : res.otras++;
+          }
+        }
+      } catch (e) {
+        console.error(`   Error analizando: ${e.message}`);
+        res.errores++;
+      }
+      await espera(3000); // Pausa para no saturar las webs oficiales
     }
   } finally {
     await navegador.close();
