@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BV5TZH279Z"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-BV5TZH279Z');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Guía para entender la diferencia entre el SAE y el SEPE. Descubre dónde tienes que inscribirte para buscar empleo y dónde pedir el paro o los subsidios.">
-    <title>SAE vs SEPE: dónde pedir el paro y dónde buscar empleo | TuAsistenteAndaluz</title>
-    <link rel="canonical" href="https://tuasistenteandaluz.es/guia-sae-sepe.html">
-    <meta name="robots" content="index, follow">
-    <link rel="icon" type="image/png" href="/logo-taa.png">
-    
+    <meta name="description" content="Ayudas, becas, empleo y trámites de la Junta de Andalucía y del SEPE explicados de forma sencilla. Servicio independiente.">
+    <title>TuAsistenteAndaluz - Trámites Oficiales Simplificados</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo-taa.png">
+
+    <!-- Aplica el tema ANTES de pintar (evita el parpadeo al cargar) -->
     <script>
     (function () {
         try {
@@ -19,128 +29,198 @@
         } catch (e) {}
     })();
     </script>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BV5TZH279Z"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-BV5TZH279Z');
-    </script>
-    <link rel="stylesheet" href="/styles.css">
-    <link rel="stylesheet" href="/paginas.css">
+
+    <!-- CSS propio y CSS de Tailwind compilado (sin CDN) -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="tailwind.css">
+    <link rel="stylesheet" href="paginas.css">
 </head>
-<body class="taa-pagina background-radial">
 
-    <header class="glass-header taa-header">
-        <a class="taa-volver" href="/">&larr; Inicio</a>
-        <a class="taa-marca" href="/"><img src="/logo-taa.png" alt="" width="40" height="40"><span>TuAsistente<span class="taa-acento">Andaluz</span></span></a>
-        <button id="theme-toggle" class="taa-tema" type="button" aria-label="Cambiar tema">
-            <svg class="taa-icono-sol" width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-            <svg class="taa-icono-luna" width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-        </button>
-    </header>
+<!-- Los colores de fondo y de texto del body los gestiona styles.css (claro y oscuro) -->
+<body class="min-h-screen text-slate-800 antialiased background-radial flex flex-col relative overflow-x-hidden">
 
-    <main class="taa-main">
-        <article class="taa-ficha">
-            <h1>SAE vs SEPE: la guía definitiva para no liarte con el paro y el empleo</h1>
-            <p class="taa-intro">Si te has quedado sin trabajo o quieres apuntarte como demandante de empleo, seguro que has oído hablar del SAE y del SEPE. Aunque parezcan lo mismo, <strong>son dos organismos diferentes</strong> y cada uno tiene su función. Aquí te lo explicamos de forma sencilla.</p>
+    <!-- Efectos de fondo (Liquid Glass) -->
+    <div id="fondo-animado" aria-hidden="true">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
 
-            <div class="taa-aviso" role="note">
-                <strong>Aviso:</strong> esta guía es orientativa. Las páginas web y los trámites pueden cambiar. Consulta siempre en las webs oficiales del SAE y del SEPE.
+    <!-- Barra de navegación + Buscador Sticky -->
+    <div class="sticky top-0 z-50 w-full">
+        <header class="glass-header px-6 py-4 flex items-center justify-center relative">
+
+            <!-- Botón de filtros (a la izquierda del todo) -->
+            <button id="filter-toggle" class="absolute left-4 sm:left-6 p-2 rounded-xl bg-white/50 dark:bg-slate-800/50 hover:bg-white/80 dark:hover:bg-slate-700/80 border border-white/60 dark:border-slate-600/60 shadow-sm transition-all" aria-label="Filtrar por categoría" aria-expanded="false" aria-controls="panel-filtros">
+                <svg class="w-6 h-6 text-slate-800 dark:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18l-7 8.5V19l-4 2v-8.5L3 4z"></path>
+                </svg>
+                <!-- Puntito que avisa de que hay un filtro activo -->
+                <span id="filter-badge" class="hidden absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900"></span>
+            </button>
+
+            <!-- Logo y título (centrados) -->
+            <div class="flex items-center">
+                <img src="logo-taa.png" alt="TuAsistenteAndaluz Logo" class="w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 mr-3 sm:mr-4 rounded-2xl shadow-md object-cover border border-white/50">
+                <h1 class="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-emerald-100 drop-shadow-sm">TuAsistente<span class="text-emerald-600 dark:text-emerald-400">Andaluz</span></h1>
             </div>
 
-            <h2>1. ¿Qué es el SAE (Servicio Andaluz de Empleo)?</h2>
-            <div class="flex items-center gap-3 mb-4">
-                <div class="bg-white p-1.5 rounded-xl shadow-sm border border-slate-200 dark:border-emerald-500/30 shrink-0">
-                    <img src="/img/logo-sae.png" alt="Logo SAE" class="w-10 h-10 object-contain">
+            <!-- Botón de tema (a la derecha del todo) -->
+            <button id="theme-toggle" class="absolute right-4 sm:right-6 p-2 rounded-xl bg-white/50 dark:bg-slate-800/50 hover:bg-white/80 dark:hover:bg-slate-700/80 border border-white/60 dark:border-slate-600/60 shadow-sm transition-all" aria-label="Cambiar tema">
+                <!-- Icono de Sol (se ve en modo oscuro) -->
+                <svg id="icon-sun" class="w-6 h-6 text-slate-800 dark:text-yellow-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+                <!-- Icono de Luna (se ve en modo claro) -->
+                <svg id="icon-moon" class="w-6 h-6 text-slate-800 dark:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                </svg>
+            </button>
+        </header>
+
+        <div class="py-3 px-4 bg-transparent">
+            <div class="max-w-2xl mx-auto">
+                <div class="flex items-center w-full bg-white/95 dark:bg-emerald-950/60 backdrop-blur-md border border-slate-200 dark:border-emerald-500/30 rounded-2xl shadow-sm focus-within:ring-2 focus-within:ring-emerald-500/30 transition-all overflow-hidden">
+                    <div class="pl-4 pr-1 text-slate-400 dark:text-emerald-300/70">
+                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <input type="search" id="buscador-tramites" aria-label="Buscar trámites" autocomplete="off"
+                        class="block w-full py-3 pr-4 pl-2 bg-transparent text-slate-800 dark:text-emerald-50 placeholder-slate-500 dark:placeholder-emerald-300/60 focus:outline-none focus:ring-0 text-base"
+                        placeholder="Buscar ayuda o beca...">
                 </div>
-                <p class="text-sm text-slate-600 dark:text-emerald-200 m-0"><strong>El SAE es el organismo de la Junta de Andalucía.</strong></p>
             </div>
-            <p>Es el encargado de gestionar las políticas de empleo en tu comunidad. Es aquí donde tienes que:</p>
-            <ul>
-                <li><strong>Inscribirte como demandante de empleo.</strong> Es el primer paso para buscar trabajo.</li>
-                <li>Buscar ofertas de trabajo y cursos de formación.</li>
-                <li>Renovar tu demanda de empleo (aunque ahora se suele hacer automáticamente).</li>
-                <li>Pedir cita para programas de empleo de la Junta (como el Programa Emplea-T).</li>
-            </ul>
+        </div>
 
-            <h2>2. ¿Qué es el SEPE (Servicio Público de Empleo Estatal)?</h2>
-            <div class="flex items-center gap-3 mb-4">
-                <div class="bg-white p-1.5 rounded-xl shadow-sm border border-slate-200 dark:border-emerald-500/30 shrink-0">
-                    <img src="/img/logo-sepe.png" alt="Logo SEPE" class="w-10 h-10 object-contain">
+    </div>
+
+    <!-- Panel lateral de filtros (cajón a la izquierda) -->
+    <div id="filtros-overlay" class="fixed inset-0 z-[90] bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm" aria-hidden="true"></div>
+    <aside id="panel-filtros" class="fixed left-0 top-0 bottom-0 z-[95] w-72 max-w-[85vw] flex flex-col bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-r border-slate-200 dark:border-emerald-500/30 shadow-2xl" aria-label="Filtros por categoría">
+        <div class="flex items-center justify-between p-5 pb-4 border-b border-slate-100 dark:border-slate-700 shrink-0">
+            <h2 class="text-lg font-extrabold text-slate-900 dark:text-emerald-100">Categorías</h2>
+            <button id="cerrar-filtros" type="button" aria-label="Cerrar filtros" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-full w-9 h-9 flex items-center justify-center font-bold text-xl transition-colors">&times;</button>
+        </div>
+        <div id="chips-categorias" class="flex flex-col gap-2 p-5 overflow-y-auto"></div>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="max-w-4xl mx-auto px-4 pb-12 flex-1 w-full relative z-10">
+
+        <div class="text-center mb-8 mt-4">
+            <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-emerald-50 mb-5" style="text-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);">
+                Trámites oficiales,<br class="hidden md:block"> sin dolores de cabeza
+            </h2>
+            <p class="text-lg md:text-xl text-slate-600 dark:text-emerald-200 max-w-2xl mx-auto">Encuentra ayudas, becas y trámites de empleo de la Junta de Andalucía y del SEPE explicados para humanos.</p>
+        </div>
+
+        <div class="max-w-2xl mx-auto mb-8 flex items-start gap-3 bg-white/50 dark:bg-slate-900/50 backdrop-blur-2xl border border-white/80 dark:border-emerald-500/20 rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] px-5 py-4 text-sm text-slate-600 dark:text-emerald-200" role="note">
+            <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5 drop-shadow-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path stroke-linecap="round" d="M12 11v5M12 8h.01"></path>
+            </svg>
+            <p class="leading-relaxed"><strong class="text-slate-800 dark:text-emerald-50">Servicio independiente.</strong> La información procede de fuentes públicas de la Junta de Andalucía y del SEPE. Comprueba siempre los plazos en la web oficial antes de solicitar.</p>
+        </div>
+        <!-- Acceso a la Guía de Cl@ve -->
+                <div class="max-w-2xl mx-auto mb-8">
+            <a href="/guia-clave.html" class="flex items-center justify-between w-full bg-orange-50/90 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-500/30 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all group">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white p-1.5 rounded-xl shadow-sm hover:animate-pulse">
+                        <img src="/img/clave.png" alt="Logo Cl@ve" class="w-8 h-8 object-contain">
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-bold text-orange-900 dark:text-orange-100">¿No tienes Cl@ve Avanzada?</h3>
+                        <p class="text-sm text-orange-700 dark:text-orange-300/80">Te explicamos cómo conseguirla paso a paso.</p>
+                    </div>
                 </div>
-                <p class="text-sm text-slate-600 dark:text-emerald-200 m-0"><strong>El SEPE es el organismo del Gobierno de España.</strong></p>
-            </div>
-            <p>Es el encargado de gestionar las prestaciones económicas. Es aquí donde tienes que:</p>
-            <ul>
-                <li><strong>Pedir el paro (la prestación contributiva).</strong></li>
-                <li>Solicitar los subsidios por desempleo (como el de mayores de 52 años).</li>
-                <li>Pedir el pago único de la prestación (para montar un negocio).</li>
-                <li>Consultar el estado de tus prestaciones o descargar certificados.</li>
-            </ul>
+                <span class="text-orange-500 group-hover:translate-x-1 transition-transform">→</span>
+            </a>
+        </div>
 
-            <h2>3. La confusión típica: ¿dónde hago cada cosa?</h2>
-            <p>Esta es la pregunta del millón. Aquí tienes la respuesta clara:</p>
-
-            <h3>Pregunta: ¿Dónde pido el paro?</h3>
-            <p><strong>En el SEPE.</strong> Es la entidad que te paga la prestación. Puedes solicitarlo online o pidiendo cita en sus oficinas.</p>
-
-            <h3>Pregunta: ¿Dónde me inscribo como demandante de empleo?</h3>
-            <p><strong>En el SAE.</strong> Es obligatorio estar inscrito en el SAE para poder cobrar el paro, pero la inscripción se hace en el SAE, no en el SEPE.</p>
-
-            <h3>Pregunta: Acabo de perder mi trabajo, ¿qué hago primero?</h3>
-            <p>Lo primero es <strong>inscribirte como demandante de empleo en el SAE</strong> (puedes hacerlo online o presencial). Luego, en un plazo de 15 días hábiles desde el despido, tienes que <strong>pedir el paro en el SEPE</strong>. Si no te inscribes primero en el SAE, el SEPE no te tramitará la prestación.</p>
-
-            <h3>Pregunta: ¿Puedo pedir cita en el SAE para el paro?</h3>
-            <p>No. La cita previa para el paro se pide en el SEPE. La del SAE es para orientación laboral, formación o para renovar la demanda.</p>
-
-            <h2>4. Cómo pedir cita previa en cada uno</h2>
-            <p>Para no equivocarte, aquí tienes los enlaces directos a las webs oficiales de cita previa.</p>
-            
-            <h3>Ir a la web del SAE (Andalucía)</h3>
-            <p>Desde la web del SAE puedes inscribirte, buscar ofertas y pedir cita para formación.</p>
-            <img src="/img/sae-1.png" alt="Pantalla de la web del SAE" class="taa-img-guia">
-            <p class="taa-cta">
-                <a class="taa-boton" href="https://www.juntadeandalucia.es/servicioandaluzdeempleo/web/websae/portal/es/index.html" target="_blank" rel="noopener noreferrer">Ir a la web del SAE</a>
-            </p>
-
-            <h3>Ir a la web del SEPE (Nacional)</h3>
-            <p>Desde la web del SEPE puedes pedir el paro, solicitar el subsidio y consultar tus datos.</p>
-            <img src="/img/sepe-1.png" alt="Pantalla de la web del SEPE" class="taa-img-guia">
-            <p class="taa-cta">
-                <a class="taa-boton" href="https://sede.sepe.gob.es/portalSede/" target="_blank" rel="noopener noreferrer">Ir a la Sede Electrónica del SEPE</a>
-            </p>
-
-            <h2>5. Preguntas Frecuentes (FAQ)</h2>
-            
-            <h3>¿El SAE y el SEPE comparten datos?</h3>
-            <p>Sí, están conectados. Cuando te inscribes en el SAE, el SEPE lo sabe automáticamente. Pero para trámites específicos, cada uno tiene su propia web.</p>
-
-            <h3>¿Si cobro el paro, tengo que renovar en el SAE?</h3>
-            <p>Normalmente, la renovación de la demanda es automática si estás cobrando la prestación. Pero si no estás cobrando nada, sí tienes que renovar (o inscribirte) en el SAE.</p>
-
-            <h3>¿Puedo pedir el paro en el SAE?</h3>
-            <p>No. El SAE no gestiona prestaciones económicas. Para pedir el paro, tienes que ir al SEPE (online o presencial).</p>
-        </article>
+        <div id="contenedor-tramites" class="grid grid-cols-1 md:grid-cols-2 gap-6" aria-live="polite">
+            <p class="col-span-full text-center text-slate-500 dark:text-emerald-300/70 animate-pulse font-medium py-10">Cargando trámites oficiales...</p>
+        </div>
     </main>
+    <div class="max-w-2xl mx-auto mt-10 mb-8">
+            <a id="btn-consulta-becas" href="#" target="_blank" rel="noopener noreferrer"
+               class="flex items-center justify-between w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-emerald-600/30 transition-all transform hover:scale-[1.02]">
+                <div class="flex items-center gap-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span class="text-lg">Consultar estado de mi beca</span>
+                </div>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </a>
+            <p class="text-xs text-center text-slate-500 dark:text-emerald-300/70 mt-2">
+                Serás redirigido a la web oficial de la Junta de Andalucía.
+            </p>
+        </div>
+    <!-- TAA:ENLACES -->
+<section class="taa-enlaces" aria-labelledby="taa-enlaces-titulo">
+  <h2 id="taa-enlaces-titulo">Todas las ayudas y trámites</h2>
+  <div class="taa-enlaces-rejilla">
+    <div>
+      <h3><a href="/categoria/educacion/">Educación</a></h3>
+      <ul><li><a href="/ayuda/bonificacion-creditos-matriculas/">Bonificación del 99 % de cada crédito aprobado en primera matrícula en universidades públicas de Andalucía</a></li><li><a href="/ayuda/libros-texto/">Gratuidad de los libros de texto</a></li><li><a href="/ayuda/beca-6000/">Beca 6000 para el alumnado que curse estudios oficiales de Bachillerato o Ciclos Formativos de Grado Medio</a></li><li><a href="/ayuda/programa-talentia-posgrado/">Programa Talentia de posgrado internacional (Máster y Doctorado)</a></li><li><a href="/ayuda/ayuda-transporte/">Ayudas individualizadas para el transporte escolar</a></li><li><a href="/ayuda/procedimiento-10239/">Ayudas a las familias para fomentar la escolarización de los niños y niñas menores de 3 años en los centros educativos de primer ciclo de educación infantil adheridos</a></li><li><a href="/ayuda/beca-adriano/">Beca Adriano</a></li><li><a href="/ayuda/procedimiento-5461/">Beca Andalucía Segunda Oportunidad dirigida a facilitar la reincorporación de las personas jóvenes al sistema educativo para obtener una titulación de Educación Secundaria</a></li><li><a href="/ayuda/ayuda-comedor-escolar/">Gratuidad/bonificación del precio público por los servicios complementarios de aula matinal, comedor escolar y actividades extraescolares en centros docentes públicos</a></li><li><a href="/ayuda/procedimiento-6344-educacion/">Ayudas para el alumnado con necesidad específica de apoyo educativo</a></li></ul>
+    </div>
+    <div>
+      <h3><a href="/categoria/empleo/">Empleo</a></h3>
+      <ul><li><a href="/ayuda/procedimiento-3106-empleo/">Becas y Ayudas al alumnado de acciones de Formación Profesional para el Empleo</a></li><li><a href="/ayuda/programa-emplea-t/">Programa Emplea-T</a></li><li><a href="/ayuda/declaracion-anual-subsidio-mayores-52/">Declaración anual de rentas del subsidio de mayores de 52 años</a></li><li><a href="/ayuda/prestacion-contributiva-desempleo/">Reconocimiento de la prestación contributiva por desempleo</a></li><li><a href="/ayuda/prorroga-subsidio-desempleo/">Reconocimiento y prórroga de subsidios por desempleo</a></li><li><a href="/ayuda/solicitud-prestaciones-subsidios-desempleo/">Solicitud de prestaciones y subsidios por desempleo en línea (SEPE)</a></li><li><a href="/ayuda/procedimiento-25342-empleo/">Fomento del trabajo autónomo en Andalucía. Línea 1. Cuota cero</a></li><li><a href="/ayuda/procedimiento-24388-empleo/">Subvenciones para la contratación por personas trabajadoras autónomas para la conciliación de la vida personal, familiar y laboral en Andalucía: Línea 4</a></li><li><a href="/ayuda/procedimiento-24389-empleo/">Subvenciones para la contratación por personas trabajadoras autónomas para la conciliación de la vida personal, familiar y laboral en Andalucía: Línea 5</a></li><li><a href="/ayuda/programa-activa-t-joven/">Programa Activa-T Joven</a></li><li><a href="/ayuda/mantenimiento-transicion/">Ayudas para el Mantenimiento de Empleo - Proyectos territoriales para el reequilibrio y la equidad </a></li></ul>
+    </div>
+    <div>
+      <h3><a href="/categoria/vivienda/">Vivienda</a></h3>
+      <ul><li><a href="/ayuda/garantia-vivienda-andalucia/">Programa Garantía Vivienda Andalucía</a></li><li><a href="/ayuda/bono-alquiler-joven/">Bono Alquiler Joven Andalucía</a></li></ul>
+    </div>
+    <div>
+      <h3><a href="/categoria/ayudas/">Ayudas</a></h3>
+      <ul><li><a href="/ayuda/ingreso-minimo-vital/">Ingreso Mínimo Vital y Complemento de ayuda a la infancia</a></li><li><a href="/ayuda/ayudas-sociales-extraordinarias-2026/">Ayudas sociales de carácter extraordinario 2026</a></li><li><a href="/ayuda/patrimonio-protegido-discapacidad/">Patrimonios protegidos y sistemas de previsión social para personas con discapacidad</a></li><li><a href="/ayuda/prestacion-asistencia-personal/">Prestación económica de asistencia personal</a></li><li><a href="/ayuda/prestacion-familiar-hijo-discapacidad/">Prestación familiar por cuidado de hijos con discapacidad</a></li><li><a href="/ayuda/prestacion-ortoprotesica/">Prestación ortoprotésica del Servicio Andaluz de Salud</a></li><li><a href="/ayuda/m-como-se-solicita-renueva/">Tarjeta Andalucía Junta 65 años</a></li><li><a href="/ayuda/procedimiento-8730/">Tarjeta de aparcamiento de vehiculos para personas con movilidad reducida</a></li><li><a href="/ayuda/procedimiento-24563/">Subvenciones individuales para personas con discapacidad</a></li></ul>
+    </div>
+    <div>
+      <h3><a href="/categoria/tramites/">Trámites</a></h3>
+      <ul><li><a href="/ayuda/procedimiento-7/">Familia Numerosa: Expedición, Renovación y Modificación del Título</a></li><li><a href="/ayuda/procedimiento-1520/">Justicia Gratuita. Solicitud de reconocimiento del derecho a la asistencia jurídica gratuita.</a></li><li><a href="/ayuda/procedimiento-6823/">Pensiones no contributivas de jubilación e incapacidad</a></li><li><a href="/ayuda/procedimiento-10660/">Prestaciones sociales a personas con discapacidad (Antigua prestación LISMI)</a></li><li><a href="/ayuda/procedimiento-mscbs-025809/">Subsidio de movilidad y compensación por gastos de transporte para personas con discapacidad</a></li><li><a href="/ayuda/area-personal-sepe/">Área Personal del SEPE</a></li><li><a href="/ayuda/cita-previa-sepe/">Cita Previa SEPE</a></li><li><a href="/ayuda/licencia-caza-pesca/">Licencia de Caza y Pesca Continental</a></li><li><a href="/ayuda/exencion-impuesto-matriculacion-discapacidad/">Modelo 05. Reconocimiento previo de determinados supuestos de no sujeción, exención o reducción en el Impuesto de Matriculación</a></li><li><a href="/ayuda/certificado-prestaciones-sepe/">Obtención de Certificados de Prestaciones por Desempleo</a></li><li><a href="/ayuda/tarjeta-sanitaria/">Tarjeta Sanitaria de Andalucía</a></li></ul>
+    </div>
+  </div>
+</section>
+<!-- /TAA:ENLACES -->
+    <button id="btn-volver-arriba" 
+            class="fixed bottom-6 right-6 z-[60] p-3 rounded-full bg-emerald-600 text-white shadow-lg shadow-emerald-600/40 hover:bg-emerald-700 transition-all duration-300 opacity-0 pointer-events-none translate-y-4"
+            aria-label="Volver arriba">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+        </svg>
+    </button>
+    <footer class="px-6 py-10 text-center text-sm text-slate-500 dark:text-emerald-300/70 relative z-10 border-t border-white/40 dark:border-emerald-500/20 mt-auto flex flex-col items-center gap-6">
+        <div>
+            <p class="mb-2">TuAsistenteAndaluz es un servicio independiente y no está vinculado a la Junta de Andalucía ni al SEPE.</p>
+            <p>
+                Información oficial en
+                <a href="https://www.juntadeandalucia.es/" target="_blank" rel="noopener noreferrer" class="text-emerald-700 dark:text-emerald-300 font-bold hover:text-emerald-600 dark:hover:text-emerald-200 transition-colors underline decoration-emerald-300 dark:decoration-emerald-500/50 decoration-2 underline-offset-4">juntadeandalucia.es</a> y
+                <a href="https://www.sepe.es/" target="_blank" rel="noopener noreferrer" class="text-emerald-700 dark:text-emerald-300 font-bold hover:text-emerald-600 dark:hover:text-emerald-200 transition-colors underline decoration-emerald-300 dark:decoration-emerald-500/50 decoration-2 underline-offset-4">sepe.es</a>
+            </p>
+        </div>
 
-    <footer class="taa-pie">
-        <p>TuAsistenteAndaluz es un servicio independiente y no está vinculado a la Junta de Andalucía ni al SEPE.</p>
-        <p><a href="/">Volver al inicio</a></p>
+        <!-- Botones de apoyo y LinkedIn -->
+        <div class="flex flex-wrap justify-center gap-3 mt-2">
+            <!-- Botón de Café -->
+            <a href="https://buymeacoffee.com/tuasistenteandaluz" target="_blank" rel="noopener noreferrer"
+               class="flex items-center gap-2 bg-amber-100 hover:bg-amber-200 dark:bg-amber-400/10 dark:hover:bg-amber-400/20 text-amber-800 dark:text-amber-200 font-bold py-2 px-4 rounded-xl border border-amber-200 dark:border-amber-400/30 transition-colors shadow-sm text-sm">
+                <span class="text-lg">☕</span> Invítame a un café
+            </a>
+
+            <!-- Botón de LinkedIn -->
+            <a href="https://linkedin.com/in/alv-fh" target="_blank" rel="noopener noreferrer"
+               class="flex items-center gap-2 bg-blue-50 hover:bg-blue-100 dark:bg-sky-400/10 dark:hover:bg-sky-400/20 text-blue-700 dark:text-sky-200 font-bold py-2 px-4 rounded-xl border border-blue-200 dark:border-sky-400/30 transition-colors shadow-sm text-sm">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+                linkedin.com/in/alv-fh
+            </a>
+        </div>
     </footer>
 
-    <script>
-    (function(){
-        var b = document.getElementById('theme-toggle');
-        if (!b) return;
-        b.onclick = function() {
-            var d = !document.documentElement.classList.contains('dark');
-            document.documentElement.classList.toggle('dark', d);
-            b.setAttribute('aria-pressed', String(d));
-            try { localStorage.setItem('theme', d ? 'dark' : 'light'); } catch(e) {}
-        };
-    })();
-    </script>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
 </body>
 </html>
