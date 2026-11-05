@@ -11,7 +11,7 @@ const aLista = (x) => (Array.isArray(x) ? x : x ? [x] : []);
 
 async function pedir(url, accept) {
   const r = await fetch(url, {
-    headers: { Accept: accept, 'User-Agent': 'TuAsistenteAndaluz/1.0' },
+    headers: { Accept: accept, 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' },
     signal: AbortSignal.timeout(30000)
   });
   if (r.status === 404) return null;

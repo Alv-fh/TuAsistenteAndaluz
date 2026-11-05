@@ -321,7 +321,7 @@ export const config = {
     maxCaracteresIa: 30000,
     palabrasClave: /beca|ayuda|subvenci|bono|matr[ií]cula|escolariza|admisi[oó]n|discapacidad|empleo|transporte|comedor|vivienda|alquiler|mayores|dependencia|paro|subsidio|sepe|tasa|licencia/i,
     // --- CONFIGURACIÓN DE LOS BOLETINES (BULLETINS) ---
-    bojaFeedUrl: 'https://www.juntadeandalucia.es/boja/distribucion/boja.xml',
+    bojaFeedUrl: 'https://www.juntadeandalucia.es/boja/distribucion/s51.xml',
     boeDiasAtras: 3,
     maxAnalisisBoletines: 15
   }
