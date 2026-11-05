@@ -1,6 +1,14 @@
 import TelegramBot from 'node-telegram-bot-api';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import { config } from './config.js';
 import { supabase } from './lib/db.js';
+
+const execFileAsync = promisify(execFile);
+
+// La misma ruta que usas tú a mano
+const SCRIPT = '/var/www/TuAsistenteAndaluz/scripts/generar-paginas.mjs';
+const RAIZ = '/var/www/TuAsistenteAndaluz';
 
 // polling: true significa que el bot se queda escuchando activamente
 const bot = new TelegramBot(config.telegram.token, { polling: true });
@@ -26,6 +34,22 @@ bot.on('callback_query', async (query) => {
       return bot.answerCallbackQuery(query.id, { text: `Error: ${error.message}`, show_alert: true });
     }
 
+    // Ejecutamos el script, igual que lo haces tú a mano
+    try {
+      const { stdout, stderr } = await execFileAsync(process.execPath, [SCRIPT], {
+        cwd: RAIZ,
+        env: process.env,
+      });
+      console.log(stdout);
+      if (stderr) console.warn(stderr);
+    } catch (e) {
+      console.error('Error ejecutando generar-paginas.mjs:', e.message);
+      return bot.answerCallbackQuery(query.id, {
+        text: `Error generando páginas: ${e.message}`,
+        show_alert: true,
+      });
+    }
+
     bot.editMessageText(`✅ *Publicado en la web:* ${slug}`, {
       chat_id: chatId,
       message_id: messageId,
@@ -36,10 +60,9 @@ bot.on('callback_query', async (query) => {
 
   // 2. SI PULSAS REVISAR
   else if (data.startsWith('review_')) {
-    // Lo marcamos en base de datos para revisarlo luego por consola
     const { error } = await supabase
       .from('tramites')
-      .update({ estado: 'Desconocido' }) // O el campo que uses para marcar pendientes
+      .update({ estado: 'Desconocido' })
       .eq('slug', slug);
 
     if (error) {
