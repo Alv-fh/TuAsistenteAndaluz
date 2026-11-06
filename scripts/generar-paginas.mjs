@@ -428,7 +428,7 @@ function paginaFicha(t, ctx) {
       <div class="taa-pasos">
         ${esc(g.como_solicitar || 'Sigue las instrucciones de la web oficial.')
         .replace(/\n/g, '<br>') // Convierte los saltos de línea en <br>
-        .replace(/(\d\.)\s/g, '<br><br><strong>$1</strong> ') // Pone en negrita los números 1. 2. 3. y les da espacio
+        .replace(/(\d\.)\s/g, '<br><strong>$1</strong> ') // Pone en negrita los números 1. 2. 3. y les da espacio
         }
       </div>
     </section>` : `
