@@ -425,10 +425,11 @@ function paginaFicha(t, ctx) {
     </section>
     <section>
       <h2>Cómo solicitarlo paso a paso</h2>
-      <div class="taa-pasos">
+      <div class="taa-pasos-contenedor">
         ${esc(g.como_solicitar || 'Sigue las instrucciones de la web oficial.')
-        .replace(/\n/g, '<br>') // Convierte los saltos de línea en <br>
-        .replace(/(\d\.)\s/g, '<br><strong>$1</strong> ') // Pone en negrita los números 1. 2. 3. y les da espacio
+          .replace(/\n/g, ' ') // 1. Quitamos los saltos de línea de la IA y los hacemos espacios
+          .replace(/(\d\.)\s/g, '<br><br><strong>$1</strong> ') // 2. Añadimos SOLO un salto de línea doble antes de cada número
+          .replace(/^<br><br>/, '') // 3. Si el texto empieza por un número, le quitamos el hueco del principio
         }
       </div>
     </section>` : `
