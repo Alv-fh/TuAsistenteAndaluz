@@ -18,7 +18,7 @@ async function generarConReintentos(prompt) {
         return await ai.models.generateContent({
           model: modelo,
           contents: prompt,
-          config: { responseMimeType: 'application/json', temperature: 0 }
+          config: { responseMimeType: 'application/json', temperature: 0, maxOutputTokens: 8192 }
         });
       } catch (e) {
         if (/404|NOT_FOUND/.test(e.message)) {
