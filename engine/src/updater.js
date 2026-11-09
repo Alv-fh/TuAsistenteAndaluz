@@ -7,6 +7,7 @@ import {
   retirarDeLaWeb,
   supabase
 } from './lib/db.js';
+import { guiaAHtml } from './lib/html.js';
 const FORZAR = process.argv.includes('--forzar'); // ignora la huella y reanaliza todo
 
 function fuentesDeFila(fila) {
@@ -30,6 +31,13 @@ async function reevaluarSinIA(fila) {
   const cambia = v.estado !== fila.estado || nuevaApertura !== (fila.fecha_apertura ?? 'No especificada');
   const cambios = { revisado_en: ahora };
   if (cambia) Object.assign(cambios, { estado: v.estado, fecha_apertura: nuevaApertura, actualizado_en: ahora });
+
+  // Si falta guia_html pero la guía existe, se genera sin gastar IA
+  const sinHtml = typeof fila.guia_html !== 'string' || !fila.guia_html.trim();
+  if (sinHtml) {
+    const html = guiaAHtml(fila.guia);
+    if (html) cambios.guia_html = html;
+  }
 
   const { error } = await supabase.from('tramites').update(cambios).eq('slug', fila.slug);
   if (error) throw new Error(`Supabase: ${error.message}`);
@@ -118,8 +126,10 @@ async function main() {
           }
         }
         
-        if (datos.guia && datos.guia.que_es) {
+        const guiaHtml = guiaAHtml(datos.guia);
+        if (guiaHtml) {
           cambios.guia = datos.guia;
+          cambios.guia_html = guiaHtml;
         }
 
         const guiaCambia = datos.guia && JSON.stringify(datos.guia) !== JSON.stringify(fila.guia);
