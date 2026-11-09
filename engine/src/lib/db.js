@@ -253,12 +253,8 @@ export async function registrarAyuda({ datos, url, slugFijo, origen, huella }) {
     if (confiable && existente.url_oficial !== url) cambios.url_oficial = url;
     if (datos.estado !== 'Desconocido') Object.assign(cambios, campos);
 
-    // Si está abierto/próximo o es manual, nos aseguramos de que esté destacado
-    if (estaAbiertoOProximo || esDestacadoManual) {
+    if (esDestacadoManual) {
       cambios.destacado = true;
-    } else if (datos.estado === 'Cerrado') {
-      // Si se cierra y no es manual, quitamos el destacado
-      cambios.destacado = false;
     }
 
     const { error } = await supabase.from('tramites').update(cambios).eq('slug', slug);
@@ -285,7 +281,7 @@ export async function registrarAyuda({ datos, url, slugFijo, origen, huella }) {
     titulo: datos.titulo,
     categoria: datos.categoria,
     cuantia: datos.cuantia ?? null,
-    destacado: estaAbiertoOProximo || esDestacadoManual || true, // <--- NUEVA AYUDA = DESTACADA SIEMPRE
+    destacado: esDestacadoManual,
     publicado: false,
     guia: datos.guia,
     url_oficial: url,
