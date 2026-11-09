@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { config } from '../config.js';
 import { sendAlert } from './telegram.js';
 import { generarJSON } from './ai.js';
+import { guiaAHtml } from './html.js';
 
 export const supabase = createClient(config.supabase.url, config.supabase.serviceKey);
 
@@ -70,7 +71,8 @@ export function limpiarGuia(g = {}) {
     requisitos: lista(g.requisitos),
     documentacion: lista(g.documentacion),
     plazos: limpiarSinCortar(g.plazos, 800),
-    como_solicitar: limpiarPasos(g.como_solicitar)
+    como_solicitar: limpiarPasos(g.como_solicitar),
+    consejos: limpiarSinCortar(g.consejos, 800)
   };
 }
 
@@ -285,6 +287,7 @@ export async function registrarAyuda({ datos, url, slugFijo, origen, huella }) {
     destacado: esDestacadoManual,
     publicado: false,
     guia: datos.guia,
+    guia_html: guiaAHtml(datos.guia),
     url_oficial: url,
     origen: origen ?? 'portal',
     ...campos
