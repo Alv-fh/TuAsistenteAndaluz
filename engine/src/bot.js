@@ -73,11 +73,16 @@ bot.on('callback_query', async (query) => {
       const { stdout, stderr } = await execFileAsync(process.execPath, [SCRIPT], {
         cwd: RAIZ,
         env: process.env,
+        timeout: 120000,
       });
       console.log(stdout);
       if (stderr) console.warn(stderr);
     } catch (e) {
       console.error('Error ejecutando generar-paginas.mjs:', e.message);
+      await bot.editMessageText(
+        '⚠️ Publicado en BD, pero falló la generación de páginas estáticas. Revisa los logs.',
+        { chat_id: chatId, message_id: messageId }
+      );
       return bot.answerCallbackQuery(query.id, {
         text: `Error generando páginas: ${e.message}`,
         show_alert: true,
@@ -115,7 +120,7 @@ bot.on('callback_query', async (query) => {
     }
 
     // D) Actualizamos el mensaje en Telegram
-    bot.editMessageText(`✅ *Publicado y subido a la web:* ${slug}`, {
+    bot.editMessageText(`✅ *Publicado y subido a la web:* ${slug}\n📄 Páginas estáticas regeneradas.`, {
       chat_id: chatId,
       message_id: messageId,
       parse_mode: 'Markdown'
