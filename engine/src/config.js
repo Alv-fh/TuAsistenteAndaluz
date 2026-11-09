@@ -6,9 +6,8 @@ dotenv.config();
 const SEDE_SEPE = 'https://sede.sepe.gob.es/portalSede/procedimientos-y-servicios/personas/proteccion-por-desempleo/';
 
 export const config = {
-  gemini: {
-    apiKey: process.env.GEMINI_API_KEY,
-    model: process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite',
+  anthropic: {
+    apiKey: process.env.ANTHROPIC_API_KEY,
   },
   supabase: {
     url: process.env.SUPABASE_URL,

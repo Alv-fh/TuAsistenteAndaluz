@@ -1,46 +1,51 @@
-import { GoogleGenAI } from '@google/genai';
+import Anthropic from '@anthropic-ai/sdk';
 import { config } from '../config.js';
 import { 
   limpiar, parseFecha, limpiarGuia, fechaHoyTexto, limpiarSinCortar 
 } from './db.js';
 
-export const ai = new GoogleGenAI({ apiKey: config.gemini.apiKey });
+export const ai = new Anthropic({ apiKey: config.anthropic.apiKey });
 
-const MODELOS = [...new Set([config.gemini.model, 'gemini-3.6-flash', 'gemini-3.5-flash-lite'])];
+const MODELO = 'claude-3-5-sonnet-latest';
+const MAX_INTENTOS = 4;
+const CODIGOS_REINTENTABLES = [429, 500, 503, 529];
 const ESTADOS = ['Abierto', 'Próximamente', 'Cerrado', 'Desconocido'];
 const CATEGORIAS = ['Educación', 'Empleo', 'Vivienda', 'Ayudas', 'Trámites'];
 
-async function generarConReintentos(prompt) {
-  for (const modelo of MODELOS) {
-    for (let intento = 1; intento <= 4; intento++) {
-      try {
-        console.log(`   ${modelo} (intento ${intento}/4)`);
-        return await ai.models.generateContent({
-          model: modelo,
-          contents: prompt,
-          config: { responseMimeType: 'application/json', temperature: 0, maxOutputTokens: 8192 }
-        });
-      } catch (e) {
-        if (/404|NOT_FOUND/.test(e.message)) {
-          console.log(`   Modelo ${modelo} no disponible, paso al siguiente.`);
-          break;
-        }
-        if (!/503|UNAVAILABLE|429|RESOURCE_EXHAUSTED/.test(e.message)) throw e;
-        console.log(`   ${modelo} saturado, esperando...`);
-        await new Promise(r => setTimeout(r, 5000 * intento));
-      }
+async function generarConReintentos(params) {
+  for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
+    try {
+      console.log(`   ${MODELO} (intento ${intento}/${MAX_INTENTOS})`);
+      return await ai.messages.create({
+        model: MODELO,
+        max_tokens: 8192,
+        temperature: 0,
+        ...params
+      });
+    } catch (e) {
+      const reintentable = CODIGOS_REINTENTABLES.includes(e.status);
+      if (!reintentable || intento === MAX_INTENTOS) throw e;
+      console.log(`   ${MODELO} saturado (${e.status}), esperando...`);
+      await new Promise(r => setTimeout(r, 5000 * intento));
     }
   }
-  throw new Error('Ningún modelo disponible, o todos están saturados.');
 }
 
-export async function generarJSON(prompt) {
-  const respuesta = await generarConReintentos(prompt);
+export async function generarJSON(prompt, system = null) {
+  const params = { messages: [{ role: 'user', content: prompt }] };
+  if (system) params.system = system;
+
+  const respuesta = await generarConReintentos(params);
+  const texto = respuesta.content
+    .filter((bloque) => bloque.type === 'text')
+    .map((bloque) => bloque.text)
+    .join('');
+
   try {
-    return JSON.parse(respuesta.text);
+    return JSON.parse(texto);
   } catch (e) {
     console.log('   [Aviso] JSON con caracteres inválidos, limpiando y reintentando...');
-    const limpio = respuesta.text.replace(/[\u0000-\u001F]+/g, " ");
+    const limpio = texto.replace(/[\u0000-\u001F]+/g, " ");
     return JSON.parse(limpio);
   }
 }
@@ -92,7 +97,10 @@ TEXTO:
 ${texto.substring(0, config.crawler.maxCaracteresIa ?? 30000)}
 `;
 
-  const d = await generarJSON(prompt);
+  const d = await generarJSON(
+    prompt,
+    'Devuelves únicamente un objeto JSON válido, sin bloques de código markdown ni texto adicional.'
+  );
   if (!d.es_ayuda) return null;
 
   if (!limpiar(d.titulo, 200)) throw new Error('La IA no devolvió título.');
