@@ -6,7 +6,7 @@ import {
 
 export const ai = new Anthropic({ apiKey: config.anthropic.apiKey });
 
-export const MODELO = 'claude-3-5-sonnet-latest';
+export const MODELO = process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5';
 const MAX_INTENTOS = 4;
 const CODIGOS_REINTENTABLES = [429, 500, 503, 529];
 const ESTADOS = ['Abierto', 'Próximamente', 'Cerrado', 'Desconocido'];
@@ -19,10 +19,14 @@ async function generarConReintentos(params) {
       return await ai.messages.create({
         model: MODELO,
         max_tokens: 4096,
-        temperature: 0,
         ...params
       });
     } catch (e) {
+      if (e.status === 400) {
+        console.error(`   [Error 400] Anthropic rechazó la petición (modelo: ${MODELO}): ${e.message}`);
+        console.error(`   Cuerpo del error: ${JSON.stringify(e.error ?? null)}`);
+        throw e;
+      }
       const reintentable = CODIGOS_REINTENTABLES.includes(e.status);
       if (!reintentable || intento === MAX_INTENTOS) throw e;
       console.log(`   ${MODELO} saturado (${e.status}), esperando...`);
