@@ -32,3 +32,4 @@ tests/
 # Logs
 logs/
 *.log
+.aider*

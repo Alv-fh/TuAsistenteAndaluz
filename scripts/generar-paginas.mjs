@@ -484,26 +484,30 @@ function paginaFicha(t, ctx) {
   ].filter(Boolean).join('\n      ');
 
   const secciones = g ? `
-    <section>
-      <h2>¿En qué consiste?</h2>
-      <p>${esc(g.que_es)}</p>
-    </section>
-    ${requisitos.length ? `<section>
-      <h2>Requisitos principales</h2>
-      <ul>${requisitos.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>
-    </section>` : ''}
-    <section>
-      <h2>Plazos</h2>
-      <p>${esc(g.plazos || 'Consulta los plazos exactos en la web oficial.')}</p>
-    </section>
-    <section>
-      <h2>Cómo solicitarlo paso a paso</h2>
-      ${bloquePasos(g.como_solicitar)}
-    </section>` : `
-    <section>
-      <h2>Información</h2>
-      <p>Todavía no tenemos la guía de este trámite. Consulta los datos completos en la web oficial.</p>
-    </section>`;
+  <section>
+    <h2>¿En qué consiste?</h2>
+    <p>${esc(g.que_es)}</p>
+  </section>
+  ${requisitos.length ? `<section>
+    <h2>Requisitos principales</h2>
+    <ul>${requisitos.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>
+  </section>` : ''}
+  <section>
+    <h2>Plazos</h2>
+    <p>${esc(g.plazos || 'Consulta los plazos exactos en la web oficial.')}</p>
+  </section>
+  ${g.consejos ? `<section>
+    <h2>💡 Consejos y avisos importantes</h2>
+    <p>${esc(g.consejos)}</p>
+  </section>` : ''}
+  <section>
+    <h2>Cómo solicitarlo paso a paso</h2>
+    ${bloquePasos(g.como_solicitar)}
+  </section>` : `
+  <section>
+    <h2>Información</h2>
+    <p>Todavía no tenemos la guía de este trámite. Consulta los datos completos en la web oficial.</p>
+  </section>`;
 
   const cuerpo = `<main class="taa-main">
   <nav class="taa-migas" aria-label="Migas de pan">
