@@ -6,7 +6,8 @@ import {
 
 export const ai = new Anthropic({ apiKey: config.anthropic.apiKey });
 
-export const MODELO = process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5';
+// Solo para logs: el modelo real lo lee llamarClaude() de process.env.ANTHROPIC_MODEL en cada llamada
+export const MODELO = process.env.ANTHROPIC_MODEL;
 const MAX_INTENTOS = 4;
 const CODIGOS_REINTENTABLES = [429, 500, 503, 529];
 const ESTADOS = ['Abierto', 'Próximamente', 'Cerrado', 'Desconocido'];
@@ -29,48 +30,64 @@ function sinRelleno(texto) {
   return GENERICOS.has(normalizado) ? null : t;
 }
 
-async function generarConReintentos(params) {
+// ÚNICO punto de entrada a la API de Anthropic. Envía solo: model, max_tokens, system y messages
+// (sin temperature, top_p, top_k, stop_sequences, response_format ni prefill).
+// Devuelve el texto concatenado de los bloques de tipo "text".
+export async function llamarClaude({ system = null, user, maxTokens = 1500 }) {
+  const modelo = process.env.ANTHROPIC_MODEL;
+  if (!modelo) {
+    throw new Error('Falta la variable de entorno ANTHROPIC_MODEL (ej. ANTHROPIC_MODEL=claude-sonnet-5-5) en el .env.');
+  }
+
+  const params = {
+    model: modelo,
+    max_tokens: maxTokens,
+    messages: [{ role: 'user', content: user }]
+  };
+  if (system) params.system = String(system);
+
   for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
     try {
-      console.log(`   ${MODELO} (intento ${intento}/${MAX_INTENTOS})`);
-      return await ai.messages.create({
-        model: MODELO,
-        max_tokens: 4096,
-        ...params
-      });
+      console.log(`   ${modelo} (intento ${intento}/${MAX_INTENTOS})`);
+      const respuesta = await ai.messages.create(params);
+      return respuesta.content
+        .filter((bloque) => bloque.type === 'text')
+        .map((bloque) => bloque.text)
+        .join('');
     } catch (e) {
       if (e.status === 400) {
-        console.error(`   [Error 400] Anthropic rechazó la petición (modelo: ${MODELO}): ${e.message}`);
+        console.error(`   [Error 400] Anthropic rechazó la petición (modelo: ${modelo}): ${e.message}`);
         console.error(`   Cuerpo del error: ${JSON.stringify(e.error ?? null)}`);
         throw e;
       }
       const reintentable = CODIGOS_REINTENTABLES.includes(e.status);
       if (!reintentable || intento === MAX_INTENTOS) throw e;
-      console.log(`   ${MODELO} saturado (${e.status}), esperando...`);
-      await new Promise(r => setTimeout(r, 5000 * intento));
+      console.log(`   ${modelo} saturado (${e.status}), esperando...`);
+      await new Promise((r) => setTimeout(r, 5000 * intento));
     }
   }
 }
 
-export async function generarJSON(prompt, system = null) {
-  const params = { messages: [{ role: 'user', content: prompt }] };
-  if (system) params.system = system;
+// Quita los bloques ```json, localiza el primer { o [ y el último } o ], y parsea.
+export function extraerJSON(texto) {
+  const limpio = String(texto ?? '').replace(/```(?:json)?/gi, '').trim();
+  const inicio = limpio.search(/[[{]/);
+  const fin = Math.max(limpio.lastIndexOf('}'), limpio.lastIndexOf(']'));
+  if (inicio === -1 || fin <= inicio) {
+    throw new SyntaxError('No se encontró JSON en la respuesta de la IA.');
+  }
+  return JSON.parse(limpio.slice(inicio, fin + 1));
+}
 
-  const respuesta = await generarConReintentos(params);
-  const texto = respuesta.content
-    .filter((bloque) => bloque.type === 'text')
-    .map((bloque) => bloque.text)
-    .join('')
-    .replace(/^\s*```(?:json)?\s*/i, '')
-    .replace(/\s*```\s*$/, '');
+export async function generarJSON(prompt, system = null, maxTokens = 4096) {
+  const texto = await llamarClaude({ system, user: prompt, maxTokens });
 
   try {
-    return JSON.parse(texto);
-  } catch (e) {
+    return extraerJSON(texto);
+  } catch {
     console.log('   [Aviso] JSON con caracteres inválidos, limpiando y reintentando...');
-    const limpio = texto.replace(/[\u0000-\u001F]+/g, " ");
     try {
-      return JSON.parse(limpio);
+      return extraerJSON(texto.replace(/[\u0000-\u001F]+/g, ' '));
     } catch (e2) {
       e2.textoCrudo = texto;
       throw e2;
