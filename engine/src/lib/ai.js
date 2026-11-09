@@ -106,7 +106,7 @@ ${texto.substring(0, config.crawler.maxCaracteresIa)}
     titulo: limpiar(d.titulo, 200),
     categoria: categoriaFija || (CATEGORIAS.includes(d.categoria) ? d.categoria : 'Ayudas'),
     estado: d.estado,
-    destacado: Boolean(d.destacado),
+    destacado: false,
     cuantia: limpiar(d.cuantia, 60) || null,
     fecha_apertura: fechaOpcional(d.fecha_apertura),
     fecha_cierre: fechaOpcional(d.fecha_cierre),
