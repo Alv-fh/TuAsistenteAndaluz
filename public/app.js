@@ -277,6 +277,18 @@ function mostrarGuia(tramite) {
           <h3 class="${claseH3}">📝 Cómo solicitarlo paso a paso</h3>
           <p class="leading-relaxed whitespace-pre-line">${esc(guia.como_solicitar || 'Sigue las instrucciones de la web oficial.')}</p>
         </div>
+  `;
+
+  if (guia.consejos) {
+    bodyHtml += `
+        <div>
+          <h3 class="${claseH3}">⚠️ Consejos y avisos</h3>
+          <p class="leading-relaxed whitespace-pre-line">${esc(guia.consejos)}</p>
+        </div>
+    `;
+  }
+
+  bodyHtml += `
       </div>
     </div>
   `;
