@@ -25,6 +25,7 @@ import { fileURLToPath } from 'node:url';
 //   node engine/src/updater.js --vacias                 solo filas con guia/guia_html vacíos
 //   node engine/src/updater.js --reanalizar-todo        reanaliza TODAS las filas (ignora el hash)
 //   node engine/src/updater.js --solo-publicadas        atajo de --reanalizar-todo limitado a publicado=true
+//   node engine/src/updater.js --solo-cuarentena        atajo de --reanalizar-todo limitado a publicado=false
 //   Modificadores: --limite=N (0 = sin límite) y --dry-run (no llama a la IA ni escribe en Supabase)
 let args;
 try {
@@ -35,6 +36,7 @@ try {
       vacias: { type: 'boolean', default: false },
       'reanalizar-todo': { type: 'boolean', default: false },
       'solo-publicadas': { type: 'boolean', default: false },
+      'solo-cuarentena': { type: 'boolean', default: false },
       limite: { type: 'string', default: '0' },
       'dry-run': { type: 'boolean', default: false }
     },
@@ -49,13 +51,19 @@ const FORZAR = args.forzar; // ignora la huella y reanaliza la fila indicada con
 const SLUG = args.slug?.trim() || null;
 const SOLO_VACIAS = args.vacias;
 const SOLO_PUBLICADAS = args['solo-publicadas'];
-const REANALIZAR_TODO = args['reanalizar-todo'] || SOLO_PUBLICADAS; // --solo-publicadas es un atajo
+const SOLO_CUARENTENA = args['solo-cuarentena'];
+const REANALIZAR_TODO = args['reanalizar-todo'] || SOLO_PUBLICADAS || SOLO_CUARENTENA; // los --solo-* son atajos
 const DRY_RUN = args['dry-run'];
 const LIMITE = Number(args.limite);
 const COOLDOWN_MS = 24 * 60 * 60 * 1000; // una fila vacía no se reanaliza si se revisó hace menos de 24 h
 
 if (FORZAR && !SLUG) {
   console.error('Error: --forzar requiere --slug=<slug> (ejemplo: --slug=beca-adriano --forzar).');
+  process.exit(1);
+}
+
+if (SOLO_PUBLICADAS && SOLO_CUARENTENA) {
+  console.error('Error: --solo-publicadas y --solo-cuarentena son mutuamente excluyentes.');
   process.exit(1);
 }
 
@@ -317,6 +325,7 @@ async function main() {
     .from('tramites').select('*').order('revisado_en', { ascending: true, nullsFirst: true });
   if (SLUG) consulta = consulta.eq('slug', SLUG);
   if (SOLO_PUBLICADAS) consulta = consulta.eq('publicado', true);
+  if (SOLO_CUARENTENA) consulta = consulta.eq('publicado', false);
 
   const { data, error } = await consulta;
   if (error) throw new Error(`Supabase: ${error.message}`);
@@ -337,6 +346,7 @@ async function main() {
     FORZAR && 'forzado',
     REANALIZAR_TODO && 'reanálisis completo',
     SOLO_PUBLICADAS && 'solo publicadas',
+    SOLO_CUARENTENA && 'solo cuarentena',
     LIMITE > 0 && `límite=${LIMITE}`,
     DRY_RUN && 'DRY-RUN'
   ].filter(Boolean).join(', ');
