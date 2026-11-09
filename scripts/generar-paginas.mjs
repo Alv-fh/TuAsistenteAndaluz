@@ -425,21 +425,39 @@ function cortarEnPalabra(texto, max) {
   return base.replace(/[\s,;:.\-–(]+$/, '');
 }
 
+// Quita los paréntesis y su contenido (también uno sin cerrar):
+// "Beca Adriano (ayuda para facilitar la permanencia...)" -> "Beca Adriano"
+function tituloLimpio(titulo) {
+  const original = String(titulo ?? '').replace(/\s+/g, ' ').trim();
+  const limpio = original
+    .replace(/\([^)]*(\)|$)/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/[\s,;:.\-–]+$/, '');
+  return limpio || original;
+}
+
 // <title> de la ficha: Google trunca a ~60 caracteres
 function tituloSeo(titulo, categoria) {
-  const t = String(titulo ?? '').replace(/\s+/g, ' ').trim();
+  const t = tituloLimpio(titulo);
+  const cat = String(categoria ?? '').trim();
+
+  // 1) Con la categoría, si cabe
+  const conCategoria = cat ? `${t} | ${cat}` : '';
+  if (conCategoria && conCategoria.length <= 60) return conCategoria;
+
+  // 2) Solo el título, si cabe
   if (t.length <= 60) return t;
 
-  const corto = cortarEnPalabra(t, 55) + '...';
-  const cat = String(categoria ?? '').trim();
-  const conCategoria = cat ? `${corto} | ${cat}` : '';
-  return conCategoria && conCategoria.length <= 60 ? conCategoria : corto.slice(0, 60);
+  // 3) Si aún supera 60, se corta en la última palabra completa
+  return cortarEnPalabra(t, 60);
 }
 
 // Meta description de 120-155 caracteres
 function metaDescription(titulo, categoria, guia, cuantia = guia?.cuantia) {
-  const corto = cortarEnPalabra(titulo, 50);
-  const nombre = corto.length < String(titulo ?? '').trim().length ? `${corto}…` : corto;
+  const limpio = tituloLimpio(titulo);
+  const corto = cortarEnPalabra(limpio, 50);
+  const nombre = corto.length < limpio.length ? `${corto}…` : corto;
   const importe = cortarEnPalabra(cuantia, 40);
 
   let d = importe
@@ -463,6 +481,7 @@ function paginaFicha(t, ctx) {
   const { h1 } = titulosSEO(t, operador); // el h1 mantiene el título completo
   const cat = ctx.categoriaDe(t);
   const title = tituloSeo(t.titulo, cat.nombre);
+  ctx.titulos?.push({ slug: t.slug, title });
   const descripcion = metaDescription(t.titulo, cat.nombre, t.guia, t.cuantia);
   const g = t.guia;
 
@@ -732,7 +751,7 @@ async function main() {
   });
 
   const hayPrivacidad = await existe(path.join(PUBLIC, 'privacidad.html'));
-  const ctx = { ahora, categorias, hayPrivacidad, porCategoria, categoriaDe };
+  const ctx = { ahora, categorias, hayPrivacidad, porCategoria, categoriaDe, titulos: [] };
 
   // Todo se genera EN MEMORIA primero; solo si va bien se borra lo anterior y se escribe.
   const archivos = [];
@@ -764,6 +783,8 @@ async function main() {
   }
 
   console.log(`\nListo: ${tramites.length} fichas, ${categorias.length} categorías, ${entradas.length} URLs en el sitemap.`);
+  console.log('\nTítulos generados (<title>):');
+  for (const x of ctx.titulos) console.log(` - ${x.slug} (${x.title.length}): ${x.title}`);
   console.log(homeOk
     ? 'Home: bloque de enlaces actualizado.'
     : 'Home: NO se actualizó. Añade en public/index.html (antes del <footer>) estas dos líneas:\n   <!-- TAA:ENLACES -->\n   <!-- /TAA:ENLACES -->');
