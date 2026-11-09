@@ -323,5 +323,9 @@ export const config = {
     bojaFeedUrl: 'https://www.juntadeandalucia.es/boja/distribucion/s51.xml',
     boeDiasAtras: 3,
     maxAnalisisBoletines: 15
+  },
+  rss: {
+    bojaUrl: 'https://www.juntadeandalucia.es/eboja/rss/boja.xml',
+    palabrasClave: /subvenci|ayuda|beca|bono|convocatoria/i
   }
 }

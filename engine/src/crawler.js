@@ -1,3 +1,4 @@
+import Parser from 'rss-parser';
 import { config } from './config.js';
 import { ai, analizarAyuda, MODELO } from './lib/ai.js';
 import { abrirNavegador, leerFuentes, leerPagina } from './lib/browser.js';
@@ -72,13 +73,38 @@ ${lista}
     .map((i) => candidatos[i].href);
 }
 
+// Lee el RSS del BOJA y devuelve las URLs de los ítems cuyo título parece una ayuda.
+// Si el feed falla, devuelve [] y el crawler sigue con las URLs estáticas de config.js.
+async function escanearRSS() {
+  const { bojaUrl, palabrasClave } = config.rss;
+  try {
+    const parser = new Parser({ timeout: 15000 });
+    const feed = await parser.parseURL(bojaUrl);
+    const items = feed.items ?? [];
+    const urls = new Set();
+    for (const item of items) {
+      if (!palabrasClave.test(item.title ?? '')) continue;
+      const url = normalizarUrl(item.link ?? '');
+      if (url) urls.add(url);
+    }
+    console.log(`RSS BOJA: ${items.length} ítems, ${urls.size} candidatos a ayuda.`);
+    return [...urls];
+  } catch (e) {
+    console.error(`RSS BOJA no disponible (${e.message}). Sigo con las URLs estáticas.`);
+    return [];
+  }
+}
+
 async function iniciarArana() {
   const conocidas = await cargarUrlsConocidas();
   console.log(`URLs que ya pertenecen a un trámite: ${conocidas.size} (las mantiene updater.js)`);
 
+  const urlsRss = await escanearRSS();
+
   const { navegador, pagina } = await abrirNavegador();
 
   const cola = [
+    ...urlsRss.map((u) => ({ url: u, profundidad: config.crawler.maxProfundidad })),
     ...config.crawler.portadas.map((u) => ({ url: u, profundidad: 0 })),
     ...config.crawler.urlsDirectas.map((d) => ({ ...d, profundidad: config.crawler.maxProfundidad }))
   ];
