@@ -97,7 +97,7 @@ async function itemsBOJA() {
     return [];
   }
   try {
-    const r = await pedir(config.crawler.bojaFeedUrl, 'application/rss+xml, application/atom+xml, application/xml, text/xml');
+    const r = await pedir(config.crawler.bojaFeedUrl, '*/*');
     if (!r) return [];
     const xml = await r.text();
     const bloques = [...xml.matchAll(/<(item|entry)\b[\s\S]*?<\/\1>/gi)].map((m) => m[0]);

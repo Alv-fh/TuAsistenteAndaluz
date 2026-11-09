@@ -24,11 +24,11 @@ ${emoji} *${tituloAccion}* ${emoji}
     reply_markup: {
       inline_keyboard: [
         [
-          { text: '✅ Publicar ahora', callback_data: `publish_${tramite.slug}` },
-          { text: '🔍 Marcar para revisar', callback_data: `review_${tramite.slug}` }
+          { text: '✅ Publicar ahora', callback_data: `publish_${tramite.slug.substring(0, 50)}` }, // Recortamos a 50 para que quepa
+          { text: '🔍 Marcar para revisar', callback_data: `review_${tramite.slug.substring(0, 50)}` }
         ],
         [
-          { text: '❌ Ignorar', callback_data: `ignore_${tramite.slug}` }
+          { text: '❌ Ignorar', callback_data: `ignore_${tramite.slug.substring(0, 50)}` }
         ]
       ]
     }

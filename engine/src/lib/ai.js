@@ -36,7 +36,14 @@ async function generarConReintentos(prompt) {
 
 export async function generarJSON(prompt) {
   const respuesta = await generarConReintentos(prompt);
-  return JSON.parse(respuesta.text);
+  try {
+    return JSON.parse(respuesta.text);
+  } catch (e) {
+    // Si la IA mete un salto de línea invisible o un tabulador, lo limpiamos y reintentamos
+    console.log('   [Aviso] JSON con caracteres inválidos, limpiando y reintentando...');
+    const limpio = respuesta.text.replace(/[\u0000-\u001F]+/g, " ");
+    return JSON.parse(limpio);
+  }
 }
 
 export async function analizarAyuda(texto, url, categoriaFija) {
