@@ -84,6 +84,16 @@ export const config = {
         categoria: 'Medio Ambiente',
         fuentes: ['https://www.juntadeandalucia.es/medioambiente/portal/web/caza-y-pesca/licencias-tasas/licencias-caza-pesca']
       },
+          // Beca Adriano (Forzada)
+      {
+        url: 'https://www.juntadeandalucia.es/educacion/portales/web/educacion/becas-ayudas/becas/beca-adriano',
+        slug: 'beca-adriano',
+        categoria: 'Educación',
+        fuentes: [
+          'https://www.juntadeandalucia.es/educacion/portales/web/educacion/becas-ayudas/becas/beca-adriano',
+          'https://www.juntadeandalucia.es/organismos/educacion/servicios/procedimientos/detalle/6377.html'
+        ]
+      },
       // Garantía Vivienda Andalucía
       {
         url: 'https://www.juntadeandalucia.es/organismos/viviendajuventudyordenaciondelterritorio/areas/vivienda-rehabilitacion/programa-garantia-vivienda.html',
