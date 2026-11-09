@@ -61,7 +61,6 @@ async function analizarNovedadesBoja(texto) {
       "categoria": "Educación, Empleo, Vivienda o Ayudas",
       "estado": "Abierto",
       "fecha_cierre": "Calcula la fecha de fin de plazo si se menciona, si no, pon 'Consultar'",
-      "destacado": true,
       "publicado": false,
       "url_oficial": "https://www.juntadeandalucia.es/organismos...",
       "guia_html": "REDACTA AQUÍ UNA GUÍA EN HTML. Usa SÓLO: <h3>, <p>, <ul>, <li>, <strong>, <a href='...'>. NADA de markdown.\\n\\n1. <h3>¿Qué es esta nueva ayuda?</h3> <p>Explicación sencilla.</p>\\n2. <h3>Requisitos principales</h3> <ul>...</ul>\\n3. <h3>Plazos detectados</h3> <p>...</p>\\n4. <h3>Cómo solicitarlo</h3> <p>Pasos mencionados y enlaces a PDFs.</p>"
@@ -93,6 +92,8 @@ async function analizarNovedadesBoja(texto) {
 
 async function guardarEnBaseDeDatos(datos) {
   console.log("💾 Guardando el nuevo trámite en Supabase (En Cuarentena)...");
+  // El destacado lo decide solo el campo "destacado" de Supabase: no se toca desde aquí
+  delete datos.destacado;
   const { error } = await supabase.from('tramites').upsert(datos, { onConflict: 'slug' });
   
   if (error) {
