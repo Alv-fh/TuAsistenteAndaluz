@@ -100,10 +100,13 @@ async function escanearUltimoBOJA() {
     const $ = load(html);
 
     const urls = new Set();
-    $('li').each((_, li) => {
-      const $li = $(li);
-      if (!config.rss.palabrasClave.test($li.text())) return;
-      const href = $li.find('a[href$=".html"]').first().attr('href');
+    $('a').each((_, a) => {
+      const $a = $(a);
+      if ($a.text().trim() !== 'Otros formatos') return;
+      // El <div> más cercano contiene el título de la disposición y sus enlaces.
+      const contenedor = $a.closest('div').text();
+      if (!config.rss.palabrasClave.test(contenedor)) return;
+      const href = $a.attr('href');
       const url = href ? resolverUrl(href, urlBoletin) : null;
       if (url) urls.add(url);
     });
