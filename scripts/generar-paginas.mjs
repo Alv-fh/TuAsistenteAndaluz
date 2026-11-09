@@ -37,7 +37,7 @@ const DOMINIOS_OFICIALES = ['juntadeandalucia.es', 'boe.es', 'sepe.es', 'sepe.go
 const COLUMNAS = [
   'id', 'created_at', 'slug', 'titulo', 'categoria', 'estado', 'cuantia',
   'fecha_apertura', 'fecha_cierre', 'proxima_apertura', 'apertura_estimada',
-  'destacado', 'url_oficial', 'guia', 'fuentes_extra', 'actualizado_en', 'revisado_en'
+  'destacado', 'url_oficial', 'guia', 'guia_html', 'fuentes_extra', 'actualizado_en', 'revisado_en'
 ].join(',');
 
 const ORDEN_CATEGORIAS = ['educacion', 'empleo', 'vivienda', 'ayudas', 'tramites'];
@@ -197,7 +197,13 @@ async function cargarTramites() {
     return JSON.parse(await fs.readFile(process.argv[i + 1], 'utf8'));
   }
   const { url, key } = await credenciales();
-  const q = new URLSearchParams({ select: COLUMNAS, publicado: 'eq.true', order: 'id.asc', limit: '1000' });
+  const q = new URLSearchParams({
+    select: COLUMNAS,
+    publicado: 'eq.true',
+    and: '(guia_html.not.is.null,guia_html.neq.)', // solo trámites con guía HTML
+    order: 'id.asc',
+    limit: '1000'
+  });
   const r = await fetch(`${url}/rest/v1/tramites?${q}`, {
     headers: { apikey: key, Authorization: `Bearer ${key}` }
   });
@@ -657,6 +663,7 @@ async function main() {
   for (const r of crudos.map(normalizarRegistro)) {
     if (!r.titulo || !r.slug) { advertencias.push(`Fila sin título o slug (id ${r.id ?? '?'}): omitida.`); continue; }
     if (!SLUG_VALIDO.test(r.slug)) { advertencias.push(`Slug no válido "${r.slug}": omitido.`); continue; }
+    if (typeof r.guia_html !== 'string' || !r.guia_html.trim()) { advertencias.push(`"${r.slug}" sin guia_html: omitido.`); continue; }
     if (vistos.has(r.slug)) { advertencias.push(`Slug repetido "${r.slug}": omitido.`); continue; }
     vistos.add(r.slug);
     if (!r.guia?.que_es) advertencias.push(`"${r.slug}" no tiene guía (página con poco contenido).`);

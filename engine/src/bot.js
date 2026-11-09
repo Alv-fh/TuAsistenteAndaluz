@@ -30,7 +30,35 @@ bot.on('callback_query', async (query) => {
   if (data.startsWith('publish_')) {
     bot.answerCallbackQuery(query.id, { text: 'Publicando y desplegando...' });
 
-    // A) Actualizamos Supabase
+    // A.1) Comprobamos que la guía esté generada antes de publicar
+    const { data: tramite, error: errorLectura } = await supabase
+      .from('tramites')
+      .select('guia, guia_html')
+      .eq('slug', slug)
+      .single();
+
+    if (errorLectura || !tramite) {
+      return bot.answerCallbackQuery(query.id, {
+        text: `Error en BD: ${errorLectura?.message ?? 'trámite no encontrado'}`,
+        show_alert: true,
+      });
+    }
+
+    const tieneGuia = Boolean(tramite.guia) && typeof tramite.guia === 'object' && Object.keys(tramite.guia).length > 0;
+    const tieneHtml = typeof tramite.guia_html === 'string' && tramite.guia_html.trim().length > 0;
+
+    if (!tieneGuia || !tieneHtml) {
+      await bot.editMessageText(
+        '⚠️ Error: No puedo publicar. La guía aún no ha sido generada por la IA o está incompleta. Vuelve a intentarlo cuando el crawler haya terminado.',
+        { chat_id: chatId, message_id: messageId }
+      );
+      return bot.answerCallbackQuery(query.id, {
+        text: 'La guía no está lista. No se ha publicado.',
+        show_alert: true,
+      });
+    }
+
+    // A.2) Actualizamos Supabase
     const { error } = await supabase
       .from('tramites')
       .update({ publicado: true, actualizado_en: new Date().toISOString() })
