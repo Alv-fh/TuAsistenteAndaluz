@@ -200,7 +200,6 @@ async function cargarTramites() {
   const q = new URLSearchParams({
     select: COLUMNAS,
     publicado: 'eq.true',
-    and: '(guia_html.not.is.null,guia_html.neq.)', // solo trámites con guía HTML
     order: 'id.asc',
     limit: '1000'
   });
