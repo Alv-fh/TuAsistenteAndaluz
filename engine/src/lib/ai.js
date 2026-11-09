@@ -52,11 +52,17 @@ export async function generarJSON(prompt, system = null) {
   } catch (e) {
     console.log('   [Aviso] JSON con caracteres inválidos, limpiando y reintentando...');
     const limpio = texto.replace(/[\u0000-\u001F]+/g, " ");
-    return JSON.parse(limpio);
+    try {
+      return JSON.parse(limpio);
+    } catch (e2) {
+      e2.textoCrudo = texto;
+      throw e2;
+    }
   }
 }
 
 export async function analizarAyuda(texto, url, categoriaFija) {
+  console.log(`   Analizando con modelo: ${MODELO}`);
   const prompt = `
 Eres un gestor administrativo experto y empático de la Junta de Andalucía y el SEPE.
 Tu objetivo NO es hacer un resumen, sino TRADUCIR el texto oficial a una guía práctica "mascadita" para que un ciudadano normal no se equivoque, no pierda el tiempo y no se vuelva loco con la burocracia.
@@ -103,11 +109,24 @@ TEXTO:
 ${texto.substring(0, config.crawler.maxCaracteresIa ?? 30000)}
 `;
 
-  const d = await generarJSON(
-    prompt,
-    'Devuelves únicamente un objeto JSON válido, sin bloques de código markdown ni texto adicional.'
-  );
+  let d;
+  try {
+    d = await generarJSON(
+      prompt,
+      'Devuelves únicamente un objeto JSON válido, sin bloques de código markdown ni texto adicional.'
+    );
+  } catch (e) {
+    if (!(e instanceof SyntaxError)) throw e;
+    console.error(`Error parseando JSON de Claude: ${e.message}`);
+    console.error(`Respuesta cruda (primeros 500 chars): ${String(e.textoCrudo ?? '').slice(0, 500)}`);
+    throw e;
+  }
   if (!d.es_ayuda) return null;
+
+  if (!d.guia || typeof d.guia !== 'object' || !Array.isArray(d.guia.como_solicitar)) {
+    console.warn(`   JSON mal formado: como_solicitar no es array, es ${typeof d.guia?.como_solicitar}`);
+    return null;
+  }
 
   if (!limpiar(d.titulo, 200)) throw new Error('La IA no devolvió título.');
   if (!ESTADOS.includes(d.estado)) throw new Error(`Estado no válido: ${d.estado}`);
