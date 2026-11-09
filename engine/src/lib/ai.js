@@ -6,7 +6,7 @@ import {
 
 export const ai = new Anthropic({ apiKey: config.anthropic.apiKey });
 
-const MODELO = 'claude-3-5-sonnet-latest';
+export const MODELO = 'claude-3-5-sonnet-latest';
 const MAX_INTENTOS = 4;
 const CODIGOS_REINTENTABLES = [429, 500, 503, 529];
 const ESTADOS = ['Abierto', 'Próximamente', 'Cerrado', 'Desconocido'];

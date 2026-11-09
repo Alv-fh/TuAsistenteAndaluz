@@ -1,5 +1,5 @@
 import { config } from './config.js';
-import { analizarAyuda, generarJSON } from './lib/ai.js';
+import { ai, analizarAyuda, MODELO } from './lib/ai.js';
 import { abrirNavegador, leerFuentes, leerPagina } from './lib/browser.js';
 import {
   cargarUrlsConocidas,
@@ -15,7 +15,6 @@ import {
 
 // La IA solo devuelve NÚMEROS de una lista; las URLs las valida el código.
 async function elegirEnlacesConIA(enlaces, urlPagina) {
-  console.log('   [DEBUG] generarJSON es:', typeof generarJSON);
   const vistos = new Set();
   const candidatos = [];
   for (const e of enlaces) {
@@ -49,7 +48,23 @@ ENLACES:
 ${lista}
 `;
 
-  const r = await generarJSON(prompt);
+  const respuesta = await ai.messages.create({
+    model: MODELO,
+    max_tokens: 512,
+    temperature: 0,
+    system: 'Devuelves únicamente un objeto JSON válido, sin bloques de código markdown ni texto adicional.',
+    messages: [{ role: 'user', content: prompt }]
+  });
+
+  const texto = respuesta.content
+    .filter((bloque) => bloque.type === 'text')
+    .map((bloque) => bloque.text)
+    .join('')
+    .replace(/^\s*```(?:json)?\s*/i, '')
+    .replace(/\s*```\s*$/, '')
+    .trim();
+
+  const r = JSON.parse(texto);
   const indices = Array.isArray(r.indices) ? r.indices : [];
   return [...new Set(indices)]
     .filter((i) => Number.isInteger(i) && i >= 0 && i < candidatos.length)
@@ -154,7 +169,8 @@ async function iniciarArana() {
             elegidos = await elegirEnlacesConIA(enlaces, url);
             console.log(`   La IA elige ${elegidos.length} enlaces para seguir.`);
           } catch (e) {
-            console.log(`   IA no disponible para elegir enlaces (${e.message.slice(0, 60)}). Uso palabras clave.`);
+            const motivo = e.status ? `HTTP ${e.status}` : (e.message || 'error desconocido').slice(0, 80);
+            console.log(`   IA no disponible para elegir enlaces (${motivo}). Uso palabras clave.`);
             elegidos = enlaces
               .filter((x) => config.crawler.palabrasClave.test(x.texto))
               .map((x) => normalizarUrl(x.href))
