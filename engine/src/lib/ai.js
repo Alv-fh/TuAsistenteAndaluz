@@ -12,6 +12,23 @@ const CODIGOS_REINTENTABLES = [429, 500, 503, 529];
 const ESTADOS = ['Abierto', 'Próximamente', 'Cerrado', 'Desconocido'];
 const CATEGORIAS = ['Educación', 'Empleo', 'Vivienda', 'Ayudas', 'Trámites'];
 
+// Frases de relleno EXACTAS (en minúsculas) que no aportan información.
+// Solo se descartan si el texto completo coincide; si hay algo más, se conserva.
+const GENERICOS = new Set([
+  'consulta los plazos en la web oficial',
+  'consulta la web oficial',
+  'sigue las instrucciones de la web oficial',
+  'consulta los plazos exactos en la web oficial'
+]);
+
+// Devuelve el texto tal cual, o null si está vacío o es una frase de relleno exacta.
+function sinRelleno(texto) {
+  const t = String(texto ?? '').trim();
+  if (!t) return null;
+  const normalizado = t.toLowerCase().replace(/\s+/g, ' ').replace(/[.\s]+$/, '');
+  return GENERICOS.has(normalizado) ? null : t;
+}
+
 async function generarConReintentos(params) {
   for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
     try {
@@ -123,13 +140,34 @@ ${texto.substring(0, config.crawler.maxCaracteresIa ?? 30000)}
   }
   if (!d.es_ayuda) return null;
 
-  if (!d.guia || typeof d.guia !== 'object' || !Array.isArray(d.guia.como_solicitar)) {
-    console.warn(`   JSON mal formado: como_solicitar no es array, es ${typeof d.guia?.como_solicitar}`);
+  if (!d.guia || typeof d.guia !== 'object' || Array.isArray(d.guia)) {
+    console.warn(`   [Aviso] JSON mal formado: guia no es un objeto, es ${Array.isArray(d.guia) ? 'array' : typeof d.guia}`);
     return null;
   }
 
   if (!limpiar(d.titulo, 200)) throw new Error('La IA no devolvió título.');
   if (!ESTADOS.includes(d.estado)) throw new Error(`Estado no válido: ${d.estado}`);
+
+  // Guía: se limpian solo las frases de relleno exactas y se valida que quede algo útil
+  const g = d.guia;
+  const pasosCrudos = Array.isArray(g.como_solicitar)
+    ? g.como_solicitar
+    : typeof g.como_solicitar === 'string'
+      ? g.como_solicitar.split(/\r?\n+/)
+      : [];
+
+  const guia = limpiarGuia({
+    ...g,
+    plazos: sinRelleno(g.plazos),
+    requisitos: (Array.isArray(g.requisitos) ? g.requisitos : []).filter((r) => sinRelleno(r)),
+    como_solicitar: pasosCrudos.filter((p) => sinRelleno(p))
+  });
+
+  const camposUtiles = [guia.plazos, guia.requisitos.length > 0, guia.como_solicitar].filter(Boolean).length;
+  if (camposUtiles < 1) {
+    console.warn('   [Aviso] Guía vacía (sin plazos, requisitos ni pasos útiles). Se descarta.');
+    return null;
+  }
 
   const fechaOpcional = (s) => (parseFecha(s) ? s : null);
   const proxima = limpiar(d.proxima_apertura, 160) || null;
@@ -145,12 +183,6 @@ ${texto.substring(0, config.crawler.maxCaracteresIa ?? 30000)}
     ultima_convocatoria_fin: fechaOpcional(d.ultima_convocatoria_fin),
     proxima_apertura: proxima,
     apertura_estimada: Boolean(d.apertura_estimada) && Boolean(proxima),
-    guia: limpiarGuia({
-      que_es: d.resumen,
-      requisitos: d.requisitos,
-      documentacion: d.documentacion,
-      plazos: d.plazo,
-      como_solicitar: d.pasos_solicitud
-    })
+    guia
   };
 }

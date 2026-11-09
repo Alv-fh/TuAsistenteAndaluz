@@ -44,7 +44,8 @@ bot.on('callback_query', async (query) => {
       });
     }
 
-    const tieneGuia = Boolean(tramite.guia) && typeof tramite.guia === 'object' && Object.keys(tramite.guia).length > 0;
+    // Solo se comprueba que existan los datos, no su calidad
+    const tieneGuia = Boolean(tramite.guia) && typeof tramite.guia === 'object';
     const tieneHtml = typeof tramite.guia_html === 'string' && tramite.guia_html.trim().length > 0;
 
     if (!tieneGuia || !tieneHtml) {
