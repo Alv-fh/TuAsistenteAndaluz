@@ -196,7 +196,7 @@ async function iniciarArana() {
         if (!duplicada && item.profundidad > 0 && texto.length >= 800) {
           const datos = await analizarAyuda(texto, url, item.categoria);
           if (!datos) {
-            console.log('   No es una ayuda concreta.');
+            console.log('   No es una ayuda concreta o no tiene contenido útil.');
             resumen.descartadas++;
           } else {
             const v = evaluarVigencia(datos);
