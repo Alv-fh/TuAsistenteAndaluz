@@ -69,9 +69,9 @@ Devuelve SOLO un JSON con esta estructura:
     "requisitos": ["Los requisitos más importantes explicados de forma clara y directa."],
     "plazos": "Cuándo se solicita y cómo saber si estás dentro de plazo.",
     "como_solicitar": [
-      "Paso 1: ...",
-      "Paso 2: ...",
-      "Paso 3: ..."
+      "Acción concreta del primer paso.",
+      "Acción concreta del segundo paso.",
+      "Acción concreta del tercer paso."
     ]
   }
 }
@@ -80,8 +80,9 @@ Reglas importantes:
 - Si "es_ayuda" es false, el resto de campos puede ir vacío.
 - NO inventes fechas, importes ni requisitos que no aparezcan.
 - En "cuantia", extrae SOLO el importe económico si aparece en el texto. Si no aparece cantidad, pon null. No inventes cifras.
-- En "como_solicitar", DEBES devolver un ARRAY (una lista) donde cada elemento sea un paso detallado. Actúa como un guía que quiere que el usuario no se pierda. 
-  Para que sea útil, DEBES incluir:
+- En "como_solicitar", DEBES devolver un ARRAY (una lista) donde cada elemento sea UN paso. Actúa como un guía que quiere que el usuario no se pierda.
+  FORMATO de cada paso: una o dos frases COMPLETAS (máximo 350 caracteres). NO escribas "Paso 1:" ni ningún número al principio: la numeración la añade el sistema. Máximo 8 pasos; agrupa los detalles menores en el paso al que pertenecen.
+  Para que sea útil, incluye donde corresponda:
   1. Si el texto original contiene un enlace (URL), un correo electrónico o un nombre de sede (ej. "Sede Electrónica de la Junta", "ClicSalud+"), PONLO EXPLÍCITAMENTE en el paso. No digas "en la dirección indicada", di "en la web [URL]".
   2. Los documentos exactos que hay que descargar, rellenar o adjuntar (nombra los Anexos o Modelos si aparecen).
   3. Si el trámite se hace presencialmente, indica exactamente en qué oficina o registro (ej. "Oficinas del Servicio Andaluz de Salud", "Registro General de la Junta").
@@ -95,7 +96,7 @@ Reglas importantes:
 - Si hace falta identificación electrónica (Cl@ve, certificado digital), indícalo en "requisitos".
 
 TEXTO:
-${texto.substring(0, config.crawler.maxIa)}
+${texto.substring(0, config.crawler.maxIa ?? config.crawler.maxCaracteresIa ?? 30000)}
 `;
 
   const d = await generarJSON(prompt);
@@ -106,11 +107,6 @@ ${texto.substring(0, config.crawler.maxIa)}
 
   const fechaOpcional = (s) => (parseFecha(s) ? s : null);
   const proxima = limpiar(d.proxima_apertura, 160) || null;
-
-  // Unimos el array de pasos en un solo texto con saltos de línea
-  const pasosUnidos = Array.isArray(d.guia?.como_solicitar) 
-    ? d.guia.como_solicitar.join('\n') 
-    : d.guia?.como_solicitar;
 
   return {
     titulo: limpiar(d.titulo, 200),
@@ -123,9 +119,7 @@ ${texto.substring(0, config.crawler.maxIa)}
     ultima_convocatoria_fin: fechaOpcional(d.ultima_convocatoria_fin),
     proxima_apertura: proxima,
     apertura_estimada: Boolean(d.apertura_estimada) && Boolean(proxima),
-    guia: limpiarGuia({ 
-      ...d.guia, 
-      como_solicitar: pasosUnidos 
-    })
+    // limpiarGuia recibe la LISTA de pasos tal cual y la guarda numerada, un paso por línea
+    guia: limpiarGuia(d.guia)
   };
 }

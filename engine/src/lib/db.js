@@ -35,13 +35,41 @@ export function limpiar(valor, max) {
     .slice(0, max);
 }
 
+// Igual que limpiar(), pero si hay que recortar lo hace en un límite de PALABRA
+// y lo indica con "…" (antes cortaba en mitad de una palabra: "mediante certific").
+export function limpiarSinCortar(valor, max) {
+  const t = limpiar(valor, Infinity);
+  if (t.length <= max) return t;
+  const corte = t.slice(0, max);
+  const ultimoEspacio = corte.lastIndexOf(' ');
+  const limpio = ultimoEspacio > max * 0.6 ? corte.slice(0, ultimoEspacio) : corte;
+  return limpio.replace(/[,;:\s]+$/, '') + '…';
+}
+
+// "Paso 1:", "1." o "1)" al principio de un paso
+const NUMERACION = /^\s*(?:Paso\s*\d+\s*[:.\-–)]\s*|\d{1,2}[.)]\s+)/i;
+
+// Guarda el paso a paso como UN PASO POR LÍNEA, numerado: "1. ...\n2. ...".
+// Acepta una lista (lo ideal) o un texto con saltos de línea. Si llega un texto de
+// una sola línea (formato antiguo) lo conserva entero, sin numerar.
+function limpiarPasos(valor) {
+  if (typeof valor === 'string' && !/\n/.test(valor.trim())) return limpiarSinCortar(valor, 3000);
+  const crudos = Array.isArray(valor) ? valor : String(valor ?? '').split(/\r?\n+/);
+  return crudos
+    .map((p) => limpiarSinCortar(p, 600).replace(NUMERACION, '').trim())
+    .filter(Boolean)
+    .slice(0, 12)
+    .map((p, i) => `${i + 1}. ${p}`)
+    .join('\n');
+}
+
 export function limpiarGuia(g = {}) {
-  const lista = (a) => (Array.isArray(a) ? a : []).slice(0, 12).map((x) => limpiar(x, 400)).filter(Boolean);
+  const lista = (a) => (Array.isArray(a) ? a : []).slice(0, 15).map((x) => limpiarSinCortar(x, 500)).filter(Boolean);
   return {
-    que_es: limpiar(g.que_es, 800),
+    que_es: limpiarSinCortar(g.que_es, 1200),
     requisitos: lista(g.requisitos),
-    plazos: limpiar(g.plazos, 500),
-    como_solicitar: limpiar(g.como_solicitar, 800)
+    plazos: limpiarSinCortar(g.plazos, 800),
+    como_solicitar: limpiarPasos(g.como_solicitar)
   };
 }
 

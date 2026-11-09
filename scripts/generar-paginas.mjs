@@ -102,6 +102,17 @@ function enlaceSeguro(texto) {
   }
 }
 
+function motivoEnlaceNoValido(texto) {
+  if (!texto) return 'url_oficial vacía';
+  try {
+    const u = new URL(texto);
+    if (u.protocol !== 'https:') return `no es https (${u.protocol})`;
+    return `dominio no permitido: ${u.hostname}`;
+  } catch {
+    return `no es una URL: "${String(texto).slice(0, 60)}"`;
+  }
+}
+
 function fechaISO(ts) {
   const d = new Date(ts);
   return Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10);
@@ -306,6 +317,68 @@ ${calcularEstado.toString()}
 </script>`;
 }
 
+// --- Paso a paso -----------------------------------------------------------
+// Acepta: lista de pasos, un paso por línea, o todo pegado en un párrafo con
+// "Paso 1: ... Paso 2: ..." o "1. ... 2. ...". Devuelve { intro, pasos }.
+const NUMERACION = /^\s*(?:Paso\s*\d+\s*[:.\-–)]\s*|\d{1,2}[.)]\s+)/i;
+const quitarNumeracion = (s) => String(s).replace(NUMERACION, '').trim();
+
+function pasosDeTexto(valor) {
+  if (Array.isArray(valor)) {
+    return { intro: '', pasos: valor.map((p) => quitarNumeracion(p)).filter(Boolean) };
+  }
+  const texto = String(valor ?? '').replace(/\r/g, '').trim();
+  if (!texto) return { intro: '', pasos: [] };
+
+  // 1) Un paso por línea
+  const lineas = texto.split(/\n+/).map((x) => x.trim()).filter(Boolean);
+  if (lineas.length >= 2) return { intro: '', pasos: lineas.map(quitarNumeracion).filter(Boolean) };
+
+  // 2) Todo en un párrafo con "Paso N:" pegados
+  const marcasPaso = [...texto.matchAll(/Paso\s*\d+\s*[:.\-–)]/gi)];
+  if (marcasPaso.length >= 2) {
+    const cortes = marcasPaso.map((m) => m.index);
+    const intro = texto.slice(0, cortes[0]).trim();
+    const pasos = cortes.map((ini, i) => quitarNumeracion(texto.slice(ini, cortes[i + 1] ?? texto.length))).filter(Boolean);
+    return { intro, pasos };
+  }
+
+  // 3) Todo en un párrafo con "1. ... 2. ..." (solo si son consecutivos desde el 1, para no cortar por error)
+  const numeradas = [...texto.matchAll(/(?:^|\s)(\d{1,2})[.)]\s+(?=\S)/g)];
+  if (numeradas.length >= 2 && numeradas.every((m, i) => Number(m[1]) === i + 1)) {
+    const cortes = numeradas.map((m) => m.index + (m[0].length - m[0].trimStart().length));
+    const intro = texto.slice(0, cortes[0]).trim();
+    const pasos = cortes.map((ini, i) => quitarNumeracion(texto.slice(ini, cortes[i + 1] ?? texto.length))).filter(Boolean);
+    return { intro, pasos };
+  }
+
+  return { intro: '', pasos: [] }; // sin estructura: se mostrará como párrafo
+}
+
+// Escapa el texto y convierte en enlace SOLO las URLs de dominios oficiales
+function enlazarUrls(texto) {
+  return String(texto ?? '').split(/(https?:\/\/[^\s<>"']+)/g).map((parte, i) => {
+    if (i % 2 === 0) return esc(parte);
+    const limpia = parte.replace(/[.,;:!?)\]]+$/, '');
+    const resto = parte.slice(limpia.length);
+    const seguro = enlaceSeguro(limpia);
+    const html = seguro
+      ? `<a href="${esc(seguro)}" target="_blank" rel="noopener noreferrer">${esc(limpia)}</a>`
+      : esc(limpia);
+    return html + esc(resto);
+  }).join('');
+}
+
+function bloquePasos(valor) {
+  const { intro, pasos } = pasosDeTexto(valor);
+  if (pasos.length >= 2) {
+    return `${intro ? `<p>${enlazarUrls(intro)}</p>` : ''}
+      <ol class="taa-pasos-lista">${pasos.map((p) => `<li>${enlazarUrls(p)}</li>`).join('')}</ol>`;
+  }
+  const texto = (Array.isArray(valor) ? valor.join('\n') : String(valor ?? '')).trim();
+  return `<p class="taa-pasos">${enlazarUrls(texto || 'Sigue las instrucciones de la web oficial.')}</p>`;
+}
+
 function listaDesdeTexto(valor) {
   if (Array.isArray(valor)) return valor.map(String).filter(Boolean);
   return String(valor ?? '').split(/\n+/).map((s) => s.trim()).filter(Boolean);
@@ -425,13 +498,7 @@ function paginaFicha(t, ctx) {
     </section>
     <section>
       <h2>Cómo solicitarlo paso a paso</h2>
-      <div class="taa-pasos-contenedor">
-        ${esc(g.como_solicitar || 'Sigue las instrucciones de la web oficial.')
-          .replace(/\n/g, ' ') // 1. Quitamos los saltos de línea de la IA y los hacemos espacios
-          .replace(/(\d\.)\s/g, '<br><br><strong>$1</strong> ') // 2. Añadimos SOLO un salto de línea doble antes de cada número
-          .replace(/^<br><br>/, '') // 3. Si el texto empieza por un número, le quitamos el hueco del principio
-        }
-      </div>
+      ${bloquePasos(g.como_solicitar)}
     </section>` : `
     <section>
       <h2>Información</h2>
@@ -589,7 +656,7 @@ async function main() {
     if (vistos.has(r.slug)) { advertencias.push(`Slug repetido "${r.slug}": omitido.`); continue; }
     vistos.add(r.slug);
     if (!r.guia?.que_es) advertencias.push(`"${r.slug}" no tiene guía (página con poco contenido).`);
-    if (!enlaceSeguro(r.url_oficial)) advertencias.push(`"${r.slug}" no tiene un enlace oficial válido.`);
+    if (!enlaceSeguro(r.url_oficial)) advertencias.push(`"${r.slug}": sin botón oficial (${motivoEnlaceNoValido(r.url_oficial)}).`);
     tramites.push(r);
   }
 
