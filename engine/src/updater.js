@@ -3,12 +3,43 @@ import { analizarAyuda } from './lib/ai.js';
 import { abrirNavegador, leerFuentes } from './lib/browser.js';
 import {
   evaluarVigencia,
+  guiaVacia,
   normalizarUrl,
   retirarDeLaWeb,
   supabase
 } from './lib/db.js';
 import { guiaAHtml } from './lib/html.js';
-const FORZAR = process.argv.includes('--forzar'); // ignora la huella y reanaliza todo
+import { parseArgs } from 'node:util';
+
+// Uso:
+//   node engine/src/updater.js                          flujo normal (todas las filas)
+//   node engine/src/updater.js --slug=beca-adriano      solo esa fila
+//   node engine/src/updater.js --slug=X --forzar        reanaliza esa fila aunque la web no haya cambiado
+//   node engine/src/updater.js --vacias                 solo filas con guia/guia_html vacíos
+let args;
+try {
+  ({ values: args } = parseArgs({
+    options: {
+      slug: { type: 'string' },
+      forzar: { type: 'boolean', default: false },
+      vacias: { type: 'boolean', default: false }
+    },
+    strict: true
+  }));
+} catch (e) {
+  console.error(`Error en los argumentos: ${e.message}`);
+  process.exit(1);
+}
+
+const FORZAR = args.forzar; // ignora la huella y reanaliza la fila indicada con --slug
+const SLUG = args.slug?.trim() || null;
+const SOLO_VACIAS = args.vacias;
+const COOLDOWN_MS = 24 * 60 * 60 * 1000; // una fila vacía no se reanaliza si se revisó hace menos de 24 h
+
+if (FORZAR && !SLUG) {
+  console.error('Error: --forzar requiere --slug=<slug> (ejemplo: --slug=beca-adriano --forzar).');
+  process.exit(1);
+}
 
 function fuentesDeFila(fila) {
   const conf = config.crawler.urlsDirectas.find((d) => d.slug === fila.slug);
@@ -48,19 +79,43 @@ async function reevaluarSinIA(fila) {
 }
 
 async function main() {
-  const { data: filas, error } = await supabase
+  let consulta = supabase
     .from('tramites').select('*').order('revisado_en', { ascending: true, nullsFirst: true });
-  if (error) throw new Error(`Supabase: ${error.message}`);
-  if (!filas.length) return console.log('No hay trámites que actualizar.');
+  if (SLUG) consulta = consulta.eq('slug', SLUG);
 
-  console.log(`Comprobando ${filas.length} trámite(s)${FORZAR ? ' (modo forzado)' : ''}...`);
+  const { data, error } = await consulta;
+  if (error) throw new Error(`Supabase: ${error.message}`);
+
+  const filas = SOLO_VACIAS ? (data ?? []).filter(guiaVacia) : (data ?? []);
+  if (!filas.length) {
+    return console.log(
+      SLUG ? `No hay ningún trámite con slug "${SLUG}"${SOLO_VACIAS ? ' y guía vacía' : ''}.`
+        : SOLO_VACIAS ? 'No hay trámites con guía vacía.'
+        : 'No hay trámites que actualizar.'
+    );
+  }
+
+  const modo = [SLUG && `slug=${SLUG}`, SOLO_VACIAS && 'solo vacías', FORZAR && 'forzado'].filter(Boolean).join(', ');
+  console.log(`Comprobando ${filas.length} trámite(s)${modo ? ` (${modo})` : ''}...`);
   const { navegador, pagina } = await abrirNavegador();
-  const res = { igual: 0, ajustadas: 0, actualizadas: 0, retiradas: 0, pendientes: 0 };
+  const res = { igual: 0, ajustadas: 0, actualizadas: 0, retiradas: 0, pendientes: 0, enEspera: 0 };
 
   try {
     for (const [i, fila] of filas.entries()) {
       console.log(`\n[${i + 1}/${filas.length}] ${fila.slug}`);
       try {
+        const vacia = guiaVacia(fila);
+
+        // Cooldown: una guía vacía que se revisó hace poco no se vuelve a intentar (salvo --forzar)
+        if (vacia && !FORZAR && fila.revisado_en) {
+          const hace = Date.now() - new Date(fila.revisado_en).getTime();
+          if (hace < COOLDOWN_MS) {
+            console.log(`   Guía vacía, pero revisada hace ${Math.round(hace / 3600000)} h: en espera (usa --slug=${fila.slug} --forzar).`);
+            res.enEspera++;
+            continue;
+          }
+        }
+
         const fuentes = fuentesDeFila(fila);
         if (!fuentes.length) throw new Error('Sin fuentes válidas.');
 
@@ -72,7 +127,7 @@ async function main() {
         }
 
         // La web no ha cambiado: no se gasta IA
-        if (!FORZAR && lectura.huella === fila.contenido_hash) {
+        if (!FORZAR && !vacia && lectura.huella === fila.contenido_hash) {
           const r = await reevaluarSinIA(fila);
           console.log(`   La web no ha cambiado: ${r.texto}.`);
           if (r.resultado === 'retirada') res.retiradas++;
@@ -81,7 +136,12 @@ async function main() {
           continue;
         }
 
-        console.log(fila.contenido_hash ? '   La web ha cambiado: se reanaliza.' : '   Primera comprobación: se analiza.');
+        console.log(
+          FORZAR ? '   Modo forzado: se reanaliza.'
+            : vacia && lectura.huella === fila.contenido_hash ? '   La web no ha cambiado, pero la guía está vacía: se reanaliza.'
+            : fila.contenido_hash ? '   La web ha cambiado: se reanaliza.'
+            : '   Primera comprobación: se analiza.'
+        );
         const datos = await analizarAyuda(lectura.texto, fuentes[0], fila.categoria);
         const ahora = new Date().toISOString();
 
@@ -149,7 +209,8 @@ async function main() {
 
   console.log(
     `\nResumen: ${res.actualizadas} reanalizadas, ${res.ajustadas} ajustadas por fecha, ${res.igual} sin cambios, ` +
-    `${res.retiradas} retiradas, ${res.pendientes} pendientes o con error.`
+    `${res.retiradas} retiradas, ${res.pendientes} pendientes o con error, ` +
+    `${res.enEspera} en espera (guía vacía revisada hace menos de 24 h).`
   );
 }
 

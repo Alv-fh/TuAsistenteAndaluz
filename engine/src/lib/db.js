@@ -76,6 +76,18 @@ export function limpiarGuia(g = {}) {
   };
 }
 
+// true si la fila no tiene una guía aprovechable o le falta el HTML generado
+export function guiaVacia(fila) {
+  const g = fila?.guia;
+  const sinGuia =
+    !g ||
+    typeof g !== 'object' ||
+    !String(g.que_es ?? '').trim() ||
+    !(Array.isArray(g.requisitos) && g.requisitos.length);
+  const sinHtml = typeof fila?.guia_html !== 'string' || fila.guia_html.trim().length < 200;
+  return sinGuia || sinHtml;
+}
+
 export function slugDesdeUrl(url) {
   const partes = new URL(url).pathname.replace(/\.html?$/i, '').split('/').filter(Boolean);
   const ultimo = partes[partes.length - 1] || '';
