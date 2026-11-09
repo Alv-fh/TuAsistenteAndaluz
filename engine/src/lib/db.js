@@ -68,6 +68,7 @@ export function limpiarGuia(g = {}) {
   return {
     que_es: limpiarSinCortar(g.que_es, 1200),
     requisitos: lista(g.requisitos),
+    documentacion: lista(g.documentacion),
     plazos: limpiarSinCortar(g.plazos, 800),
     como_solicitar: limpiarPasos(g.como_solicitar)
   };
