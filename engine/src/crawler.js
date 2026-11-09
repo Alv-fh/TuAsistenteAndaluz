@@ -1,4 +1,4 @@
-import Parser from 'rss-parser';
+import { load } from 'cheerio';
 import { config } from './config.js';
 import { ai, analizarAyuda, MODELO } from './lib/ai.js';
 import { abrirNavegador, leerFuentes, leerPagina } from './lib/browser.js';
@@ -73,38 +73,59 @@ ${lista}
     .map((i) => candidatos[i].href);
 }
 
-// Lee el RSS del BOJA y devuelve las URLs de los ítems cuyo título parece una ayuda.
-// Si el feed falla, devuelve [] y el crawler sigue con las URLs estáticas de config.js.
-async function escanearRSS() {
-  const { bojaUrl, palabrasClave } = config.rss;
+const URL_BOJA = 'https://www.juntadeandalucia.es/BOJA';
+
+// Devuelve la URL final (tras redirecciones) y el HTML.
+async function descargarHtml(url) {
+  const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
+  if (!res.ok) throw new Error(`HTTP ${res.status} en ${url}`);
+  return { url: res.url, html: await res.text() };
+}
+
+// Convierte un href en URL normalizada, o null si no es válida.
+function resolverUrl(href, base) {
   try {
-    const parser = new Parser({ timeout: 15000 });
-    const feed = await parser.parseURL(bojaUrl);
-    const items = feed.items ?? [];
+    return normalizarUrl(new URL(href, base).toString());
+  } catch {
+    return null;
+  }
+}
+
+// Lee el último boletín del BOJA y devuelve las URLs de las disposiciones que parecen ayudas.
+// Si algo falla, devuelve [] y el crawler sigue con el resto de fuentes.
+async function escanearUltimoBOJA() {
+  try {
+    // fetch sigue las redirecciones: urlBoletin es la URL real del boletín del día.
+    const { url: urlBoletin, html } = await descargarHtml(URL_BOJA);
+    const $ = load(html);
+
     const urls = new Set();
-    for (const item of items) {
-      if (!palabrasClave.test(item.title ?? '')) continue;
-      const url = normalizarUrl(item.link ?? '');
+    $('li').each((_, li) => {
+      const $li = $(li);
+      if (!config.rss.palabrasClave.test($li.text())) return;
+      const href = $li.find('a[href$=".html"]').first().attr('href');
+      const url = href ? resolverUrl(href, urlBoletin) : null;
       if (url) urls.add(url);
-    }
-    console.log(`RSS BOJA: ${items.length} ítems, ${urls.size} candidatos a ayuda.`);
+    });
+
+    console.log(`BOJA ${urlBoletin}: ${urls.size} disposiciones candidatas a ayuda.`);
     return [...urls];
   } catch (e) {
-    console.error(`RSS BOJA no disponible (${e.message}). Sigo con las URLs estáticas.`);
+    console.error(`BOJA no disponible (${e.message}). Sigo con el resto de fuentes.`);
     return [];
   }
 }
 
 async function iniciarArana() {
+  const urlsBoja = await escanearUltimoBOJA();
+
   const conocidas = await cargarUrlsConocidas();
   console.log(`URLs que ya pertenecen a un trámite: ${conocidas.size} (las mantiene updater.js)`);
-
-  const urlsRss = await escanearRSS();
 
   const { navegador, pagina } = await abrirNavegador();
 
   const cola = [
-    ...urlsRss.map((u) => ({ url: u, profundidad: config.crawler.maxProfundidad })),
+    ...urlsBoja.map((u) => ({ url: u, profundidad: config.crawler.maxProfundidad })),
     ...config.crawler.portadas.map((u) => ({ url: u, profundidad: 0 })),
     ...config.crawler.urlsDirectas.map((d) => ({ ...d, profundidad: config.crawler.maxProfundidad }))
   ];

@@ -325,7 +325,6 @@ export const config = {
     maxAnalisisBoletines: 15
   },
   rss: {
-    bojaUrl: 'https://www.juntadeandalucia.es/eboja/rss/boja.xml',
     palabrasClave: /subvenci|ayuda|beca|bono|convocatoria/i
   }
 }
