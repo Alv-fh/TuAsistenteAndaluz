@@ -18,7 +18,7 @@ async function generarConReintentos(params) {
       console.log(`   ${MODELO} (intento ${intento}/${MAX_INTENTOS})`);
       return await ai.messages.create({
         model: MODELO,
-        max_tokens: 8192,
+        max_tokens: 4096,
         temperature: 0,
         ...params
       });
@@ -39,7 +39,9 @@ export async function generarJSON(prompt, system = null) {
   const texto = respuesta.content
     .filter((bloque) => bloque.type === 'text')
     .map((bloque) => bloque.text)
-    .join('');
+    .join('')
+    .replace(/^\s*```(?:json)?\s*/i, '')
+    .replace(/\s*```\s*$/, '');
 
   try {
     return JSON.parse(texto);
