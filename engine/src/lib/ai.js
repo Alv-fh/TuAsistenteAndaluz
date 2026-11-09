@@ -122,6 +122,12 @@ ${texto.substring(0, config.crawler.maxCaracteresIa ?? 30000)}
     ultima_convocatoria_fin: fechaOpcional(d.ultima_convocatoria_fin),
     proxima_apertura: proxima,
     apertura_estimada: Boolean(d.apertura_estimada) && Boolean(proxima),
-    guia: limpiarGuia(d.guia)
+    guia: limpiarGuia({
+      que_es: d.resumen,
+      requisitos: d.requisitos,
+      documentacion: d.documentacion,
+      plazos: d.plazo,
+      como_solicitar: d.pasos_solicitud
+    })
   };
 }
