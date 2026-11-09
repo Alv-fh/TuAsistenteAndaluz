@@ -498,7 +498,7 @@ function paginaFicha(t, ctx) {
       {
         '@type': 'Article',
         '@id': `${url}#articulo`,
-        headline: recortar(h1, 110),
+        headline: title,
         description: descripcion,
         inLanguage: 'es',
         ...(fechaISO(t.created_at) ? { datePublished: fechaISO(t.created_at) } : {}),
@@ -524,7 +524,7 @@ function paginaFicha(t, ctx) {
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITIO}/` },
           { '@type': 'ListItem', position: 2, name: cat.nombre, item: `${SITIO}/categoria/${cat.slug}/` },
-          { '@type': 'ListItem', position: 3, name: t.titulo, item: url }
+          { '@type': 'ListItem', position: 3, name: title, item: url }
         ]
       }
     ]
@@ -570,7 +570,7 @@ function paginaFicha(t, ctx) {
     <ol>
       <li><a href="/">Inicio</a></li>
       <li><a href="/categoria/${cat.slug}/">${esc(cat.nombre)}</a></li>
-      <li aria-current="page">${esc(t.titulo)}</li>
+      <li aria-current="page">${esc(title)}</li>
     </ol>
   </nav>
   <article class="taa-ficha">
