@@ -238,7 +238,7 @@ function bloqueGA() {
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${esc(GA_ID)}');</script>`;
 }
 
-function cabeza({ titulo, descripcion, canonico, tipoOg = 'article', jsonld }) {
+function cabeza({ titulo, descripcion, canonico, tipoOg = 'article', tarjetaTw = 'summary', jsonld }) {
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -255,7 +255,7 @@ function cabeza({ titulo, descripcion, canonico, tipoOg = 'article', jsonld }) {
 <meta property="og:description" content="${esc(descripcion)}">
 <meta property="og:url" content="${esc(canonico)}">
 <meta property="og:image" content="${SITIO}/logo-taa.png">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="${tarjetaTw}">
 <meta name="twitter:title" content="${esc(titulo)}">
 <meta name="twitter:description" content="${esc(descripcion)}">
 <link rel="icon" type="image/png" href="/logo-taa.png">
@@ -415,10 +415,41 @@ function titulosSEO(t, operador) {
   return { title, h1: `${base}: requisitos, plazos y cómo solicitar` };
 }
 
-function descripcionSEO(t) {
-  const fuente = t.guia?.que_es || '';
-  const d = recortar(fuente, 155);
-  return d || `Requisitos, plazos y pasos para solicitar ${t.titulo} explicados de forma sencilla, con enlace a la web oficial.`;
+// Corta en el límite de palabra: nunca devuelve más de `max` caracteres ni deja una palabra a medias
+function cortarEnPalabra(texto, max) {
+  const t = String(texto ?? '').replace(/\s+/g, ' ').trim();
+  if (t.length <= max) return t;
+  const corte = t.slice(0, max + 1); // +1: si justo después hay un espacio, la última palabra cabe entera
+  const i = corte.lastIndexOf(' ');
+  const base = i > 0 ? corte.slice(0, i) : t.slice(0, max);
+  return base.replace(/[\s,;:.\-–(]+$/, '');
+}
+
+// <title> de la ficha: Google trunca a ~60 caracteres
+function tituloSeo(titulo, categoria) {
+  const t = String(titulo ?? '').replace(/\s+/g, ' ').trim();
+  if (t.length <= 60) return t;
+
+  const corto = cortarEnPalabra(t, 55) + '...';
+  const cat = String(categoria ?? '').trim();
+  const conCategoria = cat ? `${corto} | ${cat}` : '';
+  return conCategoria && conCategoria.length <= 60 ? conCategoria : corto.slice(0, 60);
+}
+
+// Meta description de 120-155 caracteres
+function metaDescription(titulo, categoria, guia, cuantia = guia?.cuantia) {
+  const corto = cortarEnPalabra(titulo, 50);
+  const nombre = corto.length < String(titulo ?? '').trim().length ? `${corto}…` : corto;
+  const importe = cortarEnPalabra(cuantia, 40);
+
+  let d = importe
+    ? `Guía completa de ${nombre}: requisitos, plazos, cuantía (${importe}) y cómo solicitarlo en Andalucía.`
+    : `Guía completa de ${nombre}: requisitos, plazos, documentos y cómo solicitarlo en Andalucía.`;
+
+  if (d.length < 120) d += ' Con enlace a la web oficial.';
+  if (d.length < 120) d += ` | ${NOMBRE}`;
+  if (d.length > 155) d = d.slice(0, 152).trimEnd() + '...';
+  return d;
 }
 
 // ---------------------------------------------------------------------------
@@ -429,9 +460,10 @@ function paginaFicha(t, ctx) {
   const url = `${SITIO}/ayuda/${t.slug}/`;
   const oficial = enlaceSeguro(t.url_oficial);
   const operador = operadorDe(t.url_oficial);
-  const { title, h1 } = titulosSEO(t, operador);
-  const descripcion = descripcionSEO(t);
+  const { h1 } = titulosSEO(t, operador); // el h1 mantiene el título completo
   const cat = ctx.categoriaDe(t);
+  const title = tituloSeo(t.titulo, cat.nombre);
+  const descripcion = metaDescription(t.titulo, cat.nombre, t.guia, t.cuantia);
   const g = t.guia;
 
   const comprobado = fechaLarga(t.revisado_en || t.actualizado_en);
@@ -447,7 +479,7 @@ function paginaFicha(t, ctx) {
       {
         '@type': 'Article',
         '@id': `${url}#articulo`,
-        headline: h1,
+        headline: recortar(h1, 110),
         description: descripcion,
         inLanguage: 'es',
         ...(fechaISO(t.created_at) ? { datePublished: fechaISO(t.created_at) } : {}),
@@ -546,7 +578,7 @@ function paginaFicha(t, ctx) {
 </main>`;
 
   return pagina({
-    head: cabeza({ titulo: title, descripcion, canonico: url, jsonld }),
+    head: cabeza({ titulo: title, descripcion, canonico: url, tarjetaTw: 'summary_large_image', jsonld }),
     cuerpo, categorias, hayPrivacidad, scriptsExtra: scriptEstado()
   });
 }
