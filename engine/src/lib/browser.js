@@ -32,8 +32,39 @@ async function irA(pagina, url, intentos = 2) {
   }
 }
 
+// Textos aceptados para el botón de cookies (el texto completo del botón debe coincidir)
+const BOTON_ACEPTAR_COOKIES = /^\s*(aceptar(\s+todas)?(\s+las)?(\s+cookies)?|aceptar\s+y\s+cerrar|acepto|ok)\s*$/i;
+
+// Intenta cerrar el banner de cookies. Nunca lanza error: si no hay banner o falla, el flujo sigue igual.
+async function aceptarCookies(pagina, url) {
+  try {
+    // Margen para que el banner aparezca
+    await pagina.waitForTimeout(1500);
+
+    const boton = pagina
+      .locator('button:visible, [role="button"]:visible, a:visible')
+      .filter({ hasText: BOTON_ACEPTAR_COOKIES })
+      .first();
+
+    if ((await boton.count()) === 0) {
+      console.log(`   🍪 Sin banner de cookies en ${url}`);
+      return false;
+    }
+
+    await boton.click({ timeout: 3000 });
+    // Tiempo para que cargue el contenido dinámico tras aceptar
+    await pagina.waitForTimeout(1000);
+    console.log(`   🍪 Cookies aceptadas en ${url}`);
+    return true;
+  } catch (e) {
+    console.log(`   🍪 Aviso: no se pudo aceptar cookies en ${url} (${e.message.split('\n')[0]})`);
+    return false;
+  }
+}
+
 export async function leerPagina(pagina, url) {
   await irA(pagina, url);
+  await aceptarCookies(pagina, url);
   await pagina.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
   await pagina.waitForTimeout(3000);
   return pagina.evaluate(() => {
