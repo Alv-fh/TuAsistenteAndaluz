@@ -1,7 +1,7 @@
 # TuAsistenteAndaluz
 
 <p align="center">
-  <img src="readme.png" alt="Arquitectura de TuAsistenteAndaluz" width="800">
+  <img src="readme.png" alt="Arquitectura de TuAsistenteAndaluz" width="800" style="border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);">
 </p>
 
 Plataforma web que centraliza, explica y resume ayudas, becas y trámites de la Junta de Andalucía, el SEPE y la Seguridad Social. Su objetivo es simplificar la burocracia administrativa para el ciudadano mediante la automatización con Inteligencia Artificial.
@@ -28,6 +28,10 @@ Este repositorio contiene el código fuente del sistema de ingesta, procesamient
 
 ## Arquitectura del Flujo de Trabajo
 
+<p align="center">
+  <img src="flujo.png" alt="Arquitectura de TuAsistenteAndaluz" width="800" style="border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);">
+</p>
+
 El sistema está diseñado para funcionar de forma autónoma, requiriendo únicamente la intervención humana para la aprobación final de la publicación.
 
 1. **Rastreo**: El crawler visita las fuentes oficiales, acepta los avisos de cookies y extrae el texto plano.
@@ -37,6 +41,8 @@ El sistema está diseñado para funcionar de forma autónoma, requiriendo única
 5. **Notificación**: El bot de Telegram envía un mensaje con el resumen del trámite al administrador.
 6. **Aprobación**: El administrador pulsa "Publicar" desde el móvil.
 7. **Despliegue**: El bot actualiza la base de datos, genera el HTML estático, hace un `git push` y Vercel despliega los cambios automáticamente.
+
+
 
 ## Estructura del Proyecto
 
