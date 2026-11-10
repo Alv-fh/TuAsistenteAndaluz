@@ -301,7 +301,27 @@
 }
 .dark .taa-cookies { background: #06281f; }
 .taa-cookies p { margin: 0; }
-.taa-cookies-titulo { font-size: 1rem; font-weight: 800; color: var(--taa-tit); margin-bottom: 0.35rem !important; }
+.taa-cookies-titulo { font-size: 1rem; font-weight: 800; color: var(--taa-tit); margin-bottom: 0.35rem !important; padding-right: 2rem; }
+.taa-cookies-cerrar {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 9999px;
+    background: none;
+    font: inherit;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--taa-suave);
+    cursor: pointer;
+}
+.taa-cookies-cerrar:hover { background: var(--taa-chip-bg); color: var(--taa-tit); }
+.taa-cookies-cerrar:focus-visible { outline: 2px solid var(--taa-acento); outline-offset: 2px; }
 .taa-cookies a { color: var(--taa-acento-txt); text-underline-offset: 3px; }
 .taa-cookies-acciones { display: flex; gap: 0.75rem; margin-top: 0.9rem; }
 /* "Aceptar" y "Rechazar" comparten exactamente el mismo estilo */

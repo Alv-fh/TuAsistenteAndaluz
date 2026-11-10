@@ -271,7 +271,7 @@ function pie(categorias) {
   const enlacesCat = categorias
     .map((c) => `<a href="/categoria/${c.slug}/">${esc(c.nombre)}</a>`)
     .join('');
-  const legal = '<a href="/legal/aviso-legal/">Aviso legal</a><a href="/legal/privacidad/">Privacidad</a><a href="/legal/cookies/">Cookies</a><a href="/legal/quienes-somos/">Quiénes somos</a><button type="button" class="taa-enlace-boton" onclick="abrirCookies()">Configurar cookies</button>';
+  const legal = '<a href="/legal/aviso-legal/">Aviso legal</a><a href="/legal/privacidad/">Privacidad</a><a href="/legal/cookies/">Cookies</a><a href="/legal/quienes-somos/">Quiénes somos</a><button type="button" class="taa-enlace-boton" onclick="if(window.abrirCookies)window.abrirCookies()">Configurar cookies</button>';
   return `<footer class="taa-pie">
   <nav aria-label="Categorías">${enlacesCat}</nav>
   <nav aria-label="Información legal">${legal}</nav>

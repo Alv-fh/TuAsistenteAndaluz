@@ -109,12 +109,15 @@
     return b;
   }
 
-  function mostrarBanner(enfocar) {
+  function cerrarBanner() {
     var existente = document.getElementById(ID_BANNER);
-    if (existente) {
-      if (enfocar) existente.querySelector('button').focus();
-      return;
-    }
+    if (existente) existente.remove();
+  }
+
+  // Dibuja el banner desde cero. No lee localStorage: la decisión guardada se ignora
+  // en esta vista y solo cambia si el usuario pulsa "Aceptar" o "Rechazar".
+  function mostrarBanner(enfocar) {
+    cerrarBanner(); // si ya había uno en el DOM, se sustituye por uno nuevo
 
     var banner = crear('div', 'taa-cookies');
     banner.id = ID_BANNER;
@@ -141,15 +144,23 @@
     acciones.appendChild(crearBoton('Rechazar', RECHAZADAS));
     acciones.appendChild(crearBoton('Aceptar', ACEPTADAS));
 
+    // Botón "×": cierra el banner sin cambiar la decisión guardada
+    var cerrar = crear('button', 'taa-cookies-cerrar', '\u00d7');
+    cerrar.type = 'button';
+    cerrar.setAttribute('aria-label', 'Cerrar');
+    cerrar.addEventListener('click', cerrarBanner);
+
+    banner.appendChild(cerrar);
     banner.appendChild(titulo);
     banner.appendChild(texto);
     banner.appendChild(acciones);
     document.body.appendChild(banner);
 
-    if (enfocar) banner.querySelector('button').focus();
+    if (enfocar) acciones.querySelector('button').focus();
   }
 
-  // Para el botón "Configurar cookies" de los pies de página
+  // Para el botón "Configurar cookies" de los pies de página:
+  // quita el banner actual (si lo hay) y lo vuelve a mostrar
   window.abrirCookies = function () { mostrarBanner(true); };
 
   // --- Arranque ------------------------------------------------------------
