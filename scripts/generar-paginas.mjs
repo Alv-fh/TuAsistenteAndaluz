@@ -32,6 +32,8 @@ const PUBLIC = path.join(RAIZ, 'public');
 const SITIO = (process.env.SITE_URL || 'https://tuasistenteandaluz.es').replace(/\/+$/, '');
 const GA_ID = process.env.GA_ID ?? 'G-BV5TZH279Z';
 const NOMBRE = 'TuAsistenteAndaluz';
+// Páginas legales escritas a mano en public/legal/<slug>/index.html (el generador no las crea ni las borra)
+const PAGINAS_LEGALES = ['aviso-legal', 'privacidad', 'cookies', 'quienes-somos'];
 const DOMINIOS_OFICIALES = ['juntadeandalucia.es', 'boe.es', 'sepe.es', 'sepe.gob.es', 'seg-social.es', 'prestaciones.seg-social.es', 'sede.agenciatributaria.gob.es', 'sede.mscbs.gob.es'];
 
 const COLUMNAS = [
@@ -808,6 +810,7 @@ async function main() {
   for (const t of tramites) archivos.push([`ayuda/${t.slug}/index.html`, paginaFicha(t, ctx)]);
   for (const c of categorias) archivos.push([`categoria/${c.slug}/index.html`, paginaCategoria(c, porCategoria.get(c.slug), ctx)]);
 
+  // Solo se borran las carpetas que el generador recrea. public/legal/ NO se toca nunca.
   await fs.rm(path.join(PUBLIC, 'ayuda'), { recursive: true, force: true });
   await fs.rm(path.join(PUBLIC, 'categoria'), { recursive: true, force: true });
   for (const [ruta, html] of archivos) await escribir(ruta, html);
@@ -818,6 +821,13 @@ async function main() {
   for (const c of categorias) entradas.push({ loc: `${SITIO}/categoria/${c.slug}/`, lastmod: ultima(porCategoria.get(c.slug)) });
   for (const t of tramites) entradas.push({ loc: `${SITIO}/ayuda/${t.slug}/`, lastmod: fechaISO(t.actualizado_en || t.revisado_en) });
   if (hayPrivacidad) entradas.push({ loc: `${SITIO}/privacidad.html`, lastmod: null });
+  for (const p of PAGINAS_LEGALES) {
+    if (await existe(path.join(PUBLIC, 'legal', p, 'index.html'))) {
+      entradas.push({ loc: `${SITIO}/legal/${p}/`, lastmod: null });
+    } else {
+      advertencias.push(`Falta public/legal/${p}/index.html: no se añade al sitemap.`);
+    }
+  }
   await escribir('sitemap.xml', generarSitemap(entradas));
 
   // Enlaces rastreables en la home
