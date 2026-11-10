@@ -58,7 +58,7 @@ function enlaceSeguro(texto) {
 const normalizar = (t) =>
   String(t ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
 
-const hayFecha = (f) => Boolean(f) && f !== 'No especificada';
+const hayFecha = (f) => Boolean(f) && f !== 'No especificada' && f !== 'Permanente';
 
 // Color de acento de cada tarjeta en modo oscuro (0..3 → esmeralda, cian, ámbar, violeta).
 // Cada categoría recibe siempre el mismo color. Los colores se definen en styles.css.
@@ -106,7 +106,10 @@ function estadoEfectivo(t) {
 const ESTILOS_ESTADO = {
   'Abierto': {
     clase: 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-400/10 dark:border-emerald-400/30 dark:text-emerald-300',
-    etiqueta: (t) => (hayFecha(t.fecha_cierre) ? `Abierto hasta el ${t.fecha_cierre}` : 'Plazo abierto')
+    etiqueta: (t) => {
+      if (t.fecha_cierre === 'Permanente') return 'Solicitud permanente';
+      return hayFecha(t.fecha_cierre) ? `Abierto hasta el ${t.fecha_cierre}` : 'Plazo abierto';
+    }
   },
   'Próximamente': {
     clase: 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-400/10 dark:border-amber-400/30 dark:text-amber-300',
