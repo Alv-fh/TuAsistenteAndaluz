@@ -26,6 +26,7 @@ import { fileURLToPath } from 'node:url';
 //   node engine/src/updater.js --reanalizar-todo        reanaliza TODAS las filas (ignora el hash)
 //   node engine/src/updater.js --solo-publicadas        atajo de --reanalizar-todo limitado a publicado=true
 //   node engine/src/updater.js --solo-cuarentena        atajo de --reanalizar-todo limitado a publicado=false
+//   node engine/src/updater.js --no-retirar             flujo normal, pero nunca oculta fichas (solo actualiza contenido)
 //   Modificadores: --limite=N (0 = sin límite) y --dry-run (no llama a la IA ni escribe en Supabase)
 let args;
 try {
@@ -38,7 +39,8 @@ try {
       'solo-publicadas': { type: 'boolean', default: false },
       'solo-cuarentena': { type: 'boolean', default: false },
       limite: { type: 'string', default: '0' },
-      'dry-run': { type: 'boolean', default: false }
+      'dry-run': { type: 'boolean', default: false },
+      'no-retirar': { type: 'boolean', default: false }
     },
     strict: true
   }));
@@ -54,6 +56,7 @@ const SOLO_PUBLICADAS = args['solo-publicadas'];
 const SOLO_CUARENTENA = args['solo-cuarentena'];
 const REANALIZAR_TODO = args['reanalizar-todo'] || SOLO_PUBLICADAS || SOLO_CUARENTENA; // los --solo-* son atajos
 const DRY_RUN = args['dry-run'];
+const NO_RETIRAR = args['no-retirar']; // en el flujo normal, nunca pone publicado=false
 const LIMITE = Number(args.limite);
 const COOLDOWN_MS = 24 * 60 * 60 * 1000; // una fila vacía no se reanaliza si se revisó hace menos de 24 h
 
@@ -90,6 +93,14 @@ async function reevaluarSinIA(fila) {
   const ahora = new Date().toISOString();
 
   if (!v.vigente) {
+    if (NO_RETIRAR) {
+      const { error } = await supabase.from('tramites').update({ estado: v.estado, revisado_en: ahora }).eq('slug', fila.slug);
+      if (error) throw new Error(`Supabase: ${error.message}`);
+      return {
+        resultado: 'conservada',
+        texto: `no vigente (${v.motivo}), pero --no-retirar está activo: se conserva`
+      };
+    }
     await supabase.from('tramites').update({ publicado: false, revisado_en: ahora }).eq('slug', fila.slug);
     return { resultado: 'retirada', texto: `retirada (${v.motivo})` };
   }
@@ -353,7 +364,7 @@ async function main() {
   console.log(`Comprobando ${filas.length} trámite(s)${modo ? ` (${modo})` : ''}...`);
   if (REANALIZAR_TODO) return reanalizarLote(filas);
   const { navegador, pagina } = await abrirNavegador();
-  const res = { igual: 0, ajustadas: 0, actualizadas: 0, retiradas: 0, pendientes: 0, enEspera: 0 };
+  const res = { igual: 0, ajustadas: 0, actualizadas: 0, retiradas: 0, conservadas: 0, pendientes: 0, enEspera: 0 };
 
   try {
     for (const [i, fila] of filas.entries()) {
@@ -386,6 +397,7 @@ async function main() {
           const r = await reevaluarSinIA(fila);
           console.log(`   La web no ha cambiado: ${r.texto}.`);
           if (r.resultado === 'retirada') res.retiradas++;
+          else if (r.resultado === 'conservada') res.conservadas++;
           else if (r.resultado === 'ajustada') res.ajustadas++;
           else res.igual++;
           continue;
@@ -401,6 +413,13 @@ async function main() {
         const ahora = new Date().toISOString();
 
         if (!datos) {
+          if (NO_RETIRAR) {
+            await supabase.from('tramites')
+              .update({ contenido_hash: lectura.huella, revisado_en: ahora }).eq('slug', fila.slug);
+            console.log('   Aviso: la IA no la reconoce como una ayuda concreta, pero --no-retirar está activo: se conserva.');
+            res.conservadas++;
+            continue;
+          }
           await retirarDeLaWeb(fila.slug, 'la IA no la reconoce como una ayuda concreta');
           await supabase.from('tramites')
             .update({ contenido_hash: lectura.huella, revisado_en: ahora }).eq('slug', fila.slug);
@@ -410,13 +429,19 @@ async function main() {
         }
 
         const v = evaluarVigencia(datos);
+        let conservada = false; // no vigente, pero no se retira por --no-retirar
         if (!v.vigente) {
-          await retirarDeLaWeb(fila.slug, v.motivo);
-          await supabase.from('tramites')
-            .update({ contenido_hash: lectura.huella, revisado_en: ahora }).eq('slug', fila.slug);
-          console.log(`   No vigente: ${v.motivo}.`);
-          res.retiradas++;
-          continue;
+          if (NO_RETIRAR) {
+            console.log(`   Aviso: no vigente, pero --no-retirar está activo: se conserva (${v.motivo}).`);
+            conservada = true; // se sigue adelante: solo se actualiza el contenido
+          } else {
+            await retirarDeLaWeb(fila.slug, v.motivo);
+            await supabase.from('tramites')
+              .update({ contenido_hash: lectura.huella, revisado_en: ahora }).eq('slug', fila.slug);
+            console.log(`   No vigente: ${v.motivo}.`);
+            res.retiradas++;
+            continue;
+          }
         }
 
                 const cambios = { contenido_hash: lectura.huella, revisado_en: ahora, actualizado_en: ahora };
@@ -452,7 +477,8 @@ async function main() {
         const { error: e } = await supabase.from('tramites').update(cambios).eq('slug', fila.slug);
         if (e) throw new Error(`Supabase: ${e.message}`);
         console.log(`   Actualizada (${cambios.estado ?? fila.estado}${guiaCambia ? ', guía renovada' : ''}).`);
-        res.actualizadas++;
+        if (conservada) res.conservadas++;
+        else res.actualizadas++;
       } catch (e) {
         console.error(`   Error: ${e.message}`);
         res.pendientes++;
@@ -464,7 +490,8 @@ async function main() {
 
   console.log(
     `\nResumen: ${res.actualizadas} reanalizadas, ${res.ajustadas} ajustadas por fecha, ${res.igual} sin cambios, ` +
-    `${res.retiradas} retiradas, ${res.pendientes} pendientes o con error, ` +
+    `${res.retiradas} retiradas, ${res.conservadas} conservadas por --no-retirar, ` +
+    `${res.pendientes} pendientes o con error, ` +
     `${res.enEspera} en espera (guía vacía revisada hace menos de 24 h).`
   );
 }
