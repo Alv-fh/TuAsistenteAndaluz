@@ -5,6 +5,8 @@
  * - La decisión se guarda en localStorage durante 12 meses.
  * - window.abrirCookies() vuelve a mostrar el banner para cambiar la decisión.
  */
+console.log('Cookie consent script cargado');
+
 (function () {
   'use strict';
 
@@ -16,6 +18,10 @@
   var RECHAZADAS = 'rechazadas';
 
   var analyticsCargado = false;
+
+  // Expuesta en window desde el principio: quita el banner actual (si lo hay) y lo vuelve a mostrar.
+  // mostrarBanner es una declaración de función (hoisting), así que ya existe en este punto.
+  window.abrirCookies = function () { mostrarBanner(true); };
 
   // --- Decisión guardada ---------------------------------------------------
   function leerDecision() {
