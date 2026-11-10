@@ -108,7 +108,7 @@
 </main>
 <footer class="taa-pie">
   <nav aria-label="Categorías"><a href="/categoria/educacion/">Educación</a><a href="/categoria/empleo/">Empleo</a><a href="/categoria/vivienda/">Vivienda</a><a href="/categoria/ayudas/">Ayudas</a><a href="/categoria/tramites/">Trámites</a></nav>
-  <nav aria-label="Información legal"><a href="/legal/aviso-legal/">Aviso legal</a><a href="/legal/privacidad/">Privacidad</a><a href="/legal/cookies/">Cookies</a><a href="/legal/quienes-somos/">Quiénes somos</a><button type="button" class="taa-enlace-boton" onclick="abrirCookies()">Configurar cookies</button></nav>
+  <nav aria-label="Información legal"><a href="/legal/aviso-legal/">Aviso legal</a><a href="/legal/privacidad/">Privacidad</a><a href="/legal/cookies/">Cookies</a><a href="/legal/quienes-somos/">Quiénes somos</a><button type="button" class="taa-enlace-boton" onclick="if(window.abrirCookies)window.abrirCookies()">Configurar cookies</button></nav>
   <p>TuAsistenteAndaluz es un servicio independiente y no está vinculado a la Junta de Andalucía ni al SEPE. Comprueba siempre los datos en la web oficial antes de solicitar.</p>
 </footer>
 <script>(function(){var b=document.getElementById('theme-toggle');if(!b)return;b.onclick=function(){var d=!document.documentElement.classList.contains('dark');document.documentElement.classList.toggle('dark',d);b.setAttribute('aria-pressed',String(d));try{localStorage.setItem('theme',d?'dark':'light');}catch(e){}};b.setAttribute('aria-pressed',String(document.documentElement.classList.contains('dark')));})();</script>
