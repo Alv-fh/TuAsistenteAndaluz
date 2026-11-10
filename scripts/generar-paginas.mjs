@@ -232,12 +232,6 @@ const SCRIPT_TEMA_INICIAL = `<script>(function(){try{var s=localStorage.getItem(
 
 const SCRIPT_TEMA_BOTON = `<script>(function(){var b=document.getElementById('theme-toggle');if(!b)return;b.onclick=function(){var d=!document.documentElement.classList.contains('dark');document.documentElement.classList.toggle('dark',d);b.setAttribute('aria-pressed',String(d));try{localStorage.setItem('theme',d?'dark':'light');}catch(e){}};b.setAttribute('aria-pressed',String(document.documentElement.classList.contains('dark')));})();</script>`;
 
-function bloqueGA() {
-  if (!GA_ID) return '';
-  return `<script async src="https://www.googletagmanager.com/gtag/js?id=${esc(GA_ID)}"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${esc(GA_ID)}');</script>`;
-}
-
 function cabeza({ titulo, descripcion, canonico, tipoOg = 'article', tarjetaTw = 'summary', jsonld }) {
   return `<!DOCTYPE html>
 <html lang="es">
