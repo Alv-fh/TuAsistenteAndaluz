@@ -437,28 +437,78 @@ function tituloLimpio(titulo) {
   return limpio || original;
 }
 
-// <title> de la ficha: Google trunca a ~60 caracteres
-function tituloSeo(titulo, categoria) {
+// Palabras que no pueden quedar al final de un texto cortado (preposiciones, artículos, conjunciones...)
+const PALABRAS_COLA = new Set([
+  'a', 'al', 'ante', 'bajo', 'con', 'contra', 'de', 'del', 'desde', 'durante', 'en', 'entre',
+  'hacia', 'hasta', 'mediante', 'para', 'por', 'segun', 'según', 'sin', 'sobre', 'tras',
+  'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'lo',
+  'y', 'e', 'o', 'u', 'ni', 'que', 'como', 'cómo', 'su', 'sus'
+]);
+const RUIDO_FINAL = /[\s,;:.…\-–]+$/;
+
+// Limpia el final de un texto cortado: quita puntuación suelta, un paréntesis sin cerrar
+// y las preposiciones/artículos/conjunciones finales. No añade puntuación.
+function quitarCola(texto) {
+  let r = String(texto ?? '');
+  for (;;) {
+    r = r.replace(RUIDO_FINAL, '');
+    const abiertos = (r.match(/\(/g) || []).length;
+    const cerrados = (r.match(/\)/g) || []).length;
+    if (abiertos > cerrados) { r = r.slice(0, r.lastIndexOf('(')); continue; }
+    const m = /(?:^|\s)(\S+)$/.exec(r);
+    if (m && PALABRAS_COLA.has(m[1].toLowerCase().replace(/[^a-záéíóúüñ]/g, ''))) {
+      r = r.slice(0, m.index);
+      continue;
+    }
+    return r;
+  }
+}
+
+// Ajusta una descripción a `max` caracteres (por defecto 155) y la termina en punto.
+// Corta en el último fin de frase dentro del límite; si no hay, en el último espacio.
+// Nunca termina en "..." ni en "…", ni en coma, preposición o artículo.
+function ajustarDescripcion(texto, max = 155) {
+  const t = String(texto ?? '').replace(/\s+/g, ' ').trim();
+  const cerrar = (s) => {
+    const r = quitarCola(s);
+    return r && !/[.!?]$/.test(r) ? `${r}.` : r;
+  };
+
+  const completo = cerrar(t);
+  if (completo.length <= max) return completo;
+
+  // 1) Último fin de frase dentro del límite (con un mínimo para no dejarla demasiado corta)
+  const finales = [...t.matchAll(/[.!?](?=\s|$)/g)].map((m) => m.index + 1).filter((n) => n <= max && n >= 40);
+  if (finales.length) return cerrar(t.slice(0, finales[finales.length - 1]));
+
+  // 2) Último espacio, dejando un hueco para el punto final
+  const limite = max - 1;
+  const corte = t.slice(0, limite + 1);
+  const i = corte.lastIndexOf(' ');
+  const base = /\s$/.test(corte) ? corte.trimEnd() : i > 0 ? corte.slice(0, i) : t.slice(0, limite);
+  return cerrar(base);
+}
+
+// Título sin sufijo de marca: es el que usan las migas de pan (máx. 60 caracteres)
+function tituloBase(titulo) {
   const t = tituloLimpio(titulo);
-  const cat = String(categoria ?? '').trim();
+  return t.length <= 60 ? t : quitarCola(cortarEnPalabra(t, 60));
+}
 
-  // 1) Con la categoría, si cabe
-  const conCategoria = cat ? `${t} | ${cat}` : '';
-  if (conCategoria && conCategoria.length <= 60) return conCategoria;
-
-  // 2) Solo el título, si cabe
-  if (t.length <= 60) return t;
-
-  // 3) Si aún supera 60, se corta en la última palabra completa
-  return cortarEnPalabra(t, 60);
+// <title> de la ficha: Google trunca a ~60 caracteres.
+// El sufijo " | TuAsistenteAndaluz" solo se añade si el total no supera 60.
+function tituloSeo(titulo) {
+  const base = tituloBase(titulo);
+  const conMarca = `${base} | ${NOMBRE}`;
+  return conMarca.length <= 60 ? conMarca : base;
 }
 
 // Meta description de 120-155 caracteres
 function metaDescription(titulo, categoria, guia, cuantia = guia?.cuantia) {
   const limpio = tituloLimpio(titulo);
   const corto = cortarEnPalabra(limpio, 50);
-  const nombre = corto.length < limpio.length ? `${corto}…` : corto;
-  const importe = cortarEnPalabra(cuantia, 40);
+  const nombre = corto.length < limpio.length ? quitarCola(corto) : corto;
+  const importe = quitarCola(cortarEnPalabra(cuantia, 40));
 
   let d = importe
     ? `Guía completa de ${nombre}: requisitos, plazos, cuantía (${importe}) y cómo solicitarlo en Andalucía.`
@@ -466,8 +516,7 @@ function metaDescription(titulo, categoria, guia, cuantia = guia?.cuantia) {
 
   if (d.length < 120) d += ' Con enlace a la web oficial.';
   if (d.length < 120) d += ` | ${NOMBRE}`;
-  if (d.length > 155) d = d.slice(0, 152).trimEnd() + '...';
-  return d;
+  return ajustarDescripcion(d, 155);
 }
 
 // ---------------------------------------------------------------------------
@@ -480,7 +529,8 @@ function paginaFicha(t, ctx) {
   const operador = operadorDe(t.url_oficial);
   const { h1 } = titulosSEO(t, operador); // el h1 mantiene el título completo
   const cat = ctx.categoriaDe(t);
-  const title = tituloSeo(t.titulo, cat.nombre);
+  const tituloMigas = tituloBase(t.titulo); // migas de pan: título sin sufijo
+  const title = tituloSeo(t.titulo);
   ctx.titulos?.push({ slug: t.slug, title });
   const descripcion = metaDescription(t.titulo, cat.nombre, t.guia, t.cuantia);
   const g = t.guia;
@@ -524,7 +574,7 @@ function paginaFicha(t, ctx) {
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITIO}/` },
           { '@type': 'ListItem', position: 2, name: cat.nombre, item: `${SITIO}/categoria/${cat.slug}/` },
-          { '@type': 'ListItem', position: 3, name: title, item: url }
+          { '@type': 'ListItem', position: 3, name: tituloMigas, item: url }
         ]
       }
     ]
@@ -570,7 +620,7 @@ function paginaFicha(t, ctx) {
     <ol>
       <li><a href="/">Inicio</a></li>
       <li><a href="/categoria/${cat.slug}/">${esc(cat.nombre)}</a></li>
-      <li aria-current="page">${esc(title)}</li>
+      <li aria-current="page">${esc(tituloMigas)}</li>
     </ol>
   </nav>
   <article class="taa-ficha">
