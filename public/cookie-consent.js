@@ -165,9 +165,6 @@ console.log('Cookie consent script cargado');
     if (enfocar) acciones.querySelector('button').focus();
   }
 
-  // Para el botón "Configurar cookies" de los pies de página:
-  // quita el banner actual (si lo hay) y lo vuelve a mostrar
-  window.abrirCookies = function () { mostrarBanner(true); };
 
   // --- Arranque ------------------------------------------------------------
   var decision = leerDecision();
