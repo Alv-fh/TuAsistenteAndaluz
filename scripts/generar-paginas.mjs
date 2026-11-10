@@ -356,12 +356,16 @@ function pasosDeTexto(valor) {
 function enlazarUrls(texto) {
   return String(texto ?? '').split(/(https?:\/\/[^\s<>"']+)/g).map((parte, i) => {
     if (i % 2 === 0) return esc(parte);
+    
     const limpia = parte.replace(/[.,;:!?)\]]+$/, '');
     const resto = parte.slice(limpia.length);
     const seguro = enlaceSeguro(limpia);
+    
+    // CAMBIO AQUÍ: Si es seguro, creamos un botón bonito con Tailwind en vez de la URL cruda
     const html = seguro
-      ? `<a href="${esc(seguro)}" target="_blank" rel="noopener noreferrer">${esc(limpia)}</a>`
+      ? `<a href="${esc(seguro)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1 mt-1 text-sm font-medium text-emerald-700 bg-emerald-100/50 border border-emerald-200 rounded-md hover:bg-emerald-100 transition-colors dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800 dark:hover:bg-emerald-900/50 break-all">🔗 Enlace oficial</a>`
       : esc(limpia);
+      
     return html + esc(resto);
   }).join('');
 }
