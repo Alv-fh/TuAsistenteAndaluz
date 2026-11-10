@@ -15,7 +15,6 @@
  * Variables de entorno (todas opcionales):
  *   SUPABASE_URL, SUPABASE_ANON_KEY   si faltan, se leen de public/app.js (son las mismas públicas)
  *   SITE_URL                          por defecto https://tuasistenteandaluz.es
- *   GA_ID                             por defecto el tuyo; pon GA_ID= (vacío) para no incluir Analytics
  *
  * IMPORTANTE: usa solo la clave ANON (pública). Nunca la service key.
  * No necesita dependencias: solo Node 18 o superior.
@@ -30,7 +29,6 @@ import { fileURLToPath } from 'node:url';
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PUBLIC = path.join(RAIZ, 'public');
 const SITIO = (process.env.SITE_URL || 'https://tuasistenteandaluz.es').replace(/\/+$/, '');
-const GA_ID = process.env.GA_ID ?? 'G-BV5TZH279Z';
 const NOMBRE = 'TuAsistenteAndaluz';
 // Páginas legales escritas a mano en public/legal/<slug>/index.html (el generador no las crea ni las borra)
 const PAGINAS_LEGALES = ['aviso-legal', 'privacidad', 'cookies', 'quienes-somos'];
@@ -262,7 +260,7 @@ function cabeza({ titulo, descripcion, canonico, tipoOg = 'article', tarjetaTw =
 <meta name="twitter:description" content="${esc(descripcion)}">
 <link rel="icon" type="image/png" href="/logo-taa.png">
 ${SCRIPT_TEMA_INICIAL}
-${bloqueGA()}
+<script src="/cookie-consent.js" defer></script>
 <link rel="stylesheet" href="/styles.css">
 <link rel="stylesheet" href="/paginas.css">
 <script type="application/ld+json">${jsonSeguro(jsonld)}</script>
@@ -275,16 +273,14 @@ const CABECERA = `<header class="glass-header taa-header">
   <button id="theme-toggle" class="taa-tema" type="button" aria-label="Cambiar tema">${ICONO_SOL}${ICONO_LUNA}</button>
 </header>`;
 
-function pie(categorias, hayPrivacidad) {
+function pie(categorias) {
   const enlacesCat = categorias
     .map((c) => `<a href="/categoria/${c.slug}/">${esc(c.nombre)}</a>`)
     .join('');
-  const legal = hayPrivacidad
-    ? '<a href="/privacidad.html#aviso-legal">Aviso legal</a><a href="/privacidad.html#privacidad">Privacidad</a><a href="/privacidad.html#cookies">Cookies</a>'
-    : '';
+  const legal = '<a href="/legal/aviso-legal/">Aviso legal</a><a href="/legal/privacidad/">Privacidad</a><a href="/legal/cookies/">Cookies</a><a href="/legal/quienes-somos/">Quiénes somos</a><button type="button" class="taa-enlace-boton" onclick="abrirCookies()">Configurar cookies</button>';
   return `<footer class="taa-pie">
   <nav aria-label="Categorías">${enlacesCat}</nav>
-  ${legal ? `<nav aria-label="Información legal">${legal}</nav>` : ''}
+  <nav aria-label="Información legal">${legal}</nav>
   <p>${NOMBRE} es un servicio independiente y no está vinculado a la Junta de Andalucía ni al SEPE. Comprueba siempre los datos en la web oficial antes de solicitar.</p>
 </footer>`;
 }
@@ -294,7 +290,7 @@ function pagina({ head, cuerpo, categorias, hayPrivacidad, scriptsExtra = '' }) 
 <body class="taa-pagina background-radial">
 ${CABECERA}
 ${cuerpo}
-${pie(categorias, hayPrivacidad)}
+${pie(categorias)}
 ${SCRIPT_TEMA_BOTON}
 ${scriptsExtra}
 </body>

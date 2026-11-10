@@ -19,8 +19,7 @@
 <meta name="twitter:description" content="Política de cookies de TuAsistenteAndaluz: qué cookies usamos (Google Analytics), para qué, cuánto duran y cómo rechazarlas.">
 <link rel="icon" type="image/png" href="/logo-taa.png">
 <script>(function(){try{var s=localStorage.getItem('theme');var d=s?s==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',d);}catch(e){}})();</script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BV5TZH279Z"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-BV5TZH279Z');</script>
+<script src="/cookie-consent.js" defer></script>
 <link rel="stylesheet" href="/styles.css">
 <link rel="stylesheet" href="/paginas.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://tuasistenteandaluz.es/legal/cookies/#pagina","name":"Política de cookies","inLanguage":"es","url":"https://tuasistenteandaluz.es/legal/cookies/","isPartOf":{"@type":"WebSite","name":"TuAsistenteAndaluz","url":"https://tuasistenteandaluz.es"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://tuasistenteandaluz.es/"},{"@type":"ListItem","position":2,"name":"Política de cookies","item":"https://tuasistenteandaluz.es/legal/cookies/"}]}]}</script>
@@ -69,12 +68,20 @@
         <li><strong>Duración:</strong> hasta que borres los datos del sitio en tu navegador.</li>
         <li><strong>Tipo:</strong> propia y técnica. No necesita consentimiento y no se envía a ningún servidor.</li>
       </ul>
+
+      <h3>Preferencia de cookies (técnica)</h3>
+      <ul>
+        <li><strong>Nombre:</strong> <code>taa-cookies</code> (<em>localStorage</em>).</li>
+        <li><strong>Finalidad:</strong> recordar si has aceptado o rechazado las cookies de analítica.</li>
+        <li><strong>Duración:</strong> 12 meses. Pasado ese tiempo se te vuelve a preguntar.</li>
+        <li><strong>Tipo:</strong> propia y técnica. No se envía a ningún servidor.</li>
+      </ul>
     </section>
 
     <section>
       <h2>3. Cómo rechazar las cookies de analítica</h2>
       <ul>
-        <li><strong>En este sitio:</strong> [COMPLETAR: mecanismo de consentimiento (banner o botón de rechazo) y su ubicación].</li>
+        <li><strong>En este sitio:</strong> la primera vez que entras ves un aviso con los botones «Rechazar» y «Aceptar». Si pulsas «Rechazar», o no eliges nada, no se carga Google Analytics ni se instalan sus cookies.</li>
         <li><strong>En tu navegador:</strong> puedes bloquear o eliminar las cookies desde los ajustes de privacidad de tu navegador (Chrome, Firefox, Safari, Edge, etc.). Si las bloqueas, el sitio sigue funcionando.</li>
         <li><strong>Complemento de Google:</strong> puedes instalar el <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">complemento de inhabilitación de Google Analytics</a> para que tus visitas no se midan en ningún sitio web.</li>
       </ul>
@@ -83,7 +90,7 @@
     <section>
       <h2>4. Cómo cambiar tu decisión</h2>
       <ul>
-        <li><strong>En este sitio:</strong> [COMPLETAR: enlace o botón para volver a abrir el panel de consentimiento].</li>
+        <li><strong>En este sitio:</strong> pulsa <button type="button" class="taa-enlace-boton" onclick="abrirCookies()">Configurar cookies</button> (también disponible en el pie de todas las páginas) para volver a elegir. Si rechazas después de haber aceptado, se borran las cookies <code>_ga</code> de este sitio.</li>
         <li><strong>En tu navegador:</strong> elimina las cookies <code>_ga</code> y <code>_ga_BV5TZH279Z</code> de este sitio desde los ajustes del navegador y vuelve a elegir la próxima vez que se te pregunte.</li>
         <li><strong>Para retirar tu consentimiento</strong> también puedes escribirnos a [COMPLETAR: email].</li>
       </ul>

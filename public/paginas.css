@@ -278,3 +278,73 @@
     border-color: rgba(52, 211, 153, 0.25);
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
+
+/* ---------- Banner de cookies (public/cookie-consent.js) ---------- */
+.taa-cookies {
+    position: fixed;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    z-index: 200;
+    box-sizing: border-box;
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 1.1rem 1.25rem;
+    border-radius: 1.1rem;
+    font-family: inherit;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--taa-txt);
+    background: #ffffff;
+    border: 1px solid var(--taa-borde);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+.dark .taa-cookies { background: #06281f; }
+.taa-cookies p { margin: 0; }
+.taa-cookies-titulo { font-size: 1rem; font-weight: 800; color: var(--taa-tit); margin-bottom: 0.35rem !important; }
+.taa-cookies a { color: var(--taa-acento-txt); text-underline-offset: 3px; }
+.taa-cookies-acciones { display: flex; gap: 0.75rem; margin-top: 0.9rem; }
+/* "Aceptar" y "Rechazar" comparten exactamente el mismo estilo */
+.taa-cookies-btn {
+    flex: 1 1 0;
+    box-sizing: border-box;
+    padding: 0.7rem 1rem;
+    border-radius: 0.8rem;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    color: var(--taa-boton-txt);
+    background: var(--taa-boton-bg);
+    border: 2px solid var(--taa-boton-bg);
+    transition: background-color 0.2s, border-color 0.2s;
+}
+.taa-cookies-btn:hover { background: var(--taa-boton-hover); border-color: var(--taa-boton-hover); }
+.taa-cookies a:focus-visible, .taa-cookies-btn:focus-visible {
+    outline: 2px solid var(--taa-acento);
+    outline-offset: 2px;
+}
+
+/* Botón con aspecto de enlace (pies de página y política de cookies) */
+.taa-enlace-boton {
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    font-weight: inherit;
+    color: var(--taa-acento-txt);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+.taa-enlace-boton:hover { text-decoration: none; }
+.taa-enlace-boton:focus-visible { outline: 2px solid var(--taa-acento); outline-offset: 2px; }
+
+/* Enlaces legales del pie de la home */
+.taa-pie-legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem 1.2rem;
+    font-weight: 600;
+}
