@@ -585,6 +585,24 @@ function paginaFicha(t, ctx) {
     t.destacado ? '<span class="taa-chip taa-chip--destacado">Destacado</span>' : ''
   ].filter(Boolean).join('\n      ');
 
+  let resumenHtml = '';
+  if (t.slug.includes('familia-numerosa') || t.titulo.toLowerCase().includes('familia numerosa')) {
+    resumenHtml = `
+    <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 1.5rem; border-radius: 0.75rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+      <h2 style="margin-top: 0; color: #065f46; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">⚡ Resumen rápido: Lo que necesitas saber</h2>
+      <ul style="margin-bottom: 0; padding-left: 1.2rem; color: #064e3b;">
+        <li style="margin-bottom: 0.5rem;"><strong>Cuándo renovar:</strong> En los 3 meses antes de que caduque.</li>
+        <li style="margin-bottom: 0.5rem;"><strong>Papeles básicos:</strong> DNI de todos, Libro de Familia y Certificado de Empadronamiento.</li>
+        <li><strong>Cómo pedir cita:</strong> Online con certificado digital o presencial en tu Delegación.</li>
+      </ul>
+      <div style="margin-top: 1.2rem;">
+        <a href="https://www.juntadeandalucia.es/haciendayadministracionpublica/citaprevia/citapreviaOperacion?tenantId=998" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; background-color: #10b981; color: white; font-weight: bold; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; transition: background-color 0.2s;">
+          Pedir Cita Previa en la Junta 🔗
+        </a>
+      </div>
+    </div>`;
+  }
+
   const secciones = g ? `
   <section>
     <h2>¿En qué consiste?</h2>
@@ -627,6 +645,7 @@ function paginaFicha(t, ctx) {
       </div>
     </header>
     <div class="taa-aviso" role="note"><strong>Aviso importante:</strong> esta es una guía orientativa basada en fuentes públicas. Los requisitos o el método de solicitud pueden haber cambiado. Comprueba siempre los datos en la web oficial antes de presentar tu solicitud.</div>
+    ${resumenHtml}
     ${secciones}
     ${oficial ? `<p class="taa-cta"><a class="taa-boton" href="${esc(oficial)}" target="_blank" rel="noopener noreferrer">Ver en la web oficial</a></p>` : ''}
     <footer class="taa-meta">
