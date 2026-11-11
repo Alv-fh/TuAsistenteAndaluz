@@ -210,6 +210,25 @@ async function cargarTramites() {
   return r.json();
 }
 
+// Frases que a veces vienen en los datos de origen y no queremos mostrar en las páginas
+const FRASES_A_QUITAR = [
+  /El texto de la página solo enumera las gestiones[^.\n]*\.?[ \t]*/gi
+];
+
+// Quita esas frases de cualquier texto (también dentro de listas y objetos anidados)
+function limpiarFrases(valor) {
+  if (typeof valor === 'string') {
+    return FRASES_A_QUITAR.reduce((texto, re) => texto.replace(re, ''), valor).trim();
+  }
+  if (Array.isArray(valor)) {
+    return valor.map(limpiarFrases).filter((v) => v !== '');
+  }
+  if (valor && typeof valor === 'object') {
+    return Object.fromEntries(Object.entries(valor).map(([k, v]) => [k, limpiarFrases(v)]));
+  }
+  return valor;
+}
+
 function normalizarRegistro(r) {
   let guia = r.guia;
   if (typeof guia === 'string') { try { guia = JSON.parse(guia); } catch { guia = null; } }
@@ -217,7 +236,7 @@ function normalizarRegistro(r) {
   if (typeof extra === 'string') { try { extra = JSON.parse(extra); } catch { extra = []; } }
   return {
     ...r,
-    guia: guia && typeof guia === 'object' ? guia : null,
+    guia: guia && typeof guia === 'object' ? limpiarFrases(guia) : null,
     fuentes_extra: Array.isArray(extra) ? extra.filter((x) => typeof x === 'string') : []
   };
 }
@@ -598,6 +617,36 @@ function paginaFicha(t, ctx) {
       <div style="margin-top: 1.2rem;">
         <a href="https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/7.html" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; background-color: #10b981; color: white; font-weight: bold; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; transition: background-color 0.2s;">
           Pedir Cita Previa en la Junta 🔗
+        </a>
+      </div>
+    </div>`;
+  } else if (t.slug.includes('tarjeta-sanitaria')) {
+    resumenHtml = `
+    <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 1.5rem; border-radius: 0.75rem; margin-top: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+      <h2 style="margin-top: 0; color: #065f46; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">⚡ Resumen rápido: Lo que necesitas saber</h2>
+      <ul style="margin-bottom: 0; padding-left: 1.2rem; color: #064e3b;">
+        <li style="margin-bottom: 0.5rem;"><strong>Primera vez:</strong> Presencial en tu Centro de Salud (con DNI, libro de familia y empadronamiento).</li>
+        <li style="margin-bottom: 0.5rem;"><strong>Renovación o pérdida:</strong> Online con Cl@ve o certificado digital.</li>
+        <li><strong>Tarjeta virtual:</strong> Descarga la app Salud Andalucía (solo si tienes Cl@ve).</li>
+      </ul>
+      <div style="margin-top: 1.2rem;">
+        <a href="https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/7.html" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; background-color: #10b981; color: white; font-weight: bold; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; transition: background-color 0.2s;">
+          Ir al trámite oficial 🔗
+        </a>
+      </div>
+    </div>`;
+  } else if (t.slug.includes('exencion-impuesto-matriculacion')) {
+    resumenHtml = `
+    <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 1.5rem; border-radius: 0.75rem; margin-top: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+      <h2 style="margin-top: 0; color: #065f46; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">⚡ Resumen rápido: Lo que necesitas saber</h2>
+      <ul style="margin-bottom: 0; padding-left: 1.2rem; color: #064e3b;">
+        <li style="margin-bottom: 0.5rem;"><strong>Para qué sirve:</strong> Evitar pagar el Impuesto de Matriculación (o pagar menos) al comprar un coche.</li>
+        <li style="margin-bottom: 0.5rem;"><strong>Cuándo pedirlo:</strong> Siempre ANTES de matricular el vehículo.</li>
+        <li><strong>Quién lo tramita:</strong> Es de la Agencia Tributaria (Hacienda), no de la Junta.</li>
+      </ul>
+      <div style="margin-top: 1.2rem;">
+        <a href="https://sede.agenciatributaria.gob.es/Sede/procedimientoini/GZ17.shtml" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; background-color: #10b981; color: white; font-weight: bold; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; transition: background-color 0.2s;">
+          Ir a la Agencia Tributaria 🔗
         </a>
       </div>
     </div>`;
