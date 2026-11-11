@@ -665,6 +665,21 @@ function paginaFicha(t, ctx) {
         </a>
       </div>
     </div>`;
+  } else if (t.slug.includes('complemento-apoyo-empleo')) {
+    resumenHtml = `
+    <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 1.5rem; border-radius: 0.75rem; margin-top: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+      <h2 style="margin-top: 0; color: #065f46; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">⚡ Resumen rápido: Lo que necesitas saber</h2>
+      <ul style="margin-bottom: 0; padding-left: 1.2rem; color: #064e3b;">
+        <li style="margin-bottom: 0.5rem;"><strong>Para qué sirve:</strong> Para seguir cobrando el paro o el subsidio mientras trabajas.</li>
+        <li style="margin-bottom: 0.5rem;"><strong>Cuándo pedirlo:</strong> En los 15 días hábiles siguientes a empezar el nuevo trabajo.</li>
+        <li><strong>Cuánto se cobra:</strong> Tu sueldo + la parte proporcional de tu paro.</li>
+      </ul>
+      <div style="margin-top: 1.2rem;">
+        <a href="https://www.sepe.es/HomeSepe/es/prestaciones-desempleo/complemento-de-apoyo-empleo.html" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; background-color: #10b981; color: white; font-weight: bold; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; transition: background-color 0.2s;">
+          Ir a la Web del SEPE 🔗
+        </a>
+      </div>
+    </div>`;
   }
 
   const secciones = g ? `
