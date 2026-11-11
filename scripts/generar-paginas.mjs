@@ -596,7 +596,7 @@ function paginaFicha(t, ctx) {
         <li><strong>Cómo pedir cita:</strong> Online con certificado digital o presencial en tu Delegación.</li>
       </ul>
       <div style="margin-top: 1.2rem;">
-        <a href="https://www.juntadeandalucia.es/haciendayadministracionpublica/citaprevia/citapreviaOperacion?tenantId=998" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; background-color: #10b981; color: white; font-weight: bold; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; transition: background-color 0.2s;">
+        <a href="https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/7.html" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; background-color: #10b981; color: white; font-weight: bold; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; transition: background-color 0.2s;">
           Pedir Cita Previa en la Junta 🔗
         </a>
       </div>
