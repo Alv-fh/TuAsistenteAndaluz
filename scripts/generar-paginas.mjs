@@ -691,7 +691,7 @@ function paginaFicha(t, ctx) {
         <li><strong>Quién lo pide:</strong> Familias numerosas, quien cobra el IMV, la pensión mínima o tiene rentas bajas.</li>
       </ul>
       <div style="margin-top: 1.2rem;">
-        <a href="https://www.bonosocial.gob.es/" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; background-color: #10b981; color: white; font-weight: bold; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; transition: background-color 0.2s;">
+        <a href="https://www.miteco.gob.es/es/energia/pobreza-energetica/pe-001.html" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; background-color: #10b981; color: white; font-weight: bold; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; transition: background-color 0.2s;">
           Más información oficial 🔗
         </a>
       </div>
