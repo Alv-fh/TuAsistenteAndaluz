@@ -316,6 +316,13 @@ export const config = {
         slug: 'procedimiento-mscbs-025809',
         categoria: 'Trámites',
         fuentes: ['https://sede.mscbs.gob.es/ciudadanos/procAdministrativos.do?tipo=detallar&cod=025809']
+      },
+      // Capitalización del paro (Pago único)
+      {
+        url: 'https://www.sepe.es/HomeSepe/Personas/distributiva-prestaciones/ayudas-prestaciones-capitalizacion-pago-unico.html',
+        slug: 'capitalizacion-paro',
+        categoria: 'Empleo',
+        fuentes: ['https://www.sepe.es/HomeSepe/Personas/distributiva-prestaciones/ayudas-prestaciones-capitalizacion-pago-unico.html']
       }
       // Otras páginas de la sede que podrías añadir más adelante:
       //   baja-prestacion.html, consultas.html, comunicacion-variacion-situacion-personal-familiar-rentas.html,
