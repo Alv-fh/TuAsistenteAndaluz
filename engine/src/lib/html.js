@@ -4,7 +4,7 @@
 
 const DOMINIOS_OFICIALES = [
   'juntadeandalucia.es', 'boe.es', 'sepe.es', 'sepe.gob.es', 'seg-social.es',
-  'prestaciones.seg-social.es', 'imv.seg-social.es', 'sede.agenciatributaria.gob.es', 'sede.mscbs.gob.es'
+  'prestaciones.seg-social.es', 'imv.seg-social.es', 'sede.agenciatributaria.gob.es', 'sede.mscbs.gob.es', 'bonosocial.gob.es'
 ];
 
 const esc = (valor) =>

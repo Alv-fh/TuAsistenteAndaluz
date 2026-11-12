@@ -19,7 +19,7 @@ export const config = {
   },
   crawler: {
     headless: process.env.HEADLESS === 'true',
-    dominiosPermitidos: ['juntadeandalucia.es', 'boe.es', 'sepe.es', 'seg-social.es', 'prestaciones.seg-social.es', 'sede.agenciatributaria.gob.es', 'sede.mscbs.gob.es'],
+    dominiosPermitidos: ['juntadeandalucia.es', 'boe.es', 'sepe.es', 'seg-social.es', 'prestaciones.seg-social.es', 'sede.agenciatributaria.gob.es', 'sede.mscbs.gob.es', 'bonosocial.gob.es'],
     // Propiedades de control (las que faltaban)
     segmentosGenericos: ['convocatorias', 'calendario', 'normativa', 'preguntas-frecuentes', 'solicitud', 'inicio', 'index'],
     maxCaracteresFuente: 15000,
