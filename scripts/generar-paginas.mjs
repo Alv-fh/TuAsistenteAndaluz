@@ -680,6 +680,21 @@ function paginaFicha(t, ctx) {
         </a>
       </div>
     </div>`;
+  } else if (t.slug.includes('bono-social-electrico')) {
+    resumenHtml = `
+    <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 1.5rem; border-radius: 0.75rem; margin-top: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+      <h2 style="margin-top: 0; color: #065f46; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">⚡ Resumen rápido: Lo que necesitas saber</h2>
+      <ul style="margin-bottom: 0; padding-left: 1.2rem; color: #064e3b;">
+        <li style="margin-bottom: 0.5rem;"><strong>Cuánto descuentan:</strong> Hasta un 57,5% de la factura de la luz.</li>
+        <li style="margin-bottom: 0.5rem;"><strong>Requisito clave:</strong> Tienes que estar en la tarifa regulada (PVPC), no en el mercado libre.</li>
+        <li><strong>Quién lo pide:</strong> Familias numerosas, quien cobra el IMV, la pensión mínima o tiene rentas bajas.</li>
+      </ul>
+      <div style="margin-top: 1.2rem;">
+        <a href="https://www.bonosocial.gob.es/" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; background-color: #10b981; color: white; font-weight: bold; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; transition: background-color 0.2s;">
+          Más información oficial 🔗
+        </a>
+      </div>
+    </div>`;
   }
 
   const secciones = g ? `
