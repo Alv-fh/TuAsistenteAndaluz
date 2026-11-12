@@ -32,7 +32,7 @@ const SITIO = (process.env.SITE_URL || 'https://tuasistenteandaluz.es').replace(
 const NOMBRE = 'TuAsistenteAndaluz';
 // Páginas legales escritas a mano en public/legal/<slug>/index.html (el generador no las crea ni las borra)
 const PAGINAS_LEGALES = ['aviso-legal', 'privacidad', 'cookies', 'quienes-somos'];
-const DOMINIOS_OFICIALES = ['juntadeandalucia.es', 'boe.es', 'sepe.es', 'sepe.gob.es', 'seg-social.es', 'prestaciones.seg-social.es', 'sede.agenciatributaria.gob.es', 'sede.mscbs.gob.es', 'bonosocial.gob.es'];
+const DOMINIOS_OFICIALES = ['juntadeandalucia.es', 'boe.es', 'sepe.es', 'sepe.gob.es', 'seg-social.es', 'prestaciones.seg-social.es', 'sede.agenciatributaria.gob.es', 'sede.mscbs.gob.es', 'bonosocial.gob.es', 'miteco.gob.es', 'www.miteco.gob.es'];
 
 const COLUMNAS = [
   'id', 'created_at', 'slug', 'titulo', 'categoria', 'estado', 'cuantia',
