@@ -67,6 +67,46 @@ const INFO_CATEGORIAS = {
 const CLASE_ESTADO = { 'Abierto': 'abierto', 'Próximamente': 'proximo', 'Cerrado': 'cerrado', 'Desconocido': 'desconocido' };
 const ORDEN_ESTADO = { 'Abierto': 0, 'Próximamente': 1, 'Cerrado': 2, 'Desconocido': 3 };
 
+// Guías estáticas escritas a mano en public/: se añaden al sitemap
+const PAGINAS_GUIAS = ['guia-paro.html', 'guia-inscripcion-sae.html', 'guia-sae-sepe.html', 'guia-clave.html'];
+const FECHA_GUIAS = '2026-11-15';
+
+// <title>, meta description y H1 fijados a mano para fichas concretas (por slug)
+const SEO_MANUAL = {
+  'subsidio-mayores-52': {
+    title: 'Subsidio para mayores de 52 años 2026: 480 € al mes hasta la jubilación',
+    description: 'Subsidio de +52 en 2026: 480 € al mes hasta la jubilación, límite de ingresos de 915,75 € y cotización para tu pensión. Requisitos y cómo pedirlo.',
+    h1: 'Subsidio para mayores de 52 años: cuánto se cobra, requisitos y cómo pedirlo'
+  },
+  'ayudas-alquiler-junta-andalucia': {
+    title: 'Ayudas al alquiler de la Junta de Andalucía: requisitos y cómo prepararte',
+    description: 'Las ayudas al alquiler de la Junta de Andalucía salen por convocatorias. Requisito clave: contrato de alquiler a tu nombre, aunque sea de una habitación.',
+    h1: 'Ayudas al alquiler de la Junta de Andalucía: requisitos y cómo estar preparado'
+  }
+};
+
+// "Resumen rápido" por slug: lista de [etiqueta, texto]
+const RESUMENES_RAPIDOS = {
+  'subsidio-mayores-52': [
+    ['Cuánto', '480 €/mes en 2026 (80 % del IPREM).'],
+    ['Hasta cuándo', 'hasta la edad de jubilación, mientras cumplas los requisitos.'],
+    ['Límite de ingresos propios', '915,75 €/mes brutos (75 % del SMI de 1.221 €).'],
+    ['Cotiza para la jubilación', 'sí, al 125 % de la base mínima.']
+  ],
+  'ayudas-alquiler-junta-andalucia': [
+    ['Cuándo', 'salen por convocatorias publicadas en el BOJA, sin fecha fija.'],
+    ['Requisito clave', 'contrato de alquiler a tu nombre, aunque sea de una habitación.'],
+    ['Consejo', 'prepara ya el contrato para poder pedirla en cuanto se abra el plazo.']
+  ]
+};
+
+// Consejos que se añaden a una ficha existente sin tocar sus datos (enlaces internos [texto](/ruta/))
+const CONSEJOS_EXTRA = {
+  'ingreso-minimo-vital': [
+    'Si tienes 52 años o más y estás en desempleo, mira también el [subsidio para mayores de 52 años](/ayuda/subsidio-mayores-52/).'
+  ]
+};
+
 // ---------------------------------------------------------------------------
 // Utilidades
 // ---------------------------------------------------------------------------
@@ -312,6 +352,20 @@ ${scriptsExtra}
 `;
 }
 
+// Caja "Resumen rápido" (mismo aspecto que las de las fichas con resumen a medida)
+function resumenRapido(items) {
+  const filas = items
+    .map(([etiqueta, texto], i) => `<li${i < items.length - 1 ? ' style="margin-bottom: 0.5rem;"' : ''}><strong>${esc(etiqueta)}:</strong> ${esc(texto)}</li>`)
+    .join('\n        ');
+  return `
+    <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 1.5rem; border-radius: 0.75rem; margin-top: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+      <h2 style="margin-top: 0; color: #065f46; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">⚡ Resumen rápido: Lo que necesitas saber</h2>
+      <ul style="margin-bottom: 0; padding-left: 1.2rem; color: #064e3b;">
+        ${filas}
+      </ul>
+    </div>`;
+}
+
 function insigniaEstado(t, ahora) {
   const ef = calcularEstado(t, ahora);
   return `<span class="taa-badge taa-badge--${CLASE_ESTADO[ef.estado] || 'desconocido'}" data-taa-estado data-estado="${esc(t.estado)}" data-apertura="${esc(t.fecha_apertura)}" data-cierre="${esc(t.fecha_cierre)}" data-proxima="${esc(t.proxima_apertura)}" data-estimada="${t.apertura_estimada ? '1' : ''}">${esc(ef.etiqueta)}</span>`;
@@ -373,7 +427,23 @@ function pasosDeTexto(valor) {
 }
 
 // Escapa el texto y convierte en enlace SOLO las URLs de dominios oficiales
+// Enlaces internos con la sintaxis [texto](/ruta/). Solo rutas del propio sitio (empiezan por "/" y no por "//").
+const ENLACE_INTERNO = /(\[[^\]]+\]\(\/(?!\/)[^)\s]*\))/;
+
+// `resto` procesa los trozos que no son enlaces internos (por defecto, solo escapa)
+function enlazarInternos(texto, resto = esc) {
+  return String(texto ?? '').split(ENLACE_INTERNO).map((trozo, n) => {
+    if (n % 2 === 0) return resto(trozo);
+    const m = /^\[([^\]]+)\]\((\/[^)\s]*)\)$/.exec(trozo);
+    return m ? `<a href="${esc(m[2])}">${esc(m[1])}</a>` : esc(trozo);
+  }).join('');
+}
+
 function enlazarUrls(texto) {
+  return enlazarInternos(texto, enlazarUrlsExternas);
+}
+
+function enlazarUrlsExternas(texto) {
   return String(texto ?? '').split(/(https?:\/\/[^\s<>"']+)/g).map((parte, i) => {
     if (i % 2 === 0) return esc(parte);
     
@@ -403,6 +473,13 @@ function bloquePasos(valor) {
 function listaDesdeTexto(valor) {
   if (Array.isArray(valor)) return valor.map(String).filter(Boolean);
   return String(valor ?? '').split(/\n+/).map((s) => s.trim()).filter(Boolean);
+}
+
+// Consejos: un párrafo si hay uno solo, una lista si hay varios. Admite enlaces internos [texto](/ruta/).
+function bloqueConsejos(valor, slug) {
+  const todas = [...listaDesdeTexto(valor), ...(CONSEJOS_EXTRA[slug] || [])];
+  if (todas.length > 1) return `<ul>${todas.map((c) => `<li>${enlazarInternos(c)}</li>`).join('')}</ul>`;
+  return `<p>${enlazarInternos(todas[0] ?? '')}</p>`;
 }
 
 // ---------------------------------------------------------------------------
@@ -543,12 +620,14 @@ function paginaFicha(t, ctx) {
   const url = `${SITIO}/ayuda/${t.slug}/`;
   const oficial = enlaceSeguro(t.url_oficial);
   const operador = operadorDe(t.url_oficial);
-  const { h1 } = titulosSEO(t, operador); // el h1 mantiene el título completo
+  const seoManual = SEO_MANUAL[t.slug];
+  const { h1: h1Auto } = titulosSEO(t, operador);
+  const h1 = seoManual?.h1 ?? h1Auto; // el h1 mantiene el título completo
   const cat = ctx.categoriaDe(t);
   const tituloMigas = tituloBase(t.titulo); // migas de pan: título sin sufijo
-  const title = tituloSeo(t.titulo);
+  const title = seoManual?.title ?? tituloSeo(t.titulo);
   ctx.titulos?.push({ slug: t.slug, title });
-  const descripcion = metaDescription(t.titulo, cat.nombre, t.guia, t.cuantia);
+  const descripcion = seoManual?.description ?? metaDescription(t.titulo, cat.nombre, t.guia, t.cuantia);
   const g = t.guia;
 
   const comprobado = fechaLarga(t.revisado_en || t.actualizado_en);
@@ -696,6 +775,8 @@ function paginaFicha(t, ctx) {
         </a>
       </div>
     </div>`;
+  } else if (RESUMENES_RAPIDOS[t.slug]) {
+    resumenHtml = resumenRapido(RESUMENES_RAPIDOS[t.slug]);
   }
 
   const secciones = g ? `
@@ -711,9 +792,9 @@ function paginaFicha(t, ctx) {
     <h2>Plazos</h2>
     <p>${esc(g.plazos || 'Consulta los plazos exactos en la web oficial.')}</p>
   </section>
-  ${g.consejos ? `<section>
+  ${g.consejos || CONSEJOS_EXTRA[t.slug] ? `<section>
     <h2>💡 Consejos y avisos importantes</h2>
-    <p>${esc(g.consejos)}</p>
+    ${bloqueConsejos(g.consejos, t.slug)}
   </section>` : ''}
   <section>
     <h2>Cómo solicitarlo paso a paso</h2>
@@ -929,6 +1010,13 @@ async function main() {
   for (const c of categorias) entradas.push({ loc: `${SITIO}/categoria/${c.slug}/`, lastmod: ultima(porCategoria.get(c.slug)) });
   for (const t of tramites) entradas.push({ loc: `${SITIO}/ayuda/${t.slug}/`, lastmod: fechaISO(t.actualizado_en || t.revisado_en) });
   if (hayPrivacidad) entradas.push({ loc: `${SITIO}/privacidad.html`, lastmod: null });
+  for (const f of PAGINAS_GUIAS) {
+    if (await existe(path.join(PUBLIC, f))) {
+      entradas.push({ loc: `${SITIO}/${f}`, lastmod: FECHA_GUIAS });
+    } else {
+      advertencias.push(`Falta public/${f}: no se añade al sitemap.`);
+    }
+  }
   for (const p of PAGINAS_LEGALES) {
     if (await existe(path.join(PUBLIC, 'legal', p, 'index.html'))) {
       entradas.push({ loc: `${SITIO}/legal/${p}/`, lastmod: null });
