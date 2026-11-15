@@ -33,3 +33,8 @@ tests/
 logs/
 *.log
 .aider*
+
+# Binarios, copias de seguridad y metadatos de Windows
+*.deb
+*.bk
+*:Zone.Identifier
