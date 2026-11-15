@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://tuasistenteandaluz.es/</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-15</lastmod>
   </url>
   <url>
     <loc>https://tuasistenteandaluz.es/categoria/educacion/</loc>
@@ -10,11 +10,11 @@
   </url>
   <url>
     <loc>https://tuasistenteandaluz.es/categoria/empleo/</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-15</lastmod>
   </url>
   <url>
     <loc>https://tuasistenteandaluz.es/categoria/vivienda/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-15</lastmod>
   </url>
   <url>
     <loc>https://tuasistenteandaluz.es/categoria/ayudas/</loc>
@@ -199,6 +199,30 @@
   <url>
     <loc>https://tuasistenteandaluz.es/ayuda/bono-social-electrico/</loc>
     <lastmod>2026-11-12</lastmod>
+  </url>
+  <url>
+    <loc>https://tuasistenteandaluz.es/ayuda/subsidio-mayores-52/</loc>
+    <lastmod>2026-11-15</lastmod>
+  </url>
+  <url>
+    <loc>https://tuasistenteandaluz.es/ayuda/ayudas-alquiler-junta-andalucia/</loc>
+    <lastmod>2026-11-15</lastmod>
+  </url>
+  <url>
+    <loc>https://tuasistenteandaluz.es/guia-paro.html</loc>
+    <lastmod>2026-11-15</lastmod>
+  </url>
+  <url>
+    <loc>https://tuasistenteandaluz.es/guia-inscripcion-sae.html</loc>
+    <lastmod>2026-11-15</lastmod>
+  </url>
+  <url>
+    <loc>https://tuasistenteandaluz.es/guia-sae-sepe.html</loc>
+    <lastmod>2026-11-15</lastmod>
+  </url>
+  <url>
+    <loc>https://tuasistenteandaluz.es/guia-clave.html</loc>
+    <lastmod>2026-11-15</lastmod>
   </url>
   <url>
     <loc>https://tuasistenteandaluz.es/legal/aviso-legal/</loc>
