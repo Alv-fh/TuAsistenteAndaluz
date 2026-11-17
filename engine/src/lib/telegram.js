@@ -41,3 +41,12 @@ ${emoji} *${tituloAccion}* ${emoji}
     console.error('Error enviando mensaje a Telegram:', error.message);
   }
 }
+
+// Mensaje de texto simple (sin botones), por ejemplo el resumen diario del crawler.
+export async function enviarTexto(texto) {
+  try {
+    await bot.sendMessage(config.telegram.adminChatId, texto, { disable_web_page_preview: true });
+  } catch (error) {
+    console.error('Error enviando mensaje a Telegram:', error.message);
+  }
+}

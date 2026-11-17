@@ -999,6 +999,21 @@ async function main() {
   for (const t of tramites) archivos.push([`ayuda/${t.slug}/index.html`, paginaFicha(t, ctx)]);
   for (const c of categorias) archivos.push([`categoria/${c.slug}/index.html`, paginaCategoria(c, porCategoria.get(c.slug), ctx)]);
 
+  // Seguridad: si van a desaparecer fichas que hoy están en la web, no se toca nada
+  // salvo que se pida expresamente con --permitir-bajas (ej: al retirar una ficha a propósito).
+  const actuales = await fs.readdir(path.join(PUBLIC, 'ayuda'), { withFileTypes: true })
+    .then((xs) => xs.filter((x) => x.isDirectory()).map((x) => x.name))
+    .catch(() => []);
+  const nuevas = new Set(tramites.map((t) => t.slug));
+  const desaparecen = actuales.filter((s) => !nuevas.has(s));
+  if (desaparecen.length && !process.argv.includes('--permitir-bajas')) {
+    throw new Error(
+      `Se borrarían ${desaparecen.length} fichas que están publicadas: ${desaparecen.join(', ')}. ` +
+      'No se ha tocado nada. Revisa en Supabase que tengan publicado=true y guia_html, ' +
+      'o vuelve a lanzar con --permitir-bajas si de verdad quieres retirarlas.'
+    );
+  }
+
   // Solo se borran las carpetas que el generador recrea. public/legal/ NO se toca nunca.
   await fs.rm(path.join(PUBLIC, 'ayuda'), { recursive: true, force: true });
   await fs.rm(path.join(PUBLIC, 'categoria'), { recursive: true, force: true });

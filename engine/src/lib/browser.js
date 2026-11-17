@@ -69,17 +69,30 @@ export async function leerPagina(pagina, url) {
   await pagina.waitForTimeout(3000);
   return pagina.evaluate(() => {
     const selectores = ['#main-content', 'main', '[role="main"]', 'article', '#content', '.content'];
+    // Texto útil de un elemento: sin contar menús, cabeceras ni pies que tenga dentro.
+    const util = (el) => {
+      let n = el.innerText.trim().length;
+      for (const x of el.querySelectorAll('nav, header, footer')) n -= x.innerText.trim().length;
+      return n;
+    };
+    // Antes se cogía el PRIMER contenedor con más de 80 caracteres, aunque fuera una
+    // cabecera pequeña (en el BOJA salían 88 caracteres). Ahora se elige el que más texto útil tiene.
     let contenedor = null;
     let usado = 'body';
+    let mejor = 0;
     for (const s of selectores) {
-      const el = document.querySelector(s);
-      if (el && el.innerText.trim().length > 80) {
-        contenedor = el;
-        usado = s;
-        break;
+      for (const el of document.querySelectorAll(s)) {
+        // Lo que está dentro de menús, cabeceras o pies no es contenido (p. ej. los bloques
+        // "Directo a" del menú desplegable de la Junta, que son <article> dentro de un <nav>).
+        if (el.parentElement?.closest('nav, header, footer')) continue;
+        const n = util(el);
+        if (n > mejor) { mejor = n; contenedor = el; usado = s; }
       }
     }
-    if (!contenedor) contenedor = document.body;
+    // Si el ganador es una caja pequeña comparada con la página (p. ej. el bloque "Directo a"
+    // que la Junta pone en todas sus páginas), se lee la página entera.
+    const total = util(document.body);
+    if (!contenedor || mejor < 200 || mejor < total * 0.3) { contenedor = document.body; usado = 'body'; }
 
     const enlaces = [...contenedor.querySelectorAll('a[href]')]
       .filter((a) => !a.closest('nav, header, footer'))

@@ -2,6 +2,7 @@ import { load } from 'cheerio';
 import { config } from './config.js';
 import { analizarAyuda, llamarClaude, extraerJSON } from './lib/ai.js';
 import { abrirNavegador, leerFuentes, leerPagina } from './lib/browser.js';
+import { enviarTexto } from './lib/telegram.js';
 import {
   cargarUrlsConocidas,
   describirResultado,
@@ -131,10 +132,13 @@ async function iniciarArana() {
   const visitadas = new Set();
   const huellas = new Map();
   const slugsFijos = new Set(config.crawler.urlsDirectas.map((d) => d.slug));
-  const resumen = { nuevas: 0, otras: 0, caducadas: 0, descartadas: 0, omitidas: 0, errores: 0 };
+  const resumen = { nuevas: 0, otras: 0, caducadas: 0, descartadas: 0, omitidas: 0, cortas: 0, errores: 0 };
+  const urlsCortas = [];
+  // Solo cuentan para el límite las páginas que de verdad se leen (las omitidas no gastan cupo).
+  let procesadas = 0;
 
   try {
-    while (cola.length && visitadas.size < config.crawler.maxPaginas) {
+    while (cola.length && procesadas < config.crawler.maxPaginas) {
       const item = cola.shift();
       const url = normalizarUrl(item.url);
       if (!url || visitadas.has(url)) continue;
@@ -159,7 +163,8 @@ async function iniciarArana() {
         }
       }
 
-      console.log(`\n[${visitadas.size}/${config.crawler.maxPaginas}] (nivel ${item.profundidad}) ${url}`);
+      procesadas++;
+      console.log(`\n[${procesadas}/${config.crawler.maxPaginas}] (nivel ${item.profundidad}) ${url}`);
       try {
         let texto = '';
         let enlaces = [];
@@ -188,7 +193,12 @@ async function iniciarArana() {
           }
         }
 
-        if (!duplicada && item.profundidad > 0 && texto.length >= 800) {
+        if (!duplicada && item.profundidad > 0 && texto.length < 800) {
+          // Antes esto se descartaba sin dejar rastro en el resumen.
+          console.log(`   Muy poco texto (${texto.length} caracteres): no se analiza. ¿Carga con JavaScript o ha cambiado la web?`);
+          resumen.cortas++;
+          urlsCortas.push(url);
+        } else if (!duplicada && item.profundidad > 0) {
           const datos = await analizarAyuda(texto, url, item.categoria);
           if (!datos) {
             console.log('   No es una ayuda concreta o no tiene contenido útil.');
@@ -234,10 +244,17 @@ async function iniciarArana() {
     await navegador.close();
   }
 
-  console.log(
-    `\nResumen: ${resumen.nuevas} nuevas, ${resumen.otras} fusionadas/actualizadas, ${resumen.caducadas} caducadas, ` +
-    `${resumen.descartadas} no relevantes, ${resumen.omitidas} omitidas, ${resumen.errores} con error.`
-  );
+  const textoResumen =
+    `${resumen.nuevas} nuevas, ${resumen.otras} fusionadas/actualizadas, ${resumen.caducadas} caducadas, ` +
+    `${resumen.descartadas} no relevantes, ${resumen.cortas} con muy poco texto, ${resumen.omitidas} omitidas, ` +
+    `${resumen.errores} con error. Páginas leídas: ${procesadas}/${config.crawler.maxPaginas}.`;
+  console.log(`\nResumen: ${textoResumen}`);
+
+  // Aviso diario aunque no haya novedades: si un día no llega, el crawler no se ha ejecutado.
+  let aviso = `🕷️ Crawler terminado\n${textoResumen}`;
+  if (urlsBoja.length === 0) aviso += '\n⚠️ El BOJA no ha dado candidatas (o no se pudo descargar).';
+  if (urlsCortas.length) aviso += `\n⚠️ Páginas con muy poco texto:\n${urlsCortas.slice(0, 10).join('\n')}`;
+  await enviarTexto(aviso);
   if (resumen.errores) process.exitCode = 1;
 }
 
