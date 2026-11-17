@@ -46,6 +46,13 @@
       <span class="taa-chip taa-chip--cuantia">Reserva de plaza: 40 € por plaza. El resto del precio depende del balneario y del mes.</span>
       <span class="taa-badge taa-badge--abierto" data-taa-estado data-estado="Abierto" data-apertura="05/11/2026" data-cierre="04/12/2026" data-proxima="Turnos de septiembre a diciembre de 2027: se puede solicitar hasta el 12/05/2027. Lista de espera: hasta el 11/05/2027 (turnos feb-ago) y hasta el 31/10/2027 (t" data-estimada="">Abierto hasta el 04/12/2026</span>
       </div>
+      <div class="taa-compartir">
+      
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Programa%20de%20Termalismo%20del%20IMSERSO%202027%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fprograma-de-termalismo-del-imserso-2027-427b22%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/programa-de-termalismo-del-imserso-2027-427b22/">Copiar enlace</button>
+      </div>
+    </div>
     </header>
     <div class="taa-aviso" role="note"><strong>Aviso importante:</strong> esta es una guía orientativa basada en fuentes públicas. Los requisitos o el método de solicitud pueden haber cambiado. Comprueba siempre los datos en la web oficial antes de presentar tu solicitud.</div>
     
@@ -72,6 +79,13 @@
       <ol class="taa-pasos-lista"><li>Elige los balnearios, meses y turnos que te interesan en el anexo III de la resolución (BOE-A-2026-23163). Ahí figuran los precios, el tipo de tratamiento de cada balneario y si hay transporte desde la localidad concertada.</li><li>Consigue el modelo oficial de solicitud, que es el Anexo I de la resolución y lleva incluida la declaración responsable. Lo tienes en el BOE y en la sede electrónica del IMSERSO. También vale una fotocopia de ese modelo.</li><li>Si lo haces por internet (forma prioritaria), entra en https://sede.IMSERSO.gob.es. Ten a mano tu identificación electrónica (Cl@ve o certificado digital), que normalmente se pide en las sedes electrónicas; comprueba en la sede cuál aceptan.</li><li>Si prefieres papel, presenta el Anexo I en los registros y oficinas previstos en el artículo 9 de la Orden SSI/1688/2015, o envíalo por correo al Apartado de Correos número 61.285, 28080 Madrid.</li><li>Si vas con acompañante, inclúyelo en la solicitud. Rellena y firma la declaración responsable de que cumples los requisitos de autonomía y necesidad del tratamiento. Los datos de identidad y residencia los consulta el IMSERSO por vía electrónica, salvo que te opongas expresamente; en ese caso tendrás que aportar tú la documentación.</li><li>Espera la resolución, que se notifica por escrito. No puedes usar la plaza hasta que el IMSERSO confirme la adjudicación.</li><li>Si te adjudican plaza, paga los 40€ de reserva por plaza en el plazo que indique la notificación. El resto del precio se paga directamente en el balneario al ingresar.</li></ol>
   </section>
     <p class="taa-cta"><a class="taa-boton" href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-23163" target="_blank" rel="noopener noreferrer">Ver en la web oficial</a></p>
+    <div class="taa-compartir">
+      <p class="taa-compartir-pregunta">¿Conoces a alguien a quien le pueda servir? Pásaselo:</p>
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Programa%20de%20Termalismo%20del%20IMSERSO%202027%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fprograma-de-termalismo-del-imserso-2027-427b22%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/programa-de-termalismo-del-imserso-2027-427b22/">Copiar enlace</button>
+      </div>
+    </div>
     <footer class="taa-meta">
       <p>Última comprobación con la fuente oficial: <time datetime="2026-11-16">17 de noviembre de 2026</time>.</p>
       <p>Fuentes: <a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-23163" target="_blank" rel="noopener noreferrer">www.boe.es</a>.</p>
@@ -146,6 +160,15 @@ function calcularEstado(t, ahora) {
     els[i].className='taa-badge taa-badge--'+(clases[r.estado]||'desconocido');
   }
 })();
+</script><script>
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.taa-compartir-copiar');
+  if (!b) return;
+  var hecho = function (txt) { var o = 'Copiar enlace'; b.textContent = txt; setTimeout(function () { b.textContent = o; }, 2500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(b.getAttribute('data-url')).then(function () { hecho('¡Enlace copiado!'); }, function () { hecho('Copia el enlace de la barra de arriba'); });
+  } else { hecho('Copia el enlace de la barra de arriba'); }
+});
 </script>
 </body>
 </html>

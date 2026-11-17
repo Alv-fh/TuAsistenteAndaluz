@@ -45,6 +45,13 @@
       <span class="taa-chip">Empleo</span>
       <span class="taa-badge taa-badge--desconocido" data-taa-estado data-estado="Desconocido" data-apertura="No especificada" data-cierre="No especificada" data-proxima="Solo se puede solicitar cuando el Consejo de Ministros active el Mecanismo RED y la empresa obtenga autorización de la Autoridad Laboral" data-estimada="">Consulta el plazo en la web oficial</span>
       </div>
+      <div class="taa-compartir">
+      
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Prestaci%C3%B3n%20de%20sostenibilidad%20y%20mantenimiento%20del%20empleo%20(RED)%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fprestacion-sostenibilidad-mantenimiento-empleo-red%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/prestacion-sostenibilidad-mantenimiento-empleo-red/">Copiar enlace</button>
+      </div>
+    </div>
     </header>
     <div class="taa-aviso" role="note"><strong>Aviso importante:</strong> esta es una guía orientativa basada en fuentes públicas. Los requisitos o el método de solicitud pueden haber cambiado. Comprueba siempre los datos en la web oficial antes de presentar tu solicitud.</div>
     
@@ -71,6 +78,13 @@
       <ol class="taa-pasos-lista"><li>Comprueba con tu empresa si se ha activado el Mecanismo RED y si la Autoridad Laboral ha autorizado su aplicación a tu empresa. Sin esa autorización no hay prestación.</li><li>Si vas a hacerlo en línea, ten preparada tu identificación electrónica (Cl@ve, certificado digital o DNI electrónico).</li><li>Entra en la web del SEPE, en la página de esta prestación: <a href="https://www.sepe.es/HomeSepe/prestaciones-desempleo/prestacion-sostenibilidad-mantenimiento-empleo-RED.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1 mt-1 text-sm font-medium text-emerald-700 bg-emerald-100/50 border border-emerald-200 rounded-md hover:bg-emerald-100 transition-colors dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800 dark:hover:bg-emerald-900/50 break-all">🔗 Enlace oficial</a> y pulsa en &#39;Online - Realiza tu trámite&#39;.</li><li>Si prefieres hacerlo en persona, pulsa en &#39;Presencial - Solicita cita para tu oficina de prestaciones&#39; y pide cita en tu oficina del SEPE.</li><li>Consulta el apartado &#39;Solicitud y plazo de solicitud&#39; de esa misma página, donde se detalla cómo y cuándo presentar la solicitud, porque el texto facilitado no da más detalles.</li></ol>
   </section>
     <p class="taa-cta"><a class="taa-boton" href="https://www.sepe.es/HomeSepe/prestaciones-desempleo/prestacion-sostenibilidad-mantenimiento-empleo-RED.html" target="_blank" rel="noopener noreferrer">Ver en la web oficial</a></p>
+    <div class="taa-compartir">
+      <p class="taa-compartir-pregunta">¿Conoces a alguien a quien le pueda servir? Pásaselo:</p>
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Prestaci%C3%B3n%20de%20sostenibilidad%20y%20mantenimiento%20del%20empleo%20(RED)%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fprestacion-sostenibilidad-mantenimiento-empleo-red%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/prestacion-sostenibilidad-mantenimiento-empleo-red/">Copiar enlace</button>
+      </div>
+    </div>
     <footer class="taa-meta">
       <p>Última comprobación con la fuente oficial: <time datetime="2026-11-17">17 de noviembre de 2026</time>.</p>
       <p>Fuentes: <a href="https://www.sepe.es/HomeSepe/prestaciones-desempleo/prestacion-sostenibilidad-mantenimiento-empleo-RED.html" target="_blank" rel="noopener noreferrer">www.sepe.es</a>.</p>
@@ -145,6 +159,15 @@ function calcularEstado(t, ahora) {
     els[i].className='taa-badge taa-badge--'+(clases[r.estado]||'desconocido');
   }
 })();
+</script><script>
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.taa-compartir-copiar');
+  if (!b) return;
+  var hecho = function (txt) { var o = 'Copiar enlace'; b.textContent = txt; setTimeout(function () { b.textContent = o; }, 2500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(b.getAttribute('data-url')).then(function () { hecho('¡Enlace copiado!'); }, function () { hecho('Copia el enlace de la barra de arriba'); });
+  } else { hecho('Copia el enlace de la barra de arriba'); }
+});
 </script>
 </body>
 </html>

@@ -45,6 +45,13 @@
       <span class="taa-chip">Empleo</span>
       <span class="taa-badge taa-badge--abierto" data-taa-estado data-estado="Abierto" data-apertura="No especificada" data-cierre="No especificada" data-proxima="" data-estimada="">Plazo abierto</span>
       </div>
+      <div class="taa-compartir">
+      
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Prestaci%C3%B3n%20por%20desempleo%20especial%20para%20personas%20artistas%20y%20trabajadoras%20t%C3%A9cnicas%20y%20auxiliares%20de%20actividades%20art%C3%ADsticas%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fprestacion-desempleo-especial-personas-artistas%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/prestacion-desempleo-especial-personas-artistas/">Copiar enlace</button>
+      </div>
+    </div>
     </header>
     <div class="taa-aviso" role="note"><strong>Aviso importante:</strong> esta es una guía orientativa basada en fuentes públicas. Los requisitos o el método de solicitud pueden haber cambiado. Comprueba siempre los datos en la web oficial antes de presentar tu solicitud.</div>
     
@@ -71,6 +78,13 @@
       <ol class="taa-pasos-lista"><li>Entra en la página oficial del SEPE: <a href="https://www.sepe.es/HomeSepe/prestaciones-desempleo/prestacion-contributiva/prestacion-personas-artistas.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1 mt-1 text-sm font-medium text-emerald-700 bg-emerald-100/50 border border-emerald-200 rounded-md hover:bg-emerald-100 transition-colors dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800 dark:hover:bg-emerald-900/50 break-all">🔗 Enlace oficial</a> y revisa los apartados de Requisitos, Duración y cuantía y Derecho de opción antes de empezar.</li><li>Descarga el modelo oficial &#39;Solicitud prestación especial para las personas trabajadoras del sector artístico y quienes realizan actividades técnicas y auxiliares&#39; (PDF, 397 KB), que está en el apartado &#39;Documentación&#39; de esa misma página.</li><li>Rellena el formulario con tus datos. El texto no especifica quién debe firmarlo, pero lo normal es que lo firme la persona solicitante.</li><li>Si lo haces por internet, pulsa en &#39;Online - Realiza tu trámite&#39; en esa página. Ten a mano tu identificación electrónica (Cl@ve o certificado digital/DNI electrónico), que suele ser necesaria en los trámites del SEPE.</li><li>Si prefieres hacerlo en persona, pulsa en &#39;Presencial - Solicita cita para tu oficina de prestaciones&#39; y pide cita previa en tu oficina del SEPE. Lleva el formulario rellenado y tu documentación.</li><li>Si tienes dudas, mira el apartado &#39;FAQS&#39; (preguntas más solicitadas) de la misma página.</li></ol>
   </section>
     <p class="taa-cta"><a class="taa-boton" href="https://www.sepe.es/HomeSepe/prestaciones-desempleo/prestacion-contributiva/prestacion-personas-artistas.html" target="_blank" rel="noopener noreferrer">Ver en la web oficial</a></p>
+    <div class="taa-compartir">
+      <p class="taa-compartir-pregunta">¿Conoces a alguien a quien le pueda servir? Pásaselo:</p>
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Prestaci%C3%B3n%20por%20desempleo%20especial%20para%20personas%20artistas%20y%20trabajadoras%20t%C3%A9cnicas%20y%20auxiliares%20de%20actividades%20art%C3%ADsticas%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fprestacion-desempleo-especial-personas-artistas%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/prestacion-desempleo-especial-personas-artistas/">Copiar enlace</button>
+      </div>
+    </div>
     <footer class="taa-meta">
       <p>Última comprobación con la fuente oficial: <time datetime="2026-11-17">17 de noviembre de 2026</time>.</p>
       <p>Fuentes: <a href="https://www.sepe.es/HomeSepe/prestaciones-desempleo/prestacion-contributiva/prestacion-personas-artistas.html" target="_blank" rel="noopener noreferrer">www.sepe.es</a>.</p>
@@ -145,6 +159,15 @@ function calcularEstado(t, ahora) {
     els[i].className='taa-badge taa-badge--'+(clases[r.estado]||'desconocido');
   }
 })();
+</script><script>
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.taa-compartir-copiar');
+  if (!b) return;
+  var hecho = function (txt) { var o = 'Copiar enlace'; b.textContent = txt; setTimeout(function () { b.textContent = o; }, 2500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(b.getAttribute('data-url')).then(function () { hecho('¡Enlace copiado!'); }, function () { hecho('Copia el enlace de la barra de arriba'); });
+  } else { hecho('Copia el enlace de la barra de arriba'); }
+});
 </script>
 </body>
 </html>

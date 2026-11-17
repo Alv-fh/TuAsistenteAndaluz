@@ -627,6 +627,32 @@ function metaDescription(titulo, categoria, guia, cuantia = guia?.cuantia) {
 // ---------------------------------------------------------------------------
 // Páginas
 // ---------------------------------------------------------------------------
+// Botones para compartir una ficha (WhatsApp + copiar enlace).
+// El enlace lleva utm_source=whatsapp para ver en Analytics cuántas visitas llegan así.
+function bloqueCompartir(t, url, pregunta) {
+  const enlace = `${url}?utm_source=whatsapp&utm_medium=compartir`;
+  const texto = `Mira esta ayuda, te puede interesar: ${t.titulo}\n${enlace}`;
+  return `<div class="taa-compartir">
+      ${pregunta ? `<p class="taa-compartir-pregunta">${esc(pregunta)}</p>` : ''}
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=${encodeURIComponent(texto)}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="${esc(url)}">Copiar enlace</button>
+      </div>
+    </div>`;
+}
+
+// Script del botón "Copiar enlace" (uno por página).
+const SCRIPT_COMPARTIR = `<script>
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.taa-compartir-copiar');
+  if (!b) return;
+  var hecho = function (txt) { var o = 'Copiar enlace'; b.textContent = txt; setTimeout(function () { b.textContent = o; }, 2500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(b.getAttribute('data-url')).then(function () { hecho('¡Enlace copiado!'); }, function () { hecho('Copia el enlace de la barra de arriba'); });
+  } else { hecho('Copia el enlace de la barra de arriba'); }
+});
+</script>`;
+
 function paginaFicha(t, ctx) {
   const { ahora, categorias, hayPrivacidad, porCategoria } = ctx;
   const url = `${SITIO}/ayuda/${t.slug}/`;
@@ -831,11 +857,13 @@ function paginaFicha(t, ctx) {
       <div class="taa-etiquetas">
       ${etiquetas}
       </div>
+      ${bloqueCompartir(t, url)}
     </header>
     <div class="taa-aviso" role="note"><strong>Aviso importante:</strong> esta es una guía orientativa basada en fuentes públicas. Los requisitos o el método de solicitud pueden haber cambiado. Comprueba siempre los datos en la web oficial antes de presentar tu solicitud.</div>
     ${resumenHtml}
     ${secciones}
     ${oficial ? `<p class="taa-cta"><a class="taa-boton" href="${esc(oficial)}" target="_blank" rel="noopener noreferrer">Ver en la web oficial</a></p>` : ''}
+    ${bloqueCompartir(t, url, '¿Conoces a alguien a quien le pueda servir? Pásaselo:')}
     <footer class="taa-meta">
       ${comprobado ? `<p>Última comprobación con la fuente oficial: <time datetime="${esc(modificado || '')}">${esc(comprobado)}</time>.</p>` : ''}
       ${fuentesUnicas.length ? `<p>Fuentes: ${fuentesUnicas.map((f) => `<a href="${esc(f)}" target="_blank" rel="noopener noreferrer">${esc(new URL(f).hostname)}</a>`).join(', ')}.</p>` : ''}
@@ -851,7 +879,7 @@ function paginaFicha(t, ctx) {
 
   return pagina({
     head: cabeza({ titulo: title, descripcion, canonico: url, tarjetaTw: 'summary_large_image', jsonld }),
-    cuerpo, categorias, hayPrivacidad, scriptsExtra: scriptEstado()
+    cuerpo, categorias, hayPrivacidad, scriptsExtra: scriptEstado() + SCRIPT_COMPARTIR
   });
 }
 

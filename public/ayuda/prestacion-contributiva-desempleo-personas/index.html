@@ -45,6 +45,13 @@
       <span class="taa-chip">Ayudas</span>
       <span class="taa-badge taa-badge--desconocido" data-taa-estado data-estado="Desconocido" data-apertura="No especificada" data-cierre="No especificada" data-proxima="" data-estimada="">Consulta el plazo en la web oficial</span>
       </div>
+      <div class="taa-compartir">
+      
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Prestaci%C3%B3n%20contributiva%20por%20desempleo%20para%20personas%20trabajadoras%20al%20servicio%20del%20hogar%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fprestacion-contributiva-desempleo-personas%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/prestacion-contributiva-desempleo-personas/">Copiar enlace</button>
+      </div>
+    </div>
     </header>
     <div class="taa-aviso" role="note"><strong>Aviso importante:</strong> esta es una guía orientativa basada en fuentes públicas. Los requisitos o el método de solicitud pueden haber cambiado. Comprueba siempre los datos en la web oficial antes de presentar tu solicitud.</div>
     
@@ -71,6 +78,13 @@
       <ol class="taa-pasos-lista"><li>Reúne la carta de despido que te ha dado la persona empleadora. Debe estar por escrito y decir claramente que quiere terminar el contrato y por qué causa.</li><li>Entra en la página del SEPE <a href="https://www.sepe.es/HomeSepe/prestaciones-desempleo/prestacion-contributiva/soy-persona-trabajadora-servicio-hogar.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1 mt-1 text-sm font-medium text-emerald-700 bg-emerald-100/50 border border-emerald-200 rounded-md hover:bg-emerald-100 transition-colors dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800 dark:hover:bg-emerald-900/50 break-all">🔗 Enlace oficial</a> y elige tu caso: &#39;He trabajado más de un año&#39; o &#39;He trabajado menos de un año&#39;.</li><li>En esa misma página, en el apartado &#39;Realiza tu trámite&#39;, pulsa &#39;Presencial: Solicita cita para tu oficina de prestaciones&#39; y pide cita previa en tu oficina del SEPE.</li><li>Acude a la cita con la carta de despido y tu documentación personal. El texto no detalla qué documentos exige el SEPE, así que pregunta al pedir la cita qué más debes llevar.</li><li>Si quieres resolver dudas antes, consulta el apartado de preguntas frecuentes (FAQS) de la misma página.</li></ol>
   </section>
     <p class="taa-cta"><a class="taa-boton" href="https://www.sepe.es/HomeSepe/prestaciones-desempleo/prestacion-contributiva/soy-persona-trabajadora-servicio-hogar.html" target="_blank" rel="noopener noreferrer">Ver en la web oficial</a></p>
+    <div class="taa-compartir">
+      <p class="taa-compartir-pregunta">¿Conoces a alguien a quien le pueda servir? Pásaselo:</p>
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Prestaci%C3%B3n%20contributiva%20por%20desempleo%20para%20personas%20trabajadoras%20al%20servicio%20del%20hogar%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fprestacion-contributiva-desempleo-personas%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/prestacion-contributiva-desempleo-personas/">Copiar enlace</button>
+      </div>
+    </div>
     <footer class="taa-meta">
       <p>Última comprobación con la fuente oficial: <time datetime="2026-11-17">17 de noviembre de 2026</time>.</p>
       <p>Fuentes: <a href="https://www.sepe.es/HomeSepe/prestaciones-desempleo/prestacion-contributiva/soy-persona-trabajadora-servicio-hogar.html" target="_blank" rel="noopener noreferrer">www.sepe.es</a>.</p>
@@ -145,6 +159,15 @@ function calcularEstado(t, ahora) {
     els[i].className='taa-badge taa-badge--'+(clases[r.estado]||'desconocido');
   }
 })();
+</script><script>
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.taa-compartir-copiar');
+  if (!b) return;
+  var hecho = function (txt) { var o = 'Copiar enlace'; b.textContent = txt; setTimeout(function () { b.textContent = o; }, 2500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(b.getAttribute('data-url')).then(function () { hecho('¡Enlace copiado!'); }, function () { hecho('Copia el enlace de la barra de arriba'); });
+  } else { hecho('Copia el enlace de la barra de arriba'); }
+});
 </script>
 </body>
 </html>

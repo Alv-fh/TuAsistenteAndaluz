@@ -45,6 +45,13 @@
       <span class="taa-chip">Ayudas</span>
       <span class="taa-badge taa-badge--desconocido" data-taa-estado data-estado="Desconocido" data-apertura="No especificada" data-cierre="No especificada" data-proxima="" data-estimada="">Consulta el plazo en la web oficial</span>
       </div>
+      <div class="taa-compartir">
+      
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Alojamiento%20alternativo%20(Servicio%20de%20alojamiento%20temporal%20o%20permanente%20para%20personas%20en%20riesgo%20o%20situaci%C3%B3n%20de%20exclusi%C3%B3n%20social)%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fprocedimiento-5114%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/procedimiento-5114/">Copiar enlace</button>
+      </div>
+    </div>
     </header>
     <div class="taa-aviso" role="note"><strong>Aviso importante:</strong> esta es una guía orientativa basada en fuentes públicas. Los requisitos o el método de solicitud pueden haber cambiado. Comprueba siempre los datos en la web oficial antes de presentar tu solicitud.</div>
     
@@ -71,6 +78,13 @@
       <ol class="taa-pasos-lista"><li>Acude a los Servicios Sociales Comunitarios de tu ayuntamiento o de tu zona (te corresponde el Centro de Servicios Sociales de tu área). Es la puerta de entrada y quien valora y prescribe el recurso. Pide cita o ve directamente si es una urgencia.</li><li>Cuenta tu situación (vivienda, familia, convivencia, economía, salud) para que el profesional de referencia la valore y decida si el alojamiento es el recurso adecuado.</li><li>Si eres persona mayor, el procedimiento y los requisitos de ingreso están regulados en la Orden de 11 de febrero de 2008. Los servicios sociales te dirán qué documentos hay que presentar, porque el texto no los lista.</li><li>Si tienes discapacidad, pregunta por el programa de atención a personas con discapacidad en situación de exclusión social, que gestiona la Agencia de Servicios Sociales y Dependencia de Andalucía.</li><li>Si eres persona sin hogar o estás en emergencia social, pregunta en los servicios sociales de tu ayuntamiento por los recursos municipales (pisos de emergencia, pensiones, albergues). Se rigen por la normativa municipal.</li><li>Espera la resolución. Tanto la prescripción como la resolución las hacen el ámbito local y el autonómico. El texto no indica un formulario o enlace concreto de solicitud.</li></ol>
   </section>
     <p class="taa-cta"><a class="taa-boton" href="https://www.juntadeandalucia.es/organismos/serviciossocialesfamiliaseigualdad/areas/inclusion/catalogo-prestaciones/detalle/5114.html" target="_blank" rel="noopener noreferrer">Ver en la web oficial</a></p>
+    <div class="taa-compartir">
+      <p class="taa-compartir-pregunta">¿Conoces a alguien a quien le pueda servir? Pásaselo:</p>
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Alojamiento%20alternativo%20(Servicio%20de%20alojamiento%20temporal%20o%20permanente%20para%20personas%20en%20riesgo%20o%20situaci%C3%B3n%20de%20exclusi%C3%B3n%20social)%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fprocedimiento-5114%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/procedimiento-5114/">Copiar enlace</button>
+      </div>
+    </div>
     <footer class="taa-meta">
       <p>Última comprobación con la fuente oficial: <time datetime="2026-11-17">17 de noviembre de 2026</time>.</p>
       <p>Fuentes: <a href="https://www.juntadeandalucia.es/organismos/serviciossocialesfamiliaseigualdad/areas/inclusion/catalogo-prestaciones/detalle/5114.html" target="_blank" rel="noopener noreferrer">www.juntadeandalucia.es</a>.</p>
@@ -145,6 +159,15 @@ function calcularEstado(t, ahora) {
     els[i].className='taa-badge taa-badge--'+(clases[r.estado]||'desconocido');
   }
 })();
+</script><script>
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.taa-compartir-copiar');
+  if (!b) return;
+  var hecho = function (txt) { var o = 'Copiar enlace'; b.textContent = txt; setTimeout(function () { b.textContent = o; }, 2500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(b.getAttribute('data-url')).then(function () { hecho('¡Enlace copiado!'); }, function () { hecho('Copia el enlace de la barra de arriba'); });
+  } else { hecho('Copia el enlace de la barra de arriba'); }
+});
 </script>
 </body>
 </html>

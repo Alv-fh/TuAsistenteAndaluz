@@ -46,6 +46,13 @@
       <span class="taa-badge taa-badge--abierto" data-taa-estado data-estado="Abierto" data-apertura="No especificada" data-cierre="No especificada" data-proxima="" data-estimada="">Plazo abierto</span>
       <span class="taa-chip taa-chip--destacado">Destacado</span>
       </div>
+      <div class="taa-compartir">
+      
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Ingreso%20M%C3%ADnimo%20Vital%20y%20Complemento%20de%20ayuda%20a%20la%20infancia%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fingreso-minimo-vital%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/ingreso-minimo-vital/">Copiar enlace</button>
+      </div>
+    </div>
     </header>
     <div class="taa-aviso" role="note"><strong>Aviso importante:</strong> esta es una guía orientativa basada en fuentes públicas. Los requisitos o el método de solicitud pueden haber cambiado. Comprueba siempre los datos en la web oficial antes de presentar tu solicitud.</div>
     
@@ -72,6 +79,13 @@
       <ol class="taa-pasos-lista"><li>Entra en <a href="https://imv.seg-social.es/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1 mt-1 text-sm font-medium text-emerald-700 bg-emerald-100/50 border border-emerald-200 rounded-md hover:bg-emerald-100 transition-colors dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800 dark:hover:bg-emerald-900/50 break-all">🔗 Enlace oficial</a> y pulsa en &#39;Simular y solicitar&#39;. Te harán unas preguntas previas para calcular si tienes derecho y qué importe te correspondería.</li><li>Prepara lo necesario antes de empezar: tus datos personales, un correo electrónico válido, la posibilidad de hacerte una foto con el dispositivo y fotos del DNI o NIE para verificar tu identidad. No hace falta Cl@ve ni certificado digital: la Seguridad Social tiene un formulario para solicitarlo sin certificado.</li><li>Rellena el formulario. Es el mismo para pedir el IMV y el complemento de ayuda a la infancia, así que solo presentas una solicitud. Se reconocerá el IMV con complemento o solo el complemento según vuestra situación económica.</li><li>Adjunta la documentación que te pida la aplicación y envía la solicitud. Si la dejas a medias, puedes recuperarla en &#39;Accede al borrador de la solicitud&#39;.</li><li>Si vives en una unidad de convivencia, la solicitud la presenta un solo miembro que cumpla los requisitos (mayor de 23 años y con capacidad jurídica), que asume la representación de toda la unidad.</li><li>Después de enviarla, entra en &#39;Gestiona la solicitud presentada&#39; para ver cómo va, adjuntar documentos pendientes, responder a requerimientos de subsanación, conocer la resolución o presentar una reclamación previa.</li><li>Si ya cobras el IMV y cambia tu domicilio, cuenta bancaria o situación personal, familiar o económica, comunícalo en &#39;Comunica variaciones en tu IMV&#39;.</li></ol>
   </section>
     <p class="taa-cta"><a class="taa-boton" href="https://imv.seg-social.es/" target="_blank" rel="noopener noreferrer">Ver en la web oficial</a></p>
+    <div class="taa-compartir">
+      <p class="taa-compartir-pregunta">¿Conoces a alguien a quien le pueda servir? Pásaselo:</p>
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Ingreso%20M%C3%ADnimo%20Vital%20y%20Complemento%20de%20ayuda%20a%20la%20infancia%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fingreso-minimo-vital%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/ingreso-minimo-vital/">Copiar enlace</button>
+      </div>
+    </div>
     <footer class="taa-meta">
       <p>Última comprobación con la fuente oficial: <time datetime="2026-11-16">17 de noviembre de 2026</time>.</p>
       <p>Fuentes: <a href="https://imv.seg-social.es/" target="_blank" rel="noopener noreferrer">imv.seg-social.es</a>.</p>
@@ -146,6 +160,15 @@ function calcularEstado(t, ahora) {
     els[i].className='taa-badge taa-badge--'+(clases[r.estado]||'desconocido');
   }
 })();
+</script><script>
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.taa-compartir-copiar');
+  if (!b) return;
+  var hecho = function (txt) { var o = 'Copiar enlace'; b.textContent = txt; setTimeout(function () { b.textContent = o; }, 2500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(b.getAttribute('data-url')).then(function () { hecho('¡Enlace copiado!'); }, function () { hecho('Copia el enlace de la barra de arriba'); });
+  } else { hecho('Copia el enlace de la barra de arriba'); }
+});
 </script>
 </body>
 </html>

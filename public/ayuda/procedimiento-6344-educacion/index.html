@@ -46,6 +46,13 @@
       <span class="taa-chip taa-chip--cuantia">Ayudas directas y subsidios personalizados según el tipo de necesidad (enseñanza, transporte, comedor, reeducación pedagógica, etc.)</span>
       <span class="taa-badge taa-badge--proximo" data-taa-estado data-estado="Próximamente" data-apertura="No especificada" data-cierre="No especificada" data-proxima="Pendiente de nueva convocatoria para el curso siguiente" data-estimada="1">Pendiente de nueva convocatoria para el curso siguiente (sin confirmar)</span>
       </div>
+      <div class="taa-compartir">
+      
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Ayudas%20para%20el%20alumnado%20con%20necesidad%20espec%C3%ADfica%20de%20apoyo%20educativo%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fprocedimiento-6344-educacion%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/procedimiento-6344-educacion/">Copiar enlace</button>
+      </div>
+    </div>
     </header>
     <div class="taa-aviso" role="note"><strong>Aviso importante:</strong> esta es una guía orientativa basada en fuentes públicas. Los requisitos o el método de solicitud pueden haber cambiado. Comprueba siempre los datos en la web oficial antes de presentar tu solicitud.</div>
     
@@ -72,6 +79,13 @@
       <ol class="taa-pasos-lista"><li>Entra en la ficha oficial del trámite (<a href="https://www.juntadeandalucia.es/organismos/educacion/servicios/procedimientos/detalle/6344.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1 mt-1 text-sm font-medium text-emerald-700 bg-emerald-100/50 border border-emerald-200 rounded-md hover:bg-emerald-100 transition-colors dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800 dark:hover:bg-emerald-900/50 break-all">🔗 Enlace oficial</a>) y mira si hay una convocatoria abierta. En esa página aparece el enlace de inicio del trámite y los de subsanación, alegaciones y aportación de documentos.</li><li>Reúne los certificados que corresponden a tu caso: discapacidad de al menos el 25 por ciento, certificado del equipo o departamento de orientación educativa, certificado del centro base o certificado médico (TEA) y el título de familia numerosa si pides el subsidio para familias numerosas. Usa el formulario de solicitud de la convocatoria vigente.</li><li>Si lo haces online, entra en la dirección electrónica que figura en el enlace de inicio. Lo habitual en estos trámites es usar Cl@ve o certificado digital, así que ten uno a mano. Si no tienes medios electrónicos, puedes pedir ayuda en una Oficina de asistencia en materia de registros de la Junta de Andalucía, con cita previa.</li><li>Si prefieres hacerlo en papel, presenta la solicitud en una Oficina de asistencia en materia de registros de cualquier Administración Pública o en una oficina de Correos. En las oficinas de la Junta de Andalucía conviene pedir cita previa.</li><li>Después del envío, estate pendiente de los enlaces de subsanación (para corregir o completar documentos) y de alegaciones (para responder si hay algún problema). Si te deniegan la ayuda y quieres recurrir, hay un formulario obligatorio de recurso de reposición, el Nº 003168/1D.</li></ol>
   </section>
     <p class="taa-cta"><a class="taa-boton" href="https://www.juntadeandalucia.es/organismos/educacion/servicios/procedimientos/detalle/6344.html" target="_blank" rel="noopener noreferrer">Ver en la web oficial</a></p>
+    <div class="taa-compartir">
+      <p class="taa-compartir-pregunta">¿Conoces a alguien a quien le pueda servir? Pásaselo:</p>
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Ayudas%20para%20el%20alumnado%20con%20necesidad%20espec%C3%ADfica%20de%20apoyo%20educativo%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fprocedimiento-6344-educacion%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/procedimiento-6344-educacion/">Copiar enlace</button>
+      </div>
+    </div>
     <footer class="taa-meta">
       <p>Última comprobación con la fuente oficial: <time datetime="2026-11-16">17 de noviembre de 2026</time>.</p>
       <p>Fuentes: <a href="https://www.juntadeandalucia.es/organismos/educacion/servicios/procedimientos/detalle/6344.html" target="_blank" rel="noopener noreferrer">www.juntadeandalucia.es</a>.</p>
@@ -146,6 +160,15 @@ function calcularEstado(t, ahora) {
     els[i].className='taa-badge taa-badge--'+(clases[r.estado]||'desconocido');
   }
 })();
+</script><script>
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.taa-compartir-copiar');
+  if (!b) return;
+  var hecho = function (txt) { var o = 'Copiar enlace'; b.textContent = txt; setTimeout(function () { b.textContent = o; }, 2500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(b.getAttribute('data-url')).then(function () { hecho('¡Enlace copiado!'); }, function () { hecho('Copia el enlace de la barra de arriba'); });
+  } else { hecho('Copia el enlace de la barra de arriba'); }
+});
 </script>
 </body>
 </html>

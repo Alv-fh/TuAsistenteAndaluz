@@ -394,3 +394,27 @@
 .dark .taa-red-in svg { color: #7dd3fc; }
 /* Bloque de redes debajo del título de la home (móvil y escritorio) */
 .taa-redes-arriba { margin-top: 1.25rem; margin-bottom: 0; }
+
+/* ---------- Compartir ficha (WhatsApp + copiar enlace) ---------- */
+.taa-compartir { margin-top: 1rem; }
+.taa-compartir-pregunta { margin: 0 0 0.6rem; font-weight: 700; color: var(--taa-tit); }
+.taa-compartir-botones { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.taa-pagina a.taa-compartir-wa, a.taa-compartir-wa {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    min-height: 44px; padding: 0.55rem 1rem; border-radius: 999px;
+    background: #1fa855; color: #fff; font-weight: 700; font-size: 0.95rem;
+    text-decoration: none; border: 0;
+    box-shadow: 0 4px 14px -6px rgba(31, 168, 85, 0.7);
+    transition: background-color 0.15s ease, transform 0.15s ease;
+}
+a.taa-compartir-wa:hover { background: #178a45; transform: translateY(-1px); }
+a.taa-compartir-wa:focus-visible, .taa-compartir-copiar:focus-visible { outline: 2px solid var(--taa-acento); outline-offset: 2px; }
+a.taa-compartir-wa svg { width: 1.2rem; height: 1.2rem; flex: none; }
+.taa-compartir-copiar {
+    min-height: 44px; padding: 0.55rem 1rem; border-radius: 999px; cursor: pointer;
+    font: inherit; font-weight: 700; font-size: 0.95rem;
+    color: var(--taa-tit); background: var(--taa-card); border: 1px solid var(--taa-borde);
+}
+.taa-compartir-copiar:hover { border-color: var(--taa-acento); }
+/* El bloque final va separado del botón "Ver en la web oficial" */
+.taa-cta + .taa-compartir { margin: 2.5rem 0 2.5rem; padding-top: 1.75rem; border-top: 1px solid var(--taa-borde); }

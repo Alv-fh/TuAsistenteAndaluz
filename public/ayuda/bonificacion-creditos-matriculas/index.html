@@ -46,6 +46,13 @@
       <span class="taa-chip taa-chip--cuantia">Ahorro del 99% del coste de los créditos aprobados en primera matrícula</span>
       <span class="taa-badge taa-badge--abierto" data-taa-estado data-estado="Abierto" data-apertura="No especificada" data-cierre="No especificada" data-proxima="" data-estimada="">Plazo abierto</span>
       </div>
+      <div class="taa-compartir">
+      
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Bonificaci%C3%B3n%20del%2099%20%25%20de%20cada%20cr%C3%A9dito%20aprobado%20en%20primera%20matr%C3%ADcula%20en%20universidades%20p%C3%BAblicas%20de%20Andaluc%C3%ADa%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fbonificacion-creditos-matriculas%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/bonificacion-creditos-matriculas/">Copiar enlace</button>
+      </div>
+    </div>
     </header>
     <div class="taa-aviso" role="note"><strong>Aviso importante:</strong> esta es una guía orientativa basada en fuentes públicas. Los requisitos o el método de solicitud pueden haber cambiado. Comprueba siempre los datos en la web oficial antes de presentar tu solicitud.</div>
     
@@ -72,6 +79,13 @@
       <ol class="taa-pasos-lista"><li>Mira la Guía práctica sobre la bonificación de matrícula que enlaza la página de la Junta: <a href="https://www.juntadeandalucia.es/organismos/universidadindustriaenergiaeinnovacion/areas/universidad/talento/paginas/bonificacion-creditos-matriculas.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1 mt-1 text-sm font-medium text-emerald-700 bg-emerald-100/50 border border-emerald-200 rounded-md hover:bg-emerald-100 transition-colors dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800 dark:hover:bg-emerald-900/50 break-all">🔗 Enlace oficial</a></li><li>Comprueba en la secretaría o web de tu universidad pública andaluza las fechas de matrícula y el procedimiento para aplicar la bonificación. Cada universidad tiene su propio procedimiento y formulario.</li><li>Si es tu primer año de grado, matricúlate de los 60 créditos del primer curso.</li><li>Al matricularte en cursos posteriores, firma la declaración responsable de que no cumples los requisitos para la beca del Ministerio. Pide a tu universidad el modelo que debes usar.</li><li>Si necesitas identificarte electrónicamente para la matrícula en línea, ten a mano Cl@ve, certificado digital o DNI electrónico según te pida tu universidad.</li><li>Revisa que el importe de la matrícula refleje el descuento del 99 % de los créditos aprobados en primera matrícula. Si no, reclama en la secretaría.</li></ol>
   </section>
     <p class="taa-cta"><a class="taa-boton" href="https://www.juntadeandalucia.es/organismos/universidadindustriaenergiaeinnovacion/areas/universidad/talento/paginas/bonificacion-creditos-matriculas.html" target="_blank" rel="noopener noreferrer">Ver en la web oficial</a></p>
+    <div class="taa-compartir">
+      <p class="taa-compartir-pregunta">¿Conoces a alguien a quien le pueda servir? Pásaselo:</p>
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Bonificaci%C3%B3n%20del%2099%20%25%20de%20cada%20cr%C3%A9dito%20aprobado%20en%20primera%20matr%C3%ADcula%20en%20universidades%20p%C3%BAblicas%20de%20Andaluc%C3%ADa%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fbonificacion-creditos-matriculas%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/bonificacion-creditos-matriculas/">Copiar enlace</button>
+      </div>
+    </div>
     <footer class="taa-meta">
       <p>Última comprobación con la fuente oficial: <time datetime="2026-11-16">17 de noviembre de 2026</time>.</p>
       <p>Fuentes: <a href="https://www.juntadeandalucia.es/organismos/universidadindustriaenergiaeinnovacion/areas/universidad/talento/paginas/bonificacion-creditos-matriculas.html" target="_blank" rel="noopener noreferrer">www.juntadeandalucia.es</a>.</p>
@@ -146,6 +160,15 @@ function calcularEstado(t, ahora) {
     els[i].className='taa-badge taa-badge--'+(clases[r.estado]||'desconocido');
   }
 })();
+</script><script>
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.taa-compartir-copiar');
+  if (!b) return;
+  var hecho = function (txt) { var o = 'Copiar enlace'; b.textContent = txt; setTimeout(function () { b.textContent = o; }, 2500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(b.getAttribute('data-url')).then(function () { hecho('¡Enlace copiado!'); }, function () { hecho('Copia el enlace de la barra de arriba'); });
+  } else { hecho('Copia el enlace de la barra de arriba'); }
+});
 </script>
 </body>
 </html>

@@ -46,6 +46,13 @@
       <span class="taa-chip taa-chip--cuantia">Entre 10.900€ y 16.000€ por contrato según el grupo de cotización (+1.000€ adicionales si el empleo es verde o digital)</span>
       <span class="taa-badge taa-badge--cerrado" data-taa-estado data-estado="Cerrado" data-apertura="No especificada" data-cierre="17/11/2025" data-proxima="" data-estimada="">Cerró el 17/11/2025</span>
       </div>
+      <div class="taa-compartir">
+      
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Programa%20Activa-T%20Joven%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fprograma-activa-t-joven%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/programa-activa-t-joven/">Copiar enlace</button>
+      </div>
+    </div>
     </header>
     <div class="taa-aviso" role="note"><strong>Aviso importante:</strong> esta es una guía orientativa basada en fuentes públicas. Los requisitos o el método de solicitud pueden haber cambiado. Comprueba siempre los datos en la web oficial antes de presentar tu solicitud.</div>
     
@@ -72,6 +79,13 @@
       <ol class="taa-pasos-lista"><li>Confirma si eres joven o ayuntamiento: los jóvenes no piden la ayuda directamente; tienen que estar inscritos y esperar a que su ayuntamiento oferte los puestos del proyecto.</li><li>Si eres joven, apúntate como demandante de empleo en el Servicio Andaluz de Empleo y asegúrate de estar inscrito en el Sistema Nacional de Garantía Juvenil. Si ya estás, comprueba que tus datos estén actualizados.</li><li>Pregunta en el ayuntamiento o entidad local de tu municipio, o en tu oficina del Servicio Andaluz de Empleo, si tienen o van a tener proyectos Activa-T Joven.</li><li>Si eres ayuntamiento o entidad local: la solicitud se hace desde el botón &#39;Solicitar Activa-T Joven&#39; de la página oficial: <a href="https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/areas/empleo/incentivos-contratacion/paginas/programa-activat-joven.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1 mt-1 text-sm font-medium text-emerald-700 bg-emerald-100/50 border border-emerald-200 rounded-md hover:bg-emerald-100 transition-colors dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800 dark:hover:bg-emerald-900/50 break-all">🔗 Enlace oficial</a></li><li>Si eres entidad local, consulta antes la &#39;Guía para la presentación de solicitudes&#39; y las &#39;Preguntas frecuentes Activa-T Joven&#39; (PDF en esa misma página), así como los Anexos I (empleos digitales) y II (empleos verdes) si quieres optar a la cuantía adicional.</li><li>Si eres entidad local, rellena también los anexos de protección de datos que aparecen en la página (nota informativa, declaraciones expresas de cumplimiento, etc.). Revisa en la guía oficial quién firma cada uno.</li><li>Estate atento a una futura convocatoria en la misma página web, ya que la actual está cerrada.</li></ol>
   </section>
     <p class="taa-cta"><a class="taa-boton" href="https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/areas/empleo/incentivos-contratacion/paginas/programa-activat-joven.html" target="_blank" rel="noopener noreferrer">Ver en la web oficial</a></p>
+    <div class="taa-compartir">
+      <p class="taa-compartir-pregunta">¿Conoces a alguien a quien le pueda servir? Pásaselo:</p>
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Programa%20Activa-T%20Joven%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fprograma-activa-t-joven%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/programa-activa-t-joven/">Copiar enlace</button>
+      </div>
+    </div>
     <footer class="taa-meta">
       <p>Última comprobación con la fuente oficial: <time datetime="2026-11-16">17 de noviembre de 2026</time>.</p>
       <p>Fuentes: <a href="https://www.juntadeandalucia.es/organismos/empleoempresaytrabajoautonomo/areas/empleo/incentivos-contratacion/paginas/programa-activat-joven.html" target="_blank" rel="noopener noreferrer">www.juntadeandalucia.es</a>.</p>
@@ -146,6 +160,15 @@ function calcularEstado(t, ahora) {
     els[i].className='taa-badge taa-badge--'+(clases[r.estado]||'desconocido');
   }
 })();
+</script><script>
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.taa-compartir-copiar');
+  if (!b) return;
+  var hecho = function (txt) { var o = 'Copiar enlace'; b.textContent = txt; setTimeout(function () { b.textContent = o; }, 2500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(b.getAttribute('data-url')).then(function () { hecho('¡Enlace copiado!'); }, function () { hecho('Copia el enlace de la barra de arriba'); });
+  } else { hecho('Copia el enlace de la barra de arriba'); }
+});
 </script>
 </body>
 </html>

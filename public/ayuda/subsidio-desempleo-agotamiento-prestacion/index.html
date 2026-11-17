@@ -45,6 +45,13 @@
       <span class="taa-chip">Ayudas</span>
       <span class="taa-badge taa-badge--abierto" data-taa-estado data-estado="Abierto" data-apertura="No especificada" data-cierre="No especificada" data-proxima="" data-estimada="">Plazo abierto</span>
       </div>
+      <div class="taa-compartir">
+      
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Subsidio%20de%20desempleo%20por%20agotamiento%20de%20la%20prestaci%C3%B3n%20contributiva%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fsubsidio-desempleo-agotamiento-prestacion%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/subsidio-desempleo-agotamiento-prestacion/">Copiar enlace</button>
+      </div>
+    </div>
     </header>
     <div class="taa-aviso" role="note"><strong>Aviso importante:</strong> esta es una guía orientativa basada en fuentes públicas. Los requisitos o el método de solicitud pueden haber cambiado. Comprueba siempre los datos en la web oficial antes de presentar tu solicitud.</div>
     
@@ -71,6 +78,13 @@
       <ol class="taa-pasos-lista"><li>Comprueba que cumples los requisitos y reúne la documentación. Descarga el &#39;Impreso solicitud subsidio por desempleo&#39; (PDF) y la &#39;Hoja informativa subsidio por desempleo&#39; (PDF) desde la página del SEPE: <a href="https://www.sepe.es/HomeSepe/prestaciones-desempleo/subsidio-desempleo/subsidio-agotamiento-prestacion-contributiva.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1 mt-1 text-sm font-medium text-emerald-700 bg-emerald-100/50 border border-emerald-200 rounded-md hover:bg-emerald-100 transition-colors dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800 dark:hover:bg-emerald-900/50 break-all">🔗 Enlace oficial</a></li><li>Si vas a hacer el trámite en línea, ten a mano antes un sistema de identificación electrónica (Cl@ve, certificado digital o DNI electrónico). El texto no lo detalla, pero suele ser necesario para la sede electrónica.</li><li>Rellena el impreso de solicitud con tus datos. Incluye la declaración responsable con todas las rentas e ingresos del mes natural anterior, tuyos y de los miembros de tu unidad familiar si procede.</li><li>Firma el acuerdo de actividad, que es obligatorio para poder cobrar el subsidio.</li><li>Presenta la solicitud: en línea, entrando en el apartado &#39;Realiza tu trámite&#39; de la página del SEPE, o de forma presencial pidiendo cita en tu oficina de prestaciones desde el apartado &#39;Solicita cita para tu oficina de prestaciones&#39;.</li><li>Comprueba que sigues inscrito como demandante de empleo, porque es necesario cuando se resuelva tu solicitud.</li><li>Si más adelante necesitas ampliar el subsidio, usa el impreso &#39;Solicitud ampliación del subsidio por desempleo&#39; (PDF) que aparece en la misma página. Si tienes dudas, llama al teléfono de atención a la ciudadanía del SEPE.</li></ol>
   </section>
     <p class="taa-cta"><a class="taa-boton" href="https://www.sepe.es/HomeSepe/prestaciones-desempleo/subsidio-desempleo/subsidio-agotamiento-prestacion-contributiva.html" target="_blank" rel="noopener noreferrer">Ver en la web oficial</a></p>
+    <div class="taa-compartir">
+      <p class="taa-compartir-pregunta">¿Conoces a alguien a quien le pueda servir? Pásaselo:</p>
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Subsidio%20de%20desempleo%20por%20agotamiento%20de%20la%20prestaci%C3%B3n%20contributiva%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Fsubsidio-desempleo-agotamiento-prestacion%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/subsidio-desempleo-agotamiento-prestacion/">Copiar enlace</button>
+      </div>
+    </div>
     <footer class="taa-meta">
       <p>Última comprobación con la fuente oficial: <time datetime="2026-11-17">17 de noviembre de 2026</time>.</p>
       <p>Fuentes: <a href="https://www.sepe.es/HomeSepe/prestaciones-desempleo/subsidio-desempleo/subsidio-agotamiento-prestacion-contributiva.html" target="_blank" rel="noopener noreferrer">www.sepe.es</a>.</p>
@@ -145,6 +159,15 @@ function calcularEstado(t, ahora) {
     els[i].className='taa-badge taa-badge--'+(clases[r.estado]||'desconocido');
   }
 })();
+</script><script>
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.taa-compartir-copiar');
+  if (!b) return;
+  var hecho = function (txt) { var o = 'Copiar enlace'; b.textContent = txt; setTimeout(function () { b.textContent = o; }, 2500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(b.getAttribute('data-url')).then(function () { hecho('¡Enlace copiado!'); }, function () { hecho('Copia el enlace de la barra de arriba'); });
+  } else { hecho('Copia el enlace de la barra de arriba'); }
+});
 </script>
 </body>
 </html>

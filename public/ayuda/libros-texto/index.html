@@ -46,6 +46,13 @@
       <span class="taa-chip taa-chip--cuantia">Gratuito (provisión de libros de texto o cheque-libro para su adquisición)</span>
       <span class="taa-badge taa-badge--abierto" data-taa-estado data-estado="Abierto" data-apertura="No especificada" data-cierre="No especificada" data-proxima="" data-estimada="">Plazo abierto</span>
       </div>
+      <div class="taa-compartir">
+      
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Gratuidad%20de%20los%20libros%20de%20texto%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Flibros-texto%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/libros-texto/">Copiar enlace</button>
+      </div>
+    </div>
     </header>
     <div class="taa-aviso" role="note"><strong>Aviso importante:</strong> esta es una guía orientativa basada en fuentes públicas. Los requisitos o el método de solicitud pueden haber cambiado. Comprueba siempre los datos en la web oficial antes de presentar tu solicitud.</div>
     
@@ -72,6 +79,13 @@
       <ol class="taa-pasos-lista"><li>Matricula al alumno o alumna en un centro público o concertado de Andalucía en un curso incluido en el programa (Primaria, ESO o Ciclo Formativo de Grado Básico). No hace falta presentar una solicitud aparte.</li><li>Consulta qué libros ha elegido tu centro y si este año toca renovarlos en tu curso. Hay un enlace llamado &#39;Consulta la selección de libros de texto por centro&#39; en la página <a href="https://www.juntadeandalucia.es/temas/estudiar/becas/libros-texto.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1 mt-1 text-sm font-medium text-emerald-700 bg-emerald-100/50 border border-emerald-200 rounded-md hover:bg-emerald-100 transition-colors dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800 dark:hover:bg-emerald-900/50 break-all">🔗 Enlace oficial</a></li><li>Si en tu curso toca libros nuevos, accede a la plataforma PASEN (web) o a la app iPasen (App Store o Google Play). Si no tienes usuario para acceder, pregunta en la secretaría del centro.</li><li>Entra en la ficha del alumno o alumna, ve a Trámites/Punto de recogida y descarga el &#39;Cheque libro (electrónico)&#39;.</li><li>Lleva el cheque-libro, debidamente cumplimentado, a la librería o establecimiento que prefieras y cámbialo por los libros de texto designados por el centro. La librería enviará las facturas al centro para que las pague.</li><li>Compra tú los materiales complementarios y fungibles (los que no se pueden reutilizar), porque no están cubiertos por el cheque.</li><li>Al terminar el curso, devuelve los libros al centro (o al darte de baja si te trasladas).</li><li>Si no quieres participar, pide en el centro el impreso de renuncia voluntaria. El representante legal del alumno debe comunicarlo en el centro al formalizar la inscripción.</li></ol>
   </section>
     <p class="taa-cta"><a class="taa-boton" href="https://www.juntadeandalucia.es/temas/estudiar/becas/libros-texto.html" target="_blank" rel="noopener noreferrer">Ver en la web oficial</a></p>
+    <div class="taa-compartir">
+      <p class="taa-compartir-pregunta">¿Conoces a alguien a quien le pueda servir? Pásaselo:</p>
+      <div class="taa-compartir-botones">
+        <a class="taa-compartir-wa" href="https://wa.me/?text=Mira%20esta%20ayuda%2C%20te%20puede%20interesar%3A%20Gratuidad%20de%20los%20libros%20de%20texto%0Ahttps%3A%2F%2Ftuasistenteandaluz.es%2Fayuda%2Flibros-texto%2F%3Futm_source%3Dwhatsapp%26utm_medium%3Dcompartir" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+        <button type="button" class="taa-compartir-copiar" data-url="https://tuasistenteandaluz.es/ayuda/libros-texto/">Copiar enlace</button>
+      </div>
+    </div>
     <footer class="taa-meta">
       <p>Última comprobación con la fuente oficial: <time datetime="2026-11-16">17 de noviembre de 2026</time>.</p>
       <p>Fuentes: <a href="https://www.juntadeandalucia.es/temas/estudiar/becas/libros-texto.html" target="_blank" rel="noopener noreferrer">www.juntadeandalucia.es</a>.</p>
@@ -146,6 +160,15 @@ function calcularEstado(t, ahora) {
     els[i].className='taa-badge taa-badge--'+(clases[r.estado]||'desconocido');
   }
 })();
+</script><script>
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.taa-compartir-copiar');
+  if (!b) return;
+  var hecho = function (txt) { var o = 'Copiar enlace'; b.textContent = txt; setTimeout(function () { b.textContent = o; }, 2500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(b.getAttribute('data-url')).then(function () { hecho('¡Enlace copiado!'); }, function () { hecho('Copia el enlace de la barra de arriba'); });
+  } else { hecho('Copia el enlace de la barra de arriba'); }
+});
 </script>
 </body>
 </html>
