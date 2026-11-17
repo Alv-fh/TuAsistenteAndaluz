@@ -392,6 +392,5 @@
 .taa-red-cafe svg { color: #d97706; }
 .taa-red-in svg { color: #0a66c2; }
 .dark .taa-red-in svg { color: #7dd3fc; }
-/* Versión que solo aparece en el móvil, arriba de la home (en escritorio ya están en la cabecera) */
-.taa-redes-movil { margin-top: 1.25rem; margin-bottom: 0; }
-@media (min-width: 640px) { .taa-redes-movil { display: none; } }
+/* Bloque de redes debajo del título de la home (móvil y escritorio) */
+.taa-redes-arriba { margin-top: 1.25rem; margin-bottom: 0; }
