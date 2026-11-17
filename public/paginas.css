@@ -368,3 +368,30 @@
     gap: 0.4rem 1.2rem;
     font-weight: 600;
 }
+
+
+/* ---------- Redes sociales (home, fichas y categorías) ---------- */
+.taa-redes { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; margin: 0 auto 1.2rem; }
+.taa-redes-titulo { font-size: 0.85rem; font-weight: 700; color: var(--taa-suave); }
+.taa-redes-botones { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
+.taa-red {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    min-height: 44px; padding: 0.55rem 0.95rem; border-radius: 999px;
+    font-size: 0.9rem; font-weight: 700; text-decoration: none;
+    color: var(--taa-tit); background: var(--taa-card);
+    border: 1px solid var(--taa-borde);
+    box-shadow: 0 2px 10px -4px rgba(15, 23, 42, 0.15);
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.taa-red:hover { transform: translateY(-1px); border-color: var(--taa-acento); }
+.taa-red:focus-visible { outline: 2px solid var(--taa-acento); outline-offset: 2px; }
+.taa-red svg { width: 1.15rem; height: 1.15rem; flex: none; }
+.taa-red-ig svg { color: #d6249f; }
+.taa-red-tt svg { color: #0f172a; }
+.dark .taa-red-tt svg { color: #f8fafc; }
+.taa-red-cafe svg { color: #d97706; }
+.taa-red-in svg { color: #0a66c2; }
+.dark .taa-red-in svg { color: #7dd3fc; }
+/* Versión que solo aparece en el móvil, arriba de la home (en escritorio ya están en la cabecera) */
+.taa-redes-movil { margin-top: 1.25rem; margin-bottom: 0; }
+@media (min-width: 640px) { .taa-redes-movil { display: none; } }
