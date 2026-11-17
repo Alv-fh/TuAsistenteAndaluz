@@ -144,6 +144,22 @@ async function iniciarArana() {
       if (!url || visitadas.has(url)) continue;
       visitadas.add(url);
 
+      // Enlaces que descargan un archivo en vez de abrir una página: no se pueden leer.
+      if (/\.(pdf|docx?|xlsx?|odt|ods|zip|rar)(\?|$)/i.test(url) || /descarga/i.test(url)) {
+        console.log(`\n[omitida] ${url}\n   Es una descarga de archivo, no una página.`);
+        resumen.omitidas++;
+        continue;
+      }
+
+      // Disposiciones de BOJA/BOE de años anteriores: casi nunca son convocatorias vigentes.
+      // (En enero se acepta también el año anterior.)
+      const anioBoletin = url.match(/\/(?:boja|eboja|boe)\/(?:dias\/)?(\d{4})\//i)?.[1];
+      if (anioBoletin && Number(anioBoletin) < new Date().getFullYear() - (new Date().getMonth() === 0 ? 1 : 0)) {
+        console.log(`\n[omitida] ${url}\n   Boletín de ${anioBoletin}: demasiado antiguo.`);
+        resumen.omitidas++;
+        continue;
+      }
+
       if (item.profundidad > 0 && conocidas.has(url)) {
         console.log(`\n[omitida] ${url}\n   Ya registrada: la mantiene updater.js.`);
         resumen.omitidas++;

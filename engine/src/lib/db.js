@@ -109,6 +109,37 @@ export function slugDesdeTitulo(titulo, url) {
   return `${base || 'ayuda'}-${huellaTexto(url).slice(0, 6)}`;
 }
 
+// Slug corto y legible a partir del título, sin la huella final.
+// "Teleasistencia de la Junta de Andalucía" -> "teleasistencia-junta-andalucia"
+const PALABRAS_VACIAS = new Set(['de', 'del', 'la', 'las', 'el', 'los', 'y', 'e', 'o', 'u', 'a', 'al', 'en',
+  'para', 'por', 'con', 'sin', 'su', 'sus', 'un', 'una', 'unos', 'unas', 'que']);
+export function slugLegible(titulo) {
+  const palabras = String(titulo ?? '')
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim().split(' ')
+    .filter((w) => w && !PALABRAS_VACIAS.has(w));
+  let slug = '';
+  for (const w of palabras) {
+    const siguiente = slug ? `${slug}-${w}` : w;
+    if (siguiente.length > 50) break; // los botones de Telegram recortan el slug a 50
+    slug = siguiente;
+  }
+  return slug || null;
+}
+
+// Devuelve un slug que no esté usado por OTRA URL (si es la misma URL, se reutiliza).
+async function slugLibre(base, url) {
+  for (let i = 1; i <= 9; i++) {
+    const s = i === 1 ? base : `${base}-${i}`;
+    const { data, error } = await supabase.from('tramites').select('url_oficial').eq('slug', s).maybeSingle();
+    if (error) throw new Error(`Supabase (slug libre): ${error.message}`);
+    if (!data || data.url_oficial === url) return s;
+  }
+  return `${base}-${huellaTexto(url).slice(0, 6)}`;
+}
+
 // =====================================================================
 // FECHAS
 // =====================================================================
@@ -233,7 +264,12 @@ const SLUGS_DESTACADOS_MANUALES = ['beca-6000', 'bono-alquiler-joven', 'capitali
 
 export async function registrarAyuda({ datos, url, slugFijo, origen, huella }) {
   const confiable = Boolean(slugFijo);
-  const slug = slugFijo || (origen === 'portal' ? slugDesdeUrl(url) : slugDesdeTitulo(datos.titulo, url));
+  // Las páginas genéricas (sin slug propio en la URL) se siguen omitiendo como antes.
+  if (!slugFijo && origen === 'portal' && !slugDesdeUrl(url)) return { accion: 'omitida', motivo: 'sin slug propio' };
+  // Antes: slug sacado de la URL ("procedimiento-313", "m-teleasistencia") o del título con huella
+  // ("programa-...-427b22"). Ahora: del título, corto y sin huella, salvo que ya lo use otra URL.
+  const base = slugLegible(datos.titulo) || (origen === 'portal' ? slugDesdeUrl(url) : slugDesdeTitulo(datos.titulo, url));
+  const slug = slugFijo || (base ? await slugLibre(base, url) : null);
   if (!slug) return { accion: 'omitida', motivo: 'sin slug propio' };
   if (config.crawler.ignorarSlugs.includes(slug)) return { accion: 'omitida', motivo: 'en la lista de ignorados' };
 
