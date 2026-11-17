@@ -485,3 +485,21 @@ a.taa-test-item:hover { border-color: var(--taa-acento); transform: translateY(-
 .taa-cta-test-texto strong { font-size: 1.15rem; font-weight: 800; }
 .taa-cta-test-texto span { font-size: 0.92rem; opacity: 0.95; }
 .taa-cta-test-flecha { font-size: 1.4rem; font-weight: 800; flex: none; }
+/* Compartir el test: debajo de los resultados, separado con una línea */
+.taa-compartir-test { margin: 0.5rem 0 1rem; padding-top: 1.5rem; border-top: 1px solid var(--taa-borde); }
+
+/* ---------- Preguntas frecuentes de cada ficha ---------- */
+.taa-faq { margin-top: 2rem; }
+.taa-faq-item { border: 1px solid var(--taa-borde); border-radius: 0.9rem; background: var(--taa-card); margin: 0 0 0.6rem; }
+.taa-faq-item summary {
+    cursor: pointer; list-style: none; padding: 0.85rem 2.4rem 0.85rem 1rem; position: relative;
+    font-weight: 700; color: var(--taa-tit);
+}
+.taa-faq-item summary::-webkit-details-marker { display: none; }
+.taa-faq-item summary::after {
+    content: '+'; position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+    font-size: 1.3rem; font-weight: 700; color: var(--taa-acento);
+}
+.taa-faq-item[open] summary::after { content: '−'; }
+.taa-faq-item summary:focus-visible { outline: 2px solid var(--taa-acento); outline-offset: 2px; border-radius: 0.9rem; }
+.taa-faq-item p { margin: 0; padding: 0 1rem 1rem; color: var(--taa-txt); }

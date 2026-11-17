@@ -22,6 +22,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+import { createHash } from 'node:crypto';
 
 // ---------------------------------------------------------------------------
 // Configuración
@@ -306,7 +308,16 @@ const SCRIPT_TEMA_INICIAL = `<script>(function(){try{var s=localStorage.getItem(
 
 const SCRIPT_TEMA_BOTON = `<script>(function(){var b=document.getElementById('theme-toggle');if(!b)return;b.onclick=function(){var d=!document.documentElement.classList.contains('dark');document.documentElement.classList.toggle('dark',d);b.setAttribute('aria-pressed',String(d));try{localStorage.setItem('theme',d?'dark':'light');}catch(e){}};b.setAttribute('aria-pressed',String(document.documentElement.classList.contains('dark')));})();</script>`;
 
-function cabeza({ titulo, descripcion, canonico, tipoOg = 'article', tarjetaTw = 'summary', jsonld }) {
+function cabeza({ titulo, descripcion, canonico, tipoOg = 'article', tarjetaTw = 'summary', jsonld, imagen = null }) {
+  const metaImagen = imagen
+    ? `<meta property="og:image" content="${esc(imagen)}">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="${OG_ANCHO}">
+<meta property="og:image:height" content="${OG_ALTO}">
+<meta property="og:image:alt" content="${esc(titulo)}">
+<meta name="twitter:image" content="${esc(imagen)}">`
+    : `<meta property="og:image" content="${SITIO}/logo-taa.png">`;
+  if (imagen) tarjetaTw = 'summary_large_image';
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -322,7 +333,7 @@ function cabeza({ titulo, descripcion, canonico, tipoOg = 'article', tarjetaTw =
 <meta property="og:title" content="${esc(titulo)}">
 <meta property="og:description" content="${esc(descripcion)}">
 <meta property="og:url" content="${esc(canonico)}">
-<meta property="og:image" content="${SITIO}/logo-taa.png">
+${metaImagen}
 <meta name="twitter:card" content="${tarjetaTw}">
 <meta name="twitter:title" content="${esc(titulo)}">
 <meta name="twitter:description" content="${esc(descripcion)}">
@@ -642,6 +653,123 @@ function metaDescription(titulo, categoria, guia, cuantia = guia?.cuantia) {
 // Páginas
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
+// Imágenes de vista previa (WhatsApp, Facebook, X...) — public/og/<nombre>.jpg
+// - 1200x630, JPG optimizado (~30-60 KB). La web NO las carga: solo las piden las
+//   redes al compartir un enlace, así que no afectan a la velocidad de la página.
+// - Solo se regeneran si cambia el título, la cuantía o el estado (public/og/manifest.json).
+// - Usa el navegador (Playwright) que ya tiene instalado engine/. Si no está, se usa el logo.
+// ---------------------------------------------------------------------------
+const OG_ANCHO = 1200;
+const OG_ALTO = 630;
+const OG_VERSION = 1; // súbelo si cambias el diseño, para regenerarlas todas
+const OG_CALIDAD = 78;
+
+function htmlOg({ etiqueta, titulo, chips }, logo) {
+  const n = titulo.length;
+  const tam = n <= 45 ? 72 : n <= 75 ? 60 : n <= 110 ? 50 : 42;
+  // Misma letra que la web (Inter). Si no hay internet, se usa la del sistema.
+  return `<!DOCTYPE html><html><head><meta charset="utf-8">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800&display=block"><style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{width:${OG_ANCHO}px;height:${OG_ALTO}px;overflow:hidden;font-family:Inter,"Segoe UI",Roboto,"Helvetica Neue",Arial,"DejaVu Sans",sans-serif;
+    background:linear-gradient(135deg,#064e3b 0%,#047857 55%,#10b981 100%);color:#fff;position:relative}
+  .c1{position:absolute;width:520px;height:520px;border-radius:50%;background:rgba(255,255,255,.07);right:-140px;top:-180px}
+  .c2{position:absolute;width:340px;height:340px;border-radius:50%;background:rgba(255,255,255,.06);right:120px;bottom:-200px}
+  .caja{position:absolute;inset:56px 64px;display:flex;flex-direction:column}
+  .marca{display:flex;align-items:center;gap:18px;font-size:34px;font-weight:800;letter-spacing:-.5px}
+  .marca img{width:72px;height:72px;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+  .marca b{color:#a7f3d0}
+  .etiqueta{margin-top:44px;font-size:26px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#a7f3d0}
+  h1{margin-top:12px;font-size:${tam}px;line-height:1.12;font-weight:800;letter-spacing:-1px;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;max-width:1020px}
+  .chips{margin-top:auto;display:flex;gap:14px;flex-wrap:wrap}
+  .chip{font-size:26px;font-weight:700;padding:12px 22px;border-radius:999px;background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.35);
+    max-width:640px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chip.fuerte{background:#fff;color:#065f46;border-color:#fff}
+  .web{position:absolute;right:64px;top:82px;font-size:24px;font-weight:700;color:#d1fae5}
+  </style></head><body><div class="c1"></div><div class="c2"></div>
+  <div class="caja">
+    <div class="marca">${logo ? `<img src="${logo}">` : ''}<span>TuAsistente<b>Andaluz</b></span></div>
+    ${etiqueta ? `<div class="etiqueta">${esc(etiqueta)}</div>` : ''}
+    <h1>${esc(titulo)}</h1>
+    <div class="chips">${chips.filter(Boolean).slice(0, 2).map((c, i) => `<span class="chip${i === 0 ? ' fuerte' : ''}">${esc(c)}</span>`).join('')}</div>
+  </div>
+  <div class="web">tuasistenteandaluz.es</div>
+  </body></html>`;
+}
+
+async function abrirNavegadorOg() {
+  try {
+    const requerir = createRequire(path.join(RAIZ, 'engine', 'package.json'));
+    const { chromium } = requerir('playwright');
+    const opciones = { args: ['--no-sandbox', '--disable-dev-shm-usage'] };
+    if (process.env.OG_CHROME_PATH) opciones.executablePath = process.env.OG_CHROME_PATH;
+    return await chromium.launch(opciones);
+  } catch (e) {
+    return { error: e.message.split('\n')[0] };
+  }
+}
+
+// items: [{ nombre, etiqueta, titulo, chips }]. Devuelve Map nombre -> URL absoluta (con ?v= para refrescar cachés).
+async function generarImagenesOg(items, advertencias) {
+  const dir = path.join(PUBLIC, 'og');
+  await fs.mkdir(dir, { recursive: true });
+  const rutaManifest = path.join(dir, 'manifest.json');
+  const manifest = await fs.readFile(rutaManifest, 'utf8').then(JSON.parse).catch(() => ({}));
+  const nuevoManifest = {};
+  const urls = new Map();
+  const pendientes = [];
+
+  for (const it of items) {
+    const huella = createHash('sha1').update(JSON.stringify([OG_VERSION, it.etiqueta, it.titulo, it.chips])).digest('hex').slice(0, 10);
+    const archivo = path.join(dir, `${it.nombre}.jpg`);
+    nuevoManifest[it.nombre] = huella;
+    if (manifest[it.nombre] === huella && await existe(archivo)) {
+      urls.set(it.nombre, `${SITIO}/og/${it.nombre}.jpg?v=${huella}`);
+    } else {
+      pendientes.push({ ...it, huella, archivo });
+    }
+  }
+
+  if (pendientes.length) {
+    const navegador = await abrirNavegadorOg();
+    if (!navegador || navegador.error) {
+      advertencias.push(`Imágenes de vista previa: no se pudo abrir el navegador (${navegador?.error ?? 'desconocido'}). Esas páginas usan el logo.`);
+      for (const it of pendientes) delete nuevoManifest[it.nombre];
+    } else {
+      const logoBuf = await fs.readFile(path.join(PUBLIC, 'logo-taa.png')).catch(() => null);
+      const logo = logoBuf ? `data:image/png;base64,${logoBuf.toString('base64')}` : null;
+      const pagina = await navegador.newPage({ viewport: { width: OG_ANCHO, height: OG_ALTO } });
+      let hechas = 0;
+      try {
+        for (const it of pendientes) {
+          await pagina.setContent(htmlOg(it, logo), { waitUntil: 'networkidle', timeout: 15000 })
+            .catch(() => pagina.setContent(htmlOg(it, logo), { waitUntil: 'load' }));
+          await pagina.screenshot({ path: it.archivo, type: 'jpeg', quality: OG_CALIDAD });
+          urls.set(it.nombre, `${SITIO}/og/${it.nombre}.jpg?v=${it.huella}`);
+          hechas++;
+        }
+      } catch (e) {
+        advertencias.push(`Imágenes de vista previa: error generando (${e.message.split('\n')[0]}).`);
+        for (const it of pendientes) if (!urls.has(it.nombre)) delete nuevoManifest[it.nombre];
+      } finally {
+        await navegador.close();
+      }
+      console.log(`Imágenes de vista previa: ${hechas} nuevas o actualizadas, ${items.length - pendientes.length} sin cambios.`);
+    }
+  } else {
+    console.log(`Imágenes de vista previa: ${items.length} sin cambios.`);
+  }
+
+  // Borra las de fichas que ya no existen, para no acumular archivos.
+  for (const f of await fs.readdir(dir).catch(() => [])) {
+    if (f.endsWith('.jpg') && !(f.slice(0, -4) in nuevoManifest)) await fs.rm(path.join(dir, f), { force: true });
+  }
+  await fs.writeFile(rutaManifest, JSON.stringify(nuevoManifest, null, 1), 'utf8');
+  return urls;
+}
+
+// ---------------------------------------------------------------------------
 // Test "¿Qué ayudas me corresponden?"
 // Los datos de cada ficha (perfil) los pone engine/src/etiquetar-perfiles.js.
 // El filtrado se hace en el navegador: las respuestas no salen del dispositivo.
@@ -801,16 +929,31 @@ const SCRIPT_TEST = `<script>
     html += '<p><button type="button" class="taa-test-otra" id="taa-test-repetir">Volver a empezar</button></p>';
     res.innerHTML = html;
     res.hidden = false;
+    document.getElementById('taa-test-compartir').hidden = false;
     var t = document.getElementById('taa-test-titulo-res');
     t.scrollIntoView({ behavior: 'smooth', block: 'start' });
     t.focus({ preventScroll: true });
     document.getElementById('taa-test-repetir').onclick = function () {
       form.reset(); bloqueFn.hidden = true; res.hidden = true;
+      document.getElementById('taa-test-compartir').hidden = true;
       form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
   });
 })();
 </script>`;
+
+// Bloque para compartir el test (mismos botones que en las fichas).
+function bloqueCompartirTest(url) {
+  const enlace = `${url}?utm_source=whatsapp&utm_medium=compartir_test`;
+  const texto = `Mira este test gratis: en 1 minuto te dice a qué ayudas de la Junta y del SEPE puedes tener derecho 👉 ${enlace}`;
+  return `<div class="taa-compartir taa-compartir-test">
+        <p class="taa-compartir-pregunta">¿Conoces a alguien que podría tener derecho a alguna ayuda? Pásale el test:</p>
+        <div class="taa-compartir-botones">
+          <a class="taa-compartir-wa" href="https://wa.me/?text=${encodeURIComponent(texto)}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
+          <button type="button" class="taa-compartir-copiar" data-url="${esc(url)}">Copiar enlace</button>
+        </div>
+      </div>`;
+}
 
 function pregunta(nombre, texto, opciones, ayuda = '') {
   return `<fieldset class="taa-test-pregunta">
@@ -874,14 +1017,49 @@ function paginaTest(tramites, ctx) {
       <button type="submit" class="taa-test-enviar">Ver mis ayudas</button>
     </form>
     <section id="taa-test-resultados" class="taa-test-resultados" aria-live="polite" hidden></section>
+    <div id="taa-test-compartir" hidden>
+      ${bloqueCompartirTest(url)}
+    </div>
   </article>
   <script type="application/json" id="taa-test-datos">${json}</script>
 </main>`;
 
   return pagina({
-    head: cabeza({ titulo, descripcion, canonico: url, tipoOg: 'website', jsonld }),
-    cuerpo, categorias, hayPrivacidad, scriptsExtra: SCRIPT_TEST
+    head: cabeza({ titulo, descripcion, canonico: url, tipoOg: 'website', jsonld, imagen: ctx.og?.get('test') }),
+    cuerpo, categorias, hayPrivacidad, scriptsExtra: SCRIPT_TEST + SCRIPT_COMPARTIR
   });
+}
+
+// ---------------------------------------------------------------------------
+// Preguntas frecuentes de cada ficha (visibles + datos estructurados FAQPage).
+// Se construyen con la misma información de la guía: no se inventa nada.
+// ---------------------------------------------------------------------------
+function preguntasFrecuentes(t, ahora) {
+  const g = t.guia;
+  if (!g) return [];
+  const nombre = tituloBase(t.titulo);
+  const faq = [];
+  if (g.que_es) faq.push([`¿Qué es ${nombre}?`, recortar(g.que_es, 480)]);
+  const req = listaDesdeTexto(g.requisitos);
+  if (req.length) faq.push([`¿Quién puede pedir ${nombre}?`, recortar(req.slice(0, 5).map((x) => x.replace(/[.;:]\s*$/, '')).join('. ') + '.', 480)]);
+  if (t.cuantia) faq.push([`¿Cuánto se cobra con ${nombre}?`, recortar(t.cuantia, 480)]);
+  const ef = calcularEstado(t, ahora);
+  const plazo = [ef.etiqueta + '.', g.plazos].filter(Boolean).join(' ');
+  faq.push([`¿Cuál es el plazo para solicitar ${nombre}?`, recortar(plazo, 480)]);
+  const { pasos, intro } = pasosDeTexto(g.como_solicitar);
+  const como = pasos.length >= 2
+    ? pasos.slice(0, 4).map((p, i) => `${i + 1}) ${p}`).join(' ')
+    : (intro || (Array.isArray(g.como_solicitar) ? g.como_solicitar.join(' ') : g.como_solicitar));
+  if (como) faq.push([`¿Cómo se solicita ${nombre}?`, recortar(como, 480)]);
+  return faq.filter(([, r]) => r && r.length > 3);
+}
+
+function bloqueFaq(faq) {
+  if (!faq.length) return '';
+  return `<section class="taa-faq">
+    <h2>Preguntas frecuentes</h2>
+    ${faq.map(([q, r]) => `<details class="taa-faq-item"><summary>${esc(q)}</summary><p>${esc(r)}</p></details>`).join('\n    ')}
+  </section>`;
 }
 
 // Botones para compartir una ficha (WhatsApp + copiar enlace).
@@ -928,6 +1106,7 @@ function paginaFicha(t, ctx) {
   const comprobado = fechaLarga(t.revisado_en || t.actualizado_en);
   const modificado = fechaISO(t.actualizado_en || t.revisado_en);
 
+  const faq = preguntasFrecuentes(t, ahora);
   const requisitos = listaDesdeTexto(g?.requisitos);
   const fuentes = [oficial, ...t.fuentes_extra.map(enlaceSeguro)].filter(Boolean);
   const fuentesUnicas = [...new Set(fuentes)];
@@ -959,6 +1138,11 @@ function paginaFicha(t, ctx) {
         } : {}),
         ...(oficial ? { url: oficial } : {})
       },
+      ...(faq.length ? [{
+        '@type': 'FAQPage',
+        '@id': `${url}#preguntas`,
+        mainEntity: faq.map(([q, r]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: r } }))
+      }] : []),
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
@@ -1119,6 +1303,7 @@ function paginaFicha(t, ctx) {
     <div class="taa-aviso" role="note"><strong>Aviso importante:</strong> esta es una guía orientativa basada en fuentes públicas. Los requisitos o el método de solicitud pueden haber cambiado. Comprueba siempre los datos en la web oficial antes de presentar tu solicitud.</div>
     ${resumenHtml}
     ${secciones}
+    ${bloqueFaq(faq)}
     ${oficial ? `<p class="taa-cta"><a class="taa-boton" href="${esc(oficial)}" target="_blank" rel="noopener noreferrer">Ver en la web oficial</a></p>` : ''}
     ${bloqueCompartir(t, url, '¿Conoces a alguien a quien le pueda servir? Pásaselo:')}
     <footer class="taa-meta">
@@ -1135,7 +1320,7 @@ function paginaFicha(t, ctx) {
 </main>`;
 
   return pagina({
-    head: cabeza({ titulo: title, descripcion, canonico: url, tarjetaTw: 'summary_large_image', jsonld }),
+    head: cabeza({ titulo: title, descripcion, canonico: url, tarjetaTw: 'summary_large_image', jsonld, imagen: ctx.og?.get(`ayuda-${t.slug}`) }),
     cuerpo, categorias, hayPrivacidad, scriptsExtra: scriptEstado() + SCRIPT_COMPARTIR
   });
 }
@@ -1290,6 +1475,16 @@ async function main() {
 
   const hayPrivacidad = await existe(path.join(PUBLIC, 'privacidad.html'));
   const ctx = { ahora, categorias, hayPrivacidad, porCategoria, categoriaDe, titulos: [] };
+
+  // Imágenes de vista previa para compartir (solo se rehacen las que cambian)
+  const itemsOg = tramites.map((t) => ({
+    nombre: `ayuda-${t.slug}`,
+    etiqueta: categoriaDe(t).nombre,
+    titulo: tituloBase(t.titulo),
+    chips: [calcularEstado(t, ahora).etiqueta, t.cuantia ? recortar(t.cuantia, 60) : null]
+  }));
+  itemsOg.push({ nombre: 'test', etiqueta: 'Test gratis y anónimo', titulo: '¿A qué ayudas tienes derecho? Descúbrelo en 1 minuto', chips: ['Junta de Andalucía y SEPE', '6 preguntas'] });
+  ctx.og = process.argv.includes('--sin-imagenes') ? new Map() : await generarImagenesOg(itemsOg, advertencias);
 
   // Todo se genera EN MEMORIA primero; solo si va bien se borra lo anterior y se escribe.
   const archivos = [];
