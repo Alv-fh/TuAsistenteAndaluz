@@ -685,9 +685,23 @@ const SCRIPT_TEST = `<script>
     bloqueFn.hidden = valor('hijos') !== 'si';
   });
 
+  // Si la ayuda tiene varias vías de acceso (p. ej. jubilación O invalidez), encaja si cumple alguna:
+  // se queda con la vía que mejor encaja (más motivos, menos pendientes).
+  function encaja(p, r) {
+    if (p.alternativas && p.alternativas.length) {
+      var mejor = null;
+      p.alternativas.forEach(function (v) {
+        var m = encajaVia({ edad_min: v.edad_min, edad_max: v.edad_max, situacion: v.situacion, requiere: v.requiere, para_empresas: p.para_empresas }, r);
+        if (m && (!mejor || (m.motivos.length - m.pendientes.length) > (mejor.motivos.length - mejor.pendientes.length))) mejor = m;
+      });
+      return mejor;
+    }
+    return encajaVia(p, r);
+  }
+
   // Devuelve null si NO encaja. Si encaja: motivos (lo que cumple seguro) y pendientes
   // (requisitos que no ha contestado y tendría que comprobar).
-  function encaja(p, r) {
+  function encajaVia(p, r) {
     var motivos = [], pendientes = [];
     if (r.edad !== null) {
       if (p.edad_min != null && r.edad < p.edad_min) return null;
@@ -698,7 +712,8 @@ const SCRIPT_TEST = `<script>
         : p.edad_min != null ? 'tienes ' + p.edad_min + ' años o más' : 'tienes ' + p.edad_max + ' años o menos');
     }
     if (p.para_empresas && r.situacion !== 'autonomo') return null;
-    if (p.situacion && p.situacion.length && r.situacion && r.situacion !== 'otra') {
+    // "Otra" significa que no está en ninguna de esas situaciones: descarta las que piden una concreta.
+    if (p.situacion && p.situacion.length && r.situacion) {
       if (p.situacion.indexOf(r.situacion) === -1) return null;
       motivos.push(SIT[r.situacion]);
     } else if (p.situacion && p.situacion.length) {
@@ -741,19 +756,21 @@ const SCRIPT_TEST = `<script>
       ingresos_bajos: valor('ingresos_bajos')
     };
 
-    var ayudas = [], tramites = [], especiales = [];
+    var ayudas = [], generales = [], tramites = [], especiales = [];
     datos.forEach(function (d) {
       var m = encaja(d.p, r);
       if (m === null) return;
       var item = { d: d, m: m, peso: m.motivos.length - m.pendientes.length };
       if (d.p.colectivo_especifico) especiales.push(item);
       else if (d.p.tipo === 'tramite') tramites.push(item);
-      else ayudas.push(item);
+      // En la lista principal solo lo que encaja por algo que ha contestado.
+      else if (m.motivos.length) ayudas.push(item);
+      else generales.push(item);
     });
     var ordenar = function (a, b) {
       return (ORDEN[a.d.e] - ORDEN[b.d.e]) || (b.peso - a.peso) || a.d.t.localeCompare(b.d.t, 'es');
     };
-    ayudas.sort(ordenar); tramites.sort(ordenar); especiales.sort(ordenar);
+    ayudas.sort(ordenar); generales.sort(ordenar); tramites.sort(ordenar); especiales.sort(ordenar);
 
     var abiertas = ayudas.filter(function (x) { return x.d.e === 'Abierto' || x.d.e === 'Próximamente'; }).length;
     var html = '<h2 tabindex="-1" id="taa-test-titulo-res">' + (ayudas.length
@@ -765,6 +782,10 @@ const SCRIPT_TEST = `<script>
       html += '<div class="taa-test-lista">' + ayudas.map(function (x) { return tarjeta(x.d, x.m); }).join('') + '</div>';
     } else {
       html += '<p class="taa-test-resumen">Prueba a marcar «Prefiero no decirlo» en alguna pregunta, o mira todas las ayudas en la <a href="/">página de inicio</a>.</p>';
+    }
+    if (generales.length) {
+      html += '<details class="taa-test-mas"><summary>Otras ayudas generales que podrían interesarte (' + generales.length + ')</summary>' +
+        '<div class="taa-test-lista">' + generales.map(function (x) { return tarjeta(x.d, x.m); }).join('') + '</div></details>';
     }
     if (tramites.length) {
       html += '<details class="taa-test-mas"><summary>Trámites que también te pueden servir (' + tramites.length + ')</summary>' +
