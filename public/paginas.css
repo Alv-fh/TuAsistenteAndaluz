@@ -418,3 +418,70 @@ a.taa-compartir-wa svg { width: 1.2rem; height: 1.2rem; flex: none; }
 .taa-compartir-copiar:hover { border-color: var(--taa-acento); }
 /* El bloque final va separado del botón "Ver en la web oficial" */
 .taa-cta + .taa-compartir { margin: 2.5rem 0 2.5rem; padding-top: 1.75rem; border-top: 1px solid var(--taa-borde); }
+
+/* ---------- Test "¿Qué ayudas me corresponden?" ---------- */
+.taa-test-intro { margin: 0.8rem 0 0.4rem; font-size: 1.05rem; color: var(--taa-txt); }
+.taa-test-privado { margin: 0; font-size: 0.9rem; color: var(--taa-suave); }
+.taa-test-form { margin-top: 1.5rem; }
+.taa-test-pregunta { border: 0; padding: 0; margin: 0 0 1.6rem; min-width: 0; }
+.taa-test-pregunta legend { font-weight: 800; font-size: 1.05rem; color: var(--taa-tit); margin-bottom: 0.6rem; padding: 0; }
+.taa-test-ayuda { margin: -0.3rem 0 0.6rem; font-size: 0.88rem; color: var(--taa-suave); }
+.taa-test-opciones { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.taa-test-op { position: relative; cursor: pointer; }
+.taa-test-op input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.taa-test-op span {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0.5rem 1rem;
+    border-radius: 999px; border: 1px solid var(--taa-borde); background: var(--taa-card);
+    font-weight: 600; color: var(--taa-tit); transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.taa-test-op:hover span { border-color: var(--taa-acento); }
+.taa-test-op input:checked + span { background: var(--taa-boton-bg); border-color: var(--taa-boton-bg); color: var(--taa-boton-txt); }
+.taa-test-op input:focus-visible + span { outline: 2px solid var(--taa-acento); outline-offset: 2px; }
+.taa-test-edad {
+    width: 8rem; min-height: 44px; padding: 0.5rem 0.9rem; border-radius: 0.75rem;
+    border: 1px solid var(--taa-borde); background: var(--taa-card); color: var(--taa-tit);
+    font: inherit; font-size: 1.05rem;
+}
+.taa-test-edad:focus { outline: 2px solid var(--taa-acento); outline-offset: 1px; }
+.taa-test-enviar, .taa-test-otra {
+    min-height: 48px; padding: 0.7rem 1.4rem; border-radius: 0.9rem; border: 0; cursor: pointer;
+    font: inherit; font-weight: 800; font-size: 1.05rem;
+    background: var(--taa-boton-bg); color: var(--taa-boton-txt);
+}
+.taa-test-enviar { width: 100%; }
+.taa-test-enviar:hover, .taa-test-otra:hover { background: var(--taa-boton-hover); }
+.taa-test-otra { background: var(--taa-card); color: var(--taa-tit); border: 1px solid var(--taa-borde); }
+.taa-test-otra:hover { background: var(--taa-card); border-color: var(--taa-acento); }
+.taa-test-resultados { margin-top: 2.5rem; padding-top: 1.75rem; border-top: 1px solid var(--taa-borde); }
+.taa-test-resultados h2 { margin-top: 0; outline: none; }
+.taa-test-resumen { color: var(--taa-txt); }
+.taa-test-lista { display: flex; flex-direction: column; gap: 0.7rem; margin: 1rem 0 1.5rem; }
+.taa-pagina a.taa-test-item, a.taa-test-item {
+    display: block; padding: 1rem 1.1rem; border-radius: 1rem; text-decoration: none;
+    background: var(--taa-card); border: 1px solid var(--taa-borde); color: var(--taa-txt);
+    transition: border-color 0.15s ease, transform 0.15s ease;
+}
+a.taa-test-item:hover { border-color: var(--taa-acento); transform: translateY(-1px); }
+.taa-test-item-tit { display: block; font-weight: 800; color: var(--taa-tit); margin-bottom: 0.5rem; }
+.taa-test-item-meta { display: flex; flex-wrap: wrap; gap: 0.4rem; font-size: 0.82rem; font-weight: 700; }
+.taa-test-por { margin: 0.55rem 0 0; font-size: 0.88rem; color: var(--taa-suave); }
+.taa-test-mas { margin: 0.5rem 0 1rem; }
+.taa-test-mas summary { cursor: pointer; font-weight: 800; color: var(--taa-acento-txt); padding: 0.4rem 0; }
+.taa-test-aviso { font-size: 0.88rem; color: var(--taa-suave); }
+
+/* Tarjeta de la portada que lleva al test */
+.taa-cta-test {
+    display: flex; align-items: center; gap: 0.9rem;
+    max-width: 42rem; margin: 0 auto 1.5rem; padding: 1.1rem 1.2rem;
+    border-radius: 1.25rem; text-decoration: none;
+    background: linear-gradient(135deg, #059669, #10b981); color: #fff;
+    box-shadow: 0 10px 30px -12px rgba(5, 150, 105, 0.6);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.taa-cta-test:hover { transform: translateY(-2px); box-shadow: 0 14px 34px -12px rgba(5, 150, 105, 0.7); }
+.taa-cta-test:focus-visible { outline: 3px solid #a7f3d0; outline-offset: 3px; }
+.taa-cta-test-icono { font-size: 2rem; line-height: 1; flex: none; }
+.taa-cta-test-texto { display: flex; flex-direction: column; gap: 0.2rem; flex: 1; }
+.taa-cta-test-texto strong { font-size: 1.15rem; font-weight: 800; }
+.taa-cta-test-texto span { font-size: 0.92rem; opacity: 0.95; }
+.taa-cta-test-flecha { font-size: 1.4rem; font-weight: 800; flex: none; }

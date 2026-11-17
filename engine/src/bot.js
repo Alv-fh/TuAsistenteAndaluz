@@ -33,7 +33,7 @@ bot.on('callback_query', async (query) => {
     // A.1) Comprobamos que la guía esté generada antes de publicar
     const { data: tramite, error: errorLectura } = await supabase
       .from('tramites')
-      .select('guia, guia_html')
+      .select('guia, guia_html, perfil')
       .eq('slug', slug)
       .single();
 
@@ -67,6 +67,17 @@ bot.on('callback_query', async (query) => {
 
     if (error) {
       return bot.answerCallbackQuery(query.id, { text: `Error en BD: ${error.message}`, show_alert: true });
+    }
+
+    // B.0) Perfil para el test "¿Qué ayudas me corresponden?" (si falla, se publica igual)
+    if (!tramite.perfil) {
+      try {
+        await execFileAsync(process.execPath, ['src/etiquetar-perfiles.js', '--slug', slug], {
+          cwd: `${RAIZ}/engine`, env: process.env, timeout: 60000,
+        });
+      } catch (e) {
+        console.warn(`No se pudo etiquetar el perfil de ${slug}: ${e.message}`);
+      }
     }
 
     // B) Ejecutamos el script para generar las páginas

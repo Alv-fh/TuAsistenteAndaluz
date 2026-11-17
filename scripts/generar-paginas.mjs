@@ -37,7 +37,7 @@ const DOMINIOS_OFICIALES = ['juntadeandalucia.es', 'boe.es', 'sepe.es', 'sepe.go
 const COLUMNAS = [
   'id', 'created_at', 'slug', 'titulo', 'categoria', 'estado', 'cuantia',
   'fecha_apertura', 'fecha_cierre', 'proxima_apertura', 'apertura_estimada',
-  'destacado', 'url_oficial', 'guia', 'guia_html', 'fuentes_extra', 'actualizado_en', 'revisado_en'
+  'destacado', 'url_oficial', 'guia', 'guia_html', 'fuentes_extra', 'actualizado_en', 'revisado_en', 'perfil'
 ].join(',');
 
 const ORDEN_CATEGORIAS = ['educacion', 'empleo', 'vivienda', 'ayudas', 'tramites'];
@@ -244,10 +244,21 @@ async function cargarTramites() {
     order: 'id.asc',
     limit: '1000'
   });
-  const r = await fetch(`${url}/rest/v1/tramites?${q}`, {
+  let r = await fetch(`${url}/rest/v1/tramites?${q}`, {
     headers: { apikey: key, Authorization: `Bearer ${key}` }
   });
-  if (!r.ok) throw new Error(`Supabase respondió ${r.status}: ${(await r.text()).slice(0, 300)}`);
+  if (!r.ok) {
+    const cuerpo = await r.text();
+    // Si aún no existe la columna "perfil", se genera todo igual (el test saldrá vacío).
+    if (/perfil/i.test(cuerpo)) {
+      console.warn('Aviso: la tabla no tiene la columna "perfil". Créala con: alter table tramites add column if not exists perfil jsonb;');
+      q.set('select', COLUMNAS.split(',').filter((c) => c !== 'perfil').join(','));
+      r = await fetch(`${url}/rest/v1/tramites?${q}`, { headers: { apikey: key, Authorization: `Bearer ${key}` } });
+      if (!r.ok) throw new Error(`Supabase respondió ${r.status}: ${(await r.text()).slice(0, 300)}`);
+    } else {
+      throw new Error(`Supabase respondió ${r.status}: ${cuerpo.slice(0, 300)}`);
+    }
+  }
   return r.json();
 }
 
@@ -275,8 +286,11 @@ function normalizarRegistro(r) {
   if (typeof guia === 'string') { try { guia = JSON.parse(guia); } catch { guia = null; } }
   let extra = r.fuentes_extra;
   if (typeof extra === 'string') { try { extra = JSON.parse(extra); } catch { extra = []; } }
+  let perfil = r.perfil;
+  if (typeof perfil === 'string') { try { perfil = JSON.parse(perfil); } catch { perfil = null; } }
   return {
     ...r,
+    perfil: perfil && typeof perfil === 'object' ? perfil : null,
     guia: guia && typeof guia === 'object' ? limpiarFrases(guia) : null,
     fuentes_extra: Array.isArray(extra) ? extra.filter((x) => typeof x === 'string') : []
   };
@@ -627,6 +641,228 @@ function metaDescription(titulo, categoria, guia, cuantia = guia?.cuantia) {
 // ---------------------------------------------------------------------------
 // Páginas
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Test "¿Qué ayudas me corresponden?"
+// Los datos de cada ficha (perfil) los pone engine/src/etiquetar-perfiles.js.
+// El filtrado se hace en el navegador: las respuestas no salen del dispositivo.
+// ---------------------------------------------------------------------------
+const RUTA_TEST = 'que-ayudas-me-corresponden';
+
+function datosTest(tramites, ahora) {
+  return tramites
+    .filter((t) => t.perfil)
+    .map((t) => {
+      const ef = calcularEstado(t, ahora);
+      return {
+        s: t.slug,
+        t: tituloBase(t.titulo),
+        c: t.cuantia || null,
+        e: ef.estado,
+        el: ef.etiqueta,
+        p: t.perfil
+      };
+    });
+}
+
+const SCRIPT_TEST = `<script>
+(function () {
+  var datos = JSON.parse(document.getElementById('taa-test-datos').textContent);
+  var form = document.getElementById('taa-test-form');
+  var res = document.getElementById('taa-test-resultados');
+  var bloqueFn = document.getElementById('taa-test-fn');
+  var ORDEN = { 'Abierto': 0, 'Próximamente': 1, 'Desconocido': 2, 'Cerrado': 3 };
+  var CLASE = { 'Abierto': 'abierto', 'Próximamente': 'proximo', 'Cerrado': 'cerrado', 'Desconocido': 'desconocido' };
+  var MOTIVO = { hijos: 'tienes hijos a tu cargo', familia_numerosa: 'sois familia numerosa', discapacidad: 'hay una discapacidad reconocida',
+    alquiler: 'vives de alquiler', ingresos_bajos: 'tu hogar tiene ingresos bajos' };
+  var SIT = { desempleado: 'estás en paro', trabajador: 'trabajas', autonomo: 'eres autónomo o tienes empresa', estudiante: 'estudias', jubilado: 'eres pensionista' };
+  var PEND = { hijos: 'tienes hijos a tu cargo', familia_numerosa: 'sois familia numerosa', discapacidad: 'hay una discapacidad reconocida (33 % o más)',
+    alquiler: 'vives de alquiler', ingresos_bajos: 'tus ingresos están por debajo del límite' };
+
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function valor(nombre) { var el = form.querySelector('input[name="' + nombre + '"]:checked'); return el ? el.value : ''; }
+
+  form.addEventListener('change', function () {
+    bloqueFn.hidden = valor('hijos') !== 'si';
+  });
+
+  // Devuelve null si NO encaja. Si encaja: motivos (lo que cumple seguro) y pendientes
+  // (requisitos que no ha contestado y tendría que comprobar).
+  function encaja(p, r) {
+    var motivos = [], pendientes = [];
+    if (r.edad !== null) {
+      if (p.edad_min != null && r.edad < p.edad_min) return null;
+      if (p.edad_max != null && r.edad > p.edad_max) return null;
+      if (p.edad_min != null || p.edad_max != null) motivos.push('tienes ' + r.edad + ' años');
+    } else if (p.edad_min != null || p.edad_max != null) {
+      pendientes.push(p.edad_min != null && p.edad_max != null ? 'tienes entre ' + p.edad_min + ' y ' + p.edad_max + ' años'
+        : p.edad_min != null ? 'tienes ' + p.edad_min + ' años o más' : 'tienes ' + p.edad_max + ' años o menos');
+    }
+    if (p.para_empresas && r.situacion !== 'autonomo') return null;
+    if (p.situacion && p.situacion.length && r.situacion && r.situacion !== 'otra') {
+      if (p.situacion.indexOf(r.situacion) === -1) return null;
+      motivos.push(SIT[r.situacion]);
+    } else if (p.situacion && p.situacion.length) {
+      pendientes.push(p.situacion.map(function (x) { return SIT[x]; }).join(' o '));
+    }
+    var req = p.requiere || [];
+    for (var i = 0; i < req.length; i++) {
+      var resp = r[req[i]];
+      if (resp === 'no') return null;
+      if (resp === 'si') motivos.push(MOTIVO[req[i]]);
+      else pendientes.push(PEND[req[i]]);
+    }
+    return { motivos: motivos, pendientes: pendientes };
+  }
+
+  function tarjeta(d, m) {
+    var por = m.motivos.length ? '<p class="taa-test-por">✅ Encaja porque ' + esc(m.motivos.join(', ')) + '.</p>' : '';
+    if (m.pendientes.length) por += '<p class="taa-test-por">❓ Solo si ' + esc(m.pendientes.join(', ')) + '.</p>';
+    if (m.solo) por += '<p class="taa-test-por">ℹ️ Es solo para: ' + esc(m.solo) + '.</p>';
+    return '<a class="taa-test-item" href="/ayuda/' + encodeURIComponent(d.s) + '/">' +
+      '<span class="taa-test-item-tit">' + esc(d.t) + '</span>' +
+      '<span class="taa-test-item-meta">' +
+        '<span class="taa-badge taa-badge--' + (CLASE[d.e] || 'desconocido') + '">' + esc(d.el) + '</span>' +
+        (d.c ? '<span class="taa-chip taa-chip--cuantia">' + esc(d.c) + '</span>' : '') +
+      '</span>' + por + '</a>';
+  }
+
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var edadTxt = form.querySelector('#taa-test-edad').value.trim();
+    var edad = edadTxt === '' ? null : parseInt(edadTxt, 10);
+    if (edad !== null && (isNaN(edad) || edad < 0 || edad > 120)) edad = null;
+    var r = {
+      edad: edad,
+      situacion: valor('situacion'),
+      hijos: valor('hijos'),
+      familia_numerosa: valor('hijos') === 'no' ? 'no' : valor('familia_numerosa'),
+      discapacidad: valor('discapacidad'),
+      alquiler: valor('alquiler'),
+      ingresos_bajos: valor('ingresos_bajos')
+    };
+
+    var ayudas = [], tramites = [], especiales = [];
+    datos.forEach(function (d) {
+      var m = encaja(d.p, r);
+      if (m === null) return;
+      var item = { d: d, m: m, peso: m.motivos.length - m.pendientes.length };
+      if (d.p.colectivo_especifico) especiales.push(item);
+      else if (d.p.tipo === 'tramite') tramites.push(item);
+      else ayudas.push(item);
+    });
+    var ordenar = function (a, b) {
+      return (ORDEN[a.d.e] - ORDEN[b.d.e]) || (b.peso - a.peso) || a.d.t.localeCompare(b.d.t, 'es');
+    };
+    ayudas.sort(ordenar); tramites.sort(ordenar); especiales.sort(ordenar);
+
+    var abiertas = ayudas.filter(function (x) { return x.d.e === 'Abierto' || x.d.e === 'Próximamente'; }).length;
+    var html = '<h2 tabindex="-1" id="taa-test-titulo-res">' + (ayudas.length
+      ? 'Puede que te correspondan ' + ayudas.length + (ayudas.length === 1 ? ' ayuda' : ' ayudas')
+      : 'No hemos encontrado ayudas que encajen con tus respuestas') + '</h2>';
+    if (ayudas.length) {
+      html += '<p class="taa-test-resumen">' + (abiertas ? abiertas + ' con el plazo abierto o a punto de abrir. ' : '') +
+        'Entra en cada una para ver los requisitos completos: aquí solo comprobamos los principales.</p>';
+      html += '<div class="taa-test-lista">' + ayudas.map(function (x) { return tarjeta(x.d, x.m); }).join('') + '</div>';
+    } else {
+      html += '<p class="taa-test-resumen">Prueba a marcar «Prefiero no decirlo» en alguna pregunta, o mira todas las ayudas en la <a href="/">página de inicio</a>.</p>';
+    }
+    if (tramites.length) {
+      html += '<details class="taa-test-mas"><summary>Trámites que también te pueden servir (' + tramites.length + ')</summary>' +
+        '<div class="taa-test-lista">' + tramites.map(function (x) { return tarjeta(x.d, x.m); }).join('') + '</div></details>';
+    }
+    if (especiales.length) {
+      html += '<details class="taa-test-mas"><summary>Ayudas para situaciones concretas (' + especiales.length + ')</summary>' +
+        '<div class="taa-test-lista">' + especiales.map(function (x) {
+          return tarjeta(x.d, { motivos: x.m.motivos, pendientes: x.m.pendientes, solo: x.d.p.colectivo_especifico });
+        }).join('') + '</div></details>';
+    }
+    html += '<p class="taa-test-aviso">Este test es orientativo. Que una ayuda aparezca aquí no garantiza que te la concedan: comprueba siempre los requisitos en la web oficial.</p>';
+    html += '<p><button type="button" class="taa-test-otra" id="taa-test-repetir">Volver a empezar</button></p>';
+    res.innerHTML = html;
+    res.hidden = false;
+    var t = document.getElementById('taa-test-titulo-res');
+    t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    t.focus({ preventScroll: true });
+    document.getElementById('taa-test-repetir').onclick = function () {
+      form.reset(); bloqueFn.hidden = true; res.hidden = true;
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+  });
+})();
+</script>`;
+
+function pregunta(nombre, texto, opciones, ayuda = '') {
+  return `<fieldset class="taa-test-pregunta">
+      <legend>${esc(texto)}</legend>
+      ${ayuda ? `<p class="taa-test-ayuda">${esc(ayuda)}</p>` : ''}
+      <div class="taa-test-opciones">
+        ${opciones.map(([v, etiqueta]) => `<label class="taa-test-op"><input type="radio" name="${nombre}" value="${v}"><span>${esc(etiqueta)}</span></label>`).join('\n        ')}
+      </div>
+    </fieldset>`;
+}
+
+const SI_NO = [['si', 'Sí'], ['no', 'No'], ['', 'Prefiero no decirlo']];
+
+function paginaTest(tramites, ctx) {
+  const { ahora, categorias, hayPrivacidad } = ctx;
+  const url = `${SITIO}/${RUTA_TEST}/`;
+  const datos = datosTest(tramites, ahora);
+  const titulo = '¿Qué ayudas me corresponden? Test gratis | TuAsistenteAndaluz';
+  const descripcion = 'Responde 6 preguntas rápidas y descubre qué ayudas, becas y prestaciones de la Junta de Andalucía y del SEPE te pueden corresponder. Gratis y anónimo.';
+  const jsonld = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: '¿Qué ayudas me corresponden?',
+    description: descripcion,
+    url,
+    inLanguage: 'es',
+    publisher: { '@type': 'Organization', name: NOMBRE, url: SITIO }
+  };
+  // El JSON va dentro de <script type="application/json">: se escapa "<" para que no pueda cerrar la etiqueta.
+  const json = JSON.stringify(datos).replace(/</g, '\\u003c');
+
+  const cuerpo = `<main class="taa-main">
+  <nav class="taa-migas" aria-label="Migas de pan">
+    <ol>
+      <li><a href="/">Inicio</a></li>
+      <li aria-current="page">¿Qué ayudas me corresponden?</li>
+    </ol>
+  </nav>
+  <article class="taa-ficha taa-test">
+    <header>
+      <h1>¿Qué ayudas me corresponden?</h1>
+      <p class="taa-test-intro">Responde estas preguntas y te enseñamos las ayudas que encajan contigo. Si no quieres contestar alguna, déjala en blanco.</p>
+      <p class="taa-test-privado">🔒 Es anónimo: tus respuestas no se envían a ningún sitio, se quedan en tu dispositivo.</p>
+    </header>
+    <form id="taa-test-form" class="taa-test-form" novalidate>
+      <fieldset class="taa-test-pregunta">
+        <legend><label for="taa-test-edad">1. ¿Cuántos años tienes?</label></legend>
+        <input id="taa-test-edad" class="taa-test-edad" type="number" inputmode="numeric" min="0" max="120" placeholder="Ej.: 34">
+      </fieldset>
+      ${pregunta('situacion', '2. ¿Cuál es tu situación ahora mismo?', [
+        ['desempleado', 'Estoy en paro'], ['trabajador', 'Trabajo por cuenta ajena'], ['autonomo', 'Soy autónomo o tengo empresa'],
+        ['estudiante', 'Estudio'], ['jubilado', 'Soy jubilado o pensionista'], ['otra', 'Otra']
+      ])}
+      ${pregunta('hijos', '3. ¿Tienes hijos o menores a tu cargo?', SI_NO)}
+      <div id="taa-test-fn" hidden>
+      ${pregunta('familia_numerosa', '3b. ¿Tenéis el título de familia numerosa?', SI_NO)}
+      </div>
+      ${pregunta('discapacidad', '4. ¿Tienes tú, o alguien a tu cargo, una discapacidad reconocida?', SI_NO, 'Del 33 % o más.')}
+      ${pregunta('alquiler', '5. ¿Vives de alquiler?', SI_NO)}
+      ${pregunta('ingresos_bajos', '6. ¿Los ingresos de tu hogar son bajos o no tenéis ingresos?', [['si', 'Sí'], ['no', 'No'], ['', 'No lo sé']], 'Muchas ayudas tienen un límite de ingresos. Si dudas, marca «No lo sé».')}
+      <button type="submit" class="taa-test-enviar">Ver mis ayudas</button>
+    </form>
+    <section id="taa-test-resultados" class="taa-test-resultados" aria-live="polite" hidden></section>
+  </article>
+  <script type="application/json" id="taa-test-datos">${json}</script>
+</main>`;
+
+  return pagina({
+    head: cabeza({ titulo, descripcion, canonico: url, tipoOg: 'website', jsonld }),
+    cuerpo, categorias, hayPrivacidad, scriptsExtra: SCRIPT_TEST
+  });
+}
+
 // Botones para compartir una ficha (WhatsApp + copiar enlace).
 // El enlace lleva utm_source=whatsapp para ver en Analytics cuántas visitas llegan así.
 function bloqueCompartir(t, url, pregunta) {
@@ -1038,6 +1274,9 @@ async function main() {
   const archivos = [];
   for (const t of tramites) archivos.push([`ayuda/${t.slug}/index.html`, paginaFicha(t, ctx)]);
   for (const c of categorias) archivos.push([`categoria/${c.slug}/index.html`, paginaCategoria(c, porCategoria.get(c.slug), ctx)]);
+  archivos.push([`${RUTA_TEST}/index.html`, paginaTest(tramites, ctx)]);
+  const conPerfil = tramites.filter((t) => t.perfil).length;
+  if (conPerfil < tramites.length) advertencias.push(`Test: ${tramites.length - conPerfil} fichas sin perfil (no salen en el test). Ejecuta: cd engine && node src/etiquetar-perfiles.js`);
 
   // Seguridad: si van a desaparecer fichas que hoy están en la web, no se toca nada
   // salvo que se pida expresamente con --permitir-bajas (ej: al retirar una ficha a propósito).
@@ -1062,6 +1301,7 @@ async function main() {
   // Sitemap
   const ultima = (lista) => lista.map((t) => fechaISO(t.actualizado_en || t.revisado_en)).filter(Boolean).sort().pop();
   const entradas = [{ loc: `${SITIO}/`, lastmod: ultima(tramites) }];
+  entradas.push({ loc: `${SITIO}/${RUTA_TEST}/`, lastmod: ultima(tramites) });
   for (const c of categorias) entradas.push({ loc: `${SITIO}/categoria/${c.slug}/`, lastmod: ultima(porCategoria.get(c.slug)) });
   for (const t of tramites) entradas.push({ loc: `${SITIO}/ayuda/${t.slug}/`, lastmod: fechaISO(t.actualizado_en || t.revisado_en) });
   if (hayPrivacidad) entradas.push({ loc: `${SITIO}/privacidad.html`, lastmod: null });
