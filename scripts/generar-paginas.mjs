@@ -353,6 +353,7 @@ function cabeza({ titulo, descripcion, canonico, tipoOg = 'article', tarjetaTw =
 <meta name="description" content="${esc(descripcion)}">
 <link rel="canonical" href="${esc(canonico)}">
 <meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="google-adsense-account" content="ca-pub-6303400830418525">
 <meta property="og:type" content="${tipoOg}">
 <meta property="og:site_name" content="${NOMBRE}">
 <meta property="og:locale" content="es_ES">
