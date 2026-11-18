@@ -80,6 +80,32 @@ const SEO_MANUAL = {
     description: 'Subsidio de +52 en 2026: 480 € al mes hasta la jubilación, límite de ingresos de 915,75 € y cotización para tu pensión. Requisitos y cómo pedirlo.',
     h1: 'Subsidio para mayores de 52 años: cuánto se cobra, requisitos y cómo pedirlo'
   },
+  // --- Búsquedas con más impresiones en Search Console (noviembre 2026) ---
+  'tarjeta-sanitaria': {
+    title: 'Cómo solicitar la tarjeta sanitaria en Andalucía: requisitos y pasos',
+    description: 'Cómo obtener la tarjeta sanitaria del Servicio Andaluz de Salud paso a paso: quién puede pedirla, documentos que necesitas y dónde solicitarla.',
+    h1: 'Cómo solicitar la tarjeta sanitaria en Andalucía: requisitos y pasos'
+  },
+  'titulo-familia-numerosa-andalucia': {
+    title: 'Título de familia numerosa en Andalucía: cómo pedirlo y renovarlo',
+    description: 'Cómo solicitar, renovar o modificar el título de familia numerosa en Andalucía: requisitos, documentos, plazos y dónde hacer el trámite paso a paso.',
+    h1: 'Título de familia numerosa en Andalucía: cómo solicitarlo, renovarlo o modificarlo'
+  },
+  'beca-6000': {
+    title: 'Beca 6000 Andalucía: requisitos, cuantía y cómo solicitarla',
+    description: 'Requisitos de la Beca 6000 para alumnado de Bachillerato y Grado Medio en Andalucía: quién puede pedirla, cuánto se cobra, plazos y cómo solicitarla.',
+    h1: 'Beca 6000 en Andalucía: requisitos, cuantía y cómo solicitarla'
+  },
+  'ayuda-transporte': {
+    title: 'Ayudas para el transporte escolar en Andalucía: requisitos',
+    description: 'Ayudas individualizadas para el transporte escolar en Andalucía: qué alumnado puede pedirlas, requisitos, plazos y cómo solicitarlas paso a paso.',
+    h1: 'Ayudas individualizadas para el transporte escolar en Andalucía: requisitos y cómo pedirlas'
+  },
+  'bono-alquiler-joven': {
+    title: 'Bono Alquiler Joven Andalucía: requisitos, cuantía y plazos',
+    description: 'Bono Alquiler Joven en Andalucía: requisitos de edad e ingresos, cuánto se cobra al mes, cuándo se abre el plazo y cómo solicitarlo paso a paso.',
+    h1: 'Bono Alquiler Joven en Andalucía: requisitos, cuantía y plazos'
+  },
   'ayudas-alquiler-junta-andalucia': {
     title: 'Ayudas al alquiler de la Junta de Andalucía: requisitos y cómo prepararte',
     description: 'Las ayudas al alquiler de la Junta de Andalucía salen por convocatorias. Requisito clave: contrato de alquiler a tu nombre, aunque sea de una habitación.',
@@ -1529,6 +1555,8 @@ async function main() {
     }
   }
   for (const p of PAGINAS_LEGALES) {
+    // Aviso legal, privacidad y cookies llevan noindex: no deben salir en Google ni en el sitemap.
+    if (p !== 'quienes-somos') continue;
     if (await existe(path.join(PUBLIC, 'legal', p, 'index.html'))) {
       entradas.push({ loc: `${SITIO}/legal/${p}/`, lastmod: null });
     } else {
