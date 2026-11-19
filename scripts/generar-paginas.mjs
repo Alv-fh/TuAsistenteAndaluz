@@ -731,20 +731,27 @@ function htmlOg({ etiqueta, titulo, chips }, logo) {
 }
 
 // Código QR (SVG de ~2 KB) de cada ficha para la versión impresa.
-async function generarQRs(tramites, advertencias) {
-  let QR = null;
+function cargarQR() {
   for (const base of [RAIZ, path.join(RAIZ, 'engine')]) {
-    try { QR = createRequire(path.join(base, 'package.json'))('qrcode'); break; } catch { /* probar el siguiente */ }
+    try { return createRequire(path.join(base, 'package.json'))('qrcode'); } catch { /* probar el siguiente */ }
   }
+  return null;
+}
+
+async function qrSvg(QR, url) {
+  const svg = await QR.toString(url, { type: 'svg', margin: 0, errorCorrectionLevel: 'M' });
+  return svg.replace('<svg ', '<svg role="img" aria-label="Código QR de esta guía" ');
+}
+
+async function generarQRs(tramites, advertencias) {
+  const QR = cargarQR();
   const mapa = new Map();
   if (!QR) {
     advertencias.push('Versión impresa: falta el paquete "qrcode" (npm install qrcode). Se imprime la dirección sin QR.');
     return mapa;
   }
   for (const t of tramites) {
-    const svg = await QR.toString(`${SITIO}/ayuda/${t.slug}/?utm_source=impreso&utm_medium=qr`,
-      { type: 'svg', margin: 0, errorCorrectionLevel: 'M' });
-    mapa.set(t.slug, svg.replace('<svg ', '<svg role="img" aria-label="Código QR de esta guía" '));
+    mapa.set(t.slug, await qrSvg(QR, `${SITIO}/ayuda/${t.slug}/?utm_source=impreso&utm_medium=qr`));
   }
   return mapa;
 }
@@ -1115,9 +1122,9 @@ function bloqueFaq(faq) {
 
 // Botones para compartir una ficha (WhatsApp + copiar enlace).
 // El enlace lleva utm_source=whatsapp para ver en Analytics cuántas visitas llegan así.
-function bloqueCompartir(t, url, pregunta) {
+function bloqueCompartir(t, url, pregunta, intro = 'Mira esta ayuda, te puede interesar:') {
   const enlace = `${url}?utm_source=whatsapp&utm_medium=compartir`;
-  const texto = `Mira esta ayuda, te puede interesar: ${t.titulo}\n${enlace}`;
+  const texto = `${intro} ${t.titulo}\n${enlace}`;
   return `<div class="taa-compartir">
       ${pregunta ? `<p class="taa-compartir-pregunta">${esc(pregunta)}</p>` : ''}
       <div class="taa-compartir-botones">
@@ -1484,6 +1491,47 @@ async function actualizarHome(bloque) {
   return true;
 }
 
+// Guías escritas a mano (public/guia-*.html): el generador les añade, entre marcadores
+// <!-- TAA:... -->, los botones de compartir (arriba y abajo), el pie de impresión con QR,
+// las redes sociales del pie y el script de "Copiar enlace". El resto de la guía no se toca.
+async function actualizarGuias(advertencias) {
+  const QR = cargarQR();
+  const hechas = [];
+  for (const f of PAGINAS_GUIAS) {
+    const ruta = path.join(PUBLIC, f);
+    const html = await fs.readFile(ruta, 'utf8').catch(() => null);
+    if (!html) continue;
+    const url = html.match(/<link rel="canonical" href="([^"]+)"/)?.[1] || `${SITIO}/${f}`;
+    const titulo = (html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)?.[1] || '').replace(/<[^>]+>/g, '').trim();
+    const intro = 'Mira esta guía, te puede servir:';
+    const qr = QR ? await qrSvg(QR, `${url}?utm_source=impreso&utm_medium=qr`) : '';
+    const bloques = [
+      // [marcador, contenido, ancla donde se inserta la primera vez, ¿antes o después de la ancla?]
+      // Arriba: después del párrafo de introducción (o del título, si no lo hay)
+      ['COMPARTIR-ARRIBA', bloqueCompartir({ titulo }, url, null, intro),
+        /<p class="taa-intro">[\s\S]*?<\/p>/.test(html) ? /<p class="taa-intro">[\s\S]*?<\/p>/ : /<\/h1>/, 'despues'],
+      ['COMPARTIR-ABAJO', bloqueCompartir({ titulo }, url, '¿Conoces a alguien a quien le pueda servir? Pásaselo:', intro) + '\n' + pieImpresion(url, qr), /<\/article>/, 'antes'],
+      ['REDES', REDES, /<footer class="taa-pie">/, 'despues'],
+      ['SCRIPT', SCRIPT_COMPARTIR, /<\/body>/, 'antes']
+    ];
+    let nuevo = html;
+    for (const [marca, contenido, ancla, donde] of bloques) {
+      const envuelto = `<!-- TAA:${marca} -->\n${contenido}\n<!-- /TAA:${marca} -->`;
+      const re = new RegExp(`<!-- TAA:${marca} -->[\\s\\S]*?<!-- /TAA:${marca} -->`);
+      if (re.test(nuevo)) {
+        nuevo = nuevo.replace(re, () => envuelto);
+      } else if (ancla.test(nuevo)) {
+        nuevo = nuevo.replace(ancla, (m) => (donde === 'antes' ? `${envuelto}\n${m}` : `${m}\n${envuelto}`));
+      } else {
+        advertencias.push(`Guía ${f}: no encuentro dónde poner ${marca}.`);
+      }
+    }
+    if (nuevo !== html) { await fs.writeFile(ruta, nuevo, 'utf8'); hechas.push(f); }
+  }
+  if (hechas.length) console.log(`Guías actualizadas: ${hechas.join(', ')}`);
+  if (!QR) advertencias.push('Guías: sin el paquete "qrcode" se imprimen sin QR.');
+}
+
 function generarSitemap(entradas) {
   const filas = entradas.map((e) => `  <url>
     <loc>${esc(e.loc)}</loc>${e.lastmod ? `\n    <lastmod>${e.lastmod}</lastmod>` : ''}
@@ -1616,6 +1664,7 @@ async function main() {
 
   // Enlaces rastreables en la home
   const homeOk = await actualizarHome(bloqueEnlacesHome(categorias, porCategoria));
+  await actualizarGuias(advertencias);
 
   // robots.txt
   const robots = path.join(PUBLIC, 'robots.txt');
