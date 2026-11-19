@@ -106,6 +106,11 @@ const SEO_MANUAL = {
     description: 'Bono Alquiler Joven en Andalucía: requisitos de edad e ingresos, cuánto se cobra al mes, cuándo se abre el plazo y cómo solicitarlo paso a paso.',
     h1: 'Bono Alquiler Joven en Andalucía: requisitos, cuantía y plazos'
   },
+  'pensiones-no-contributivas-andalucia': {
+    title: 'Pensiones no contributivas en Andalucía: requisitos y cómo pedirlas',
+    description: 'Pensión no contributiva de jubilación e invalidez en Andalucía: quién puede pedirla, requisitos de edad e ingresos, documentos y cómo solicitarla.',
+    h1: 'Pensiones no contributivas de jubilación e invalidez en Andalucía: requisitos y cómo pedirlas'
+  },
   'ayudas-alquiler-junta-andalucia': {
     title: 'Ayudas al alquiler de la Junta de Andalucía: requisitos y cómo prepararte',
     description: 'Las ayudas al alquiler de la Junta de Andalucía salen por convocatorias. Requisito clave: contrato de alquiler a tu nombre, aunque sea de una habitación.',

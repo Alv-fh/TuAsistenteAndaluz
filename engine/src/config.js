@@ -241,7 +241,7 @@ export const config = {
       },
       {
         url: 'https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/6823.html',
-        slug: 'procedimiento-6823',
+        slug: 'pensiones-no-contributivas-andalucia',
         categoria: 'Trámites',
         fuentes: ['https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/6823.html']
       },
@@ -253,7 +253,7 @@ export const config = {
       },
       {
         url: 'https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/7.html',
-        slug: 'procedimiento-7',
+        slug: 'titulo-familia-numerosa-andalucia',
         categoria: 'Trámites',
         fuentes: ['https://www.juntadeandalucia.es/servicios/sede/tramites/procedimientos/detalle/7.html']
       },

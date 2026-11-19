@@ -1,7 +1,25 @@
 {
   "trailingSlash": true,
   "redirects": [
-    { "source": "/ayuda/procedimiento-7", "destination": "/ayuda/titulo-familia-numerosa-andalucia/", "permanent": true },
-    { "source": "/ayuda/procedimiento-7/", "destination": "/ayuda/titulo-familia-numerosa-andalucia/", "permanent": true }
+    {
+      "source": "/ayuda/procedimiento-7",
+      "destination": "/ayuda/titulo-familia-numerosa-andalucia/",
+      "permanent": true
+    },
+    {
+      "source": "/ayuda/procedimiento-7/",
+      "destination": "/ayuda/titulo-familia-numerosa-andalucia/",
+      "permanent": true
+    },
+    {
+      "source": "/ayuda/procedimiento-6823",
+      "destination": "/ayuda/pensiones-no-contributivas-andalucia/",
+      "permanent": true
+    },
+    {
+      "source": "/ayuda/procedimiento-6823/",
+      "destination": "/ayuda/pensiones-no-contributivas-andalucia/",
+      "permanent": true
+    }
   ]
 }
