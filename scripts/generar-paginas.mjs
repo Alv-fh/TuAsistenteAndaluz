@@ -730,6 +730,25 @@ function htmlOg({ etiqueta, titulo, chips }, logo) {
   </body></html>`;
 }
 
+// Código QR (SVG de ~2 KB) de cada ficha para la versión impresa.
+async function generarQRs(tramites, advertencias) {
+  let QR = null;
+  for (const base of [RAIZ, path.join(RAIZ, 'engine')]) {
+    try { QR = createRequire(path.join(base, 'package.json'))('qrcode'); break; } catch { /* probar el siguiente */ }
+  }
+  const mapa = new Map();
+  if (!QR) {
+    advertencias.push('Versión impresa: falta el paquete "qrcode" (npm install qrcode). Se imprime la dirección sin QR.');
+    return mapa;
+  }
+  for (const t of tramites) {
+    const svg = await QR.toString(`${SITIO}/ayuda/${t.slug}/?utm_source=impreso&utm_medium=qr`,
+      { type: 'svg', margin: 0, errorCorrectionLevel: 'M' });
+    mapa.set(t.slug, svg.replace('<svg ', '<svg role="img" aria-label="Código QR de esta guía" '));
+  }
+  return mapa;
+}
+
 async function abrirNavegadorOg() {
   try {
     const requerir = createRequire(path.join(RAIZ, 'engine', 'package.json'));
@@ -1104,6 +1123,19 @@ function bloqueCompartir(t, url, pregunta) {
       <div class="taa-compartir-botones">
         <a class="taa-compartir-wa" href="https://wa.me/?text=${encodeURIComponent(texto)}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 01-12.3 7.5L3 21l2-5.5A8.4 8.4 0 1121 11.5z"/></svg>Compartir por WhatsApp</a>
         <button type="button" class="taa-compartir-copiar" data-url="${esc(url)}">Copiar enlace</button>
+        ${pregunta ? '<button type="button" class="taa-compartir-imprimir" onclick="window.print()">Imprimir o guardar en PDF</button>' : ''}
+      </div>
+    </div>`;
+}
+
+// Pie que solo sale al imprimir: dirección de la ficha + código QR para volver a la web.
+function pieImpresion(url, qr) {
+  return `<div class="taa-solo-imprimir taa-imprimir-pie">
+      ${qr ? `<div class="taa-imprimir-qr">${qr}</div>` : ''}
+      <div>
+        <p><strong>Guía completa y actualizada:</strong><br>${esc(url.replace(/^https?:\/\//, ''))}</p>
+        <p>Escanea el código con la cámara del móvil para ver la guía, comprobar si ha cambiado algo y hacer el test «¿Qué ayudas me corresponden?».</p>
+        <p class="taa-imprimir-aviso">${NOMBRE} es un servicio independiente, no vinculado a la Junta de Andalucía ni al SEPE. Comprueba siempre los datos en la web oficial.</p>
       </div>
     </div>`;
 }
@@ -1117,6 +1149,15 @@ document.addEventListener('click', function (e) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(b.getAttribute('data-url')).then(function () { hecho('¡Enlace copiado!'); }, function () { hecho('Copia el enlace de la barra de arriba'); });
   } else { hecho('Copia el enlace de la barra de arriba'); }
+});
+var cerradas = [];
+window.addEventListener('beforeprint', function () {
+  cerradas = [].slice.call(document.querySelectorAll('details:not([open])'));
+  cerradas.forEach(function (d) { d.open = true; });
+});
+window.addEventListener('afterprint', function () {
+  cerradas.forEach(function (d) { d.open = false; });
+  cerradas = [];
 });
 </script>`;
 
@@ -1338,6 +1379,7 @@ function paginaFicha(t, ctx) {
     ${bloqueFaq(faq)}
     ${oficial ? `<p class="taa-cta"><a class="taa-boton" href="${esc(oficial)}" target="_blank" rel="noopener noreferrer">Ver en la web oficial</a></p>` : ''}
     ${bloqueCompartir(t, url, '¿Conoces a alguien a quien le pueda servir? Pásaselo:')}
+    ${pieImpresion(url, ctx.qr?.get(t.slug))}
     <footer class="taa-meta">
       ${comprobado ? `<p>Última comprobación con la fuente oficial: <time datetime="${esc(modificado || '')}">${esc(comprobado)}</time>.</p>` : ''}
       ${fuentesUnicas.length ? `<p>Fuentes: ${fuentesUnicas.map((f) => `<a href="${esc(f)}" target="_blank" rel="noopener noreferrer">${esc(new URL(f).hostname)}</a>`).join(', ')}.</p>` : ''}
@@ -1516,6 +1558,7 @@ async function main() {
     chips: [calcularEstado(t, ahora).etiqueta, t.cuantia ? recortar(t.cuantia, 60) : null]
   }));
   itemsOg.push({ nombre: 'test', etiqueta: 'Test gratis y anónimo', titulo: '¿A qué ayudas tienes derecho? Descúbrelo en 1 minuto', chips: ['Junta de Andalucía y SEPE', '6 preguntas'] });
+  ctx.qr = await generarQRs(tramites, advertencias);
   ctx.og = process.argv.includes('--sin-imagenes') ? new Map() : await generarImagenesOg(itemsOg, advertencias);
 
   // Todo se genera EN MEMORIA primero; solo si va bien se borra lo anterior y se escribe.
